@@ -102,7 +102,7 @@ procedure Mandelbrot.genPixel(index: integer);
 
   function abs2(z: complex): real;
   begin
-    abs2 := (z.re * z.re) + (z.im * z.im);
+    Result := (z.re * z.re) + (z.im * z.im);
   end;
 
 var
@@ -136,7 +136,7 @@ procedure Mandelbrot.genImage;
 var
   i: integer;
 begin
-  for i := 0 to w * h - 1 do
+  for i := low(image) to high(image) do
     genPixel(i);
 end;
 
@@ -156,20 +156,18 @@ type
 function genPixels(p: pointer): ptrint;
 var
   pparam: pMTParam;
-  i, chSz, ito: integer;
+  i: integer;
 begin
   pparam := p;
 
   with pparam^, pmandel^ do
   begin
-    chSz := size div nth;
-
-    ito := (th + 1) * chSz;
-    if ito >= size then
-      ito := size - 1;
-
-    for i := th * chSz to ito do
+    i := th; // offset to image
+    while i <= high(image) do
+    begin
       genPixel(i);
+      i := i + nth;
+    end;
   end;
   Result := 0;
 end;
@@ -178,24 +176,24 @@ procedure Mandelbrot.genImageMT;
 var
   nth, th: integer;
   ths: array of TThreadID;
-  tparams: array of MTParam;
+  thParam: array of MTParam;
 
 begin
   nth := GetSystemThreadCount;
   setlength(ths, nth);
-  setlength(tparams, nth);
+  setlength(thParam, nth);
 
-  for th := 0 to nth - 1 do
+  for th := low(ths) to high(ths) do
   begin
 
-    tparams[th].th := th;
-    tparams[th].nth := nth;
-    tparams[th].pmandel := @self;
+    thParam[th].th := th;
+    thParam[th].nth := nth;
+    thParam[th].pmandel := @self;
 
-    ths[th] := BeginThread(@genPixels, @tparams[th]);
+    ths[th] := BeginThread(@genPixels, @thParam[th]);
   end;
 
-  for th := 0 to nth - 1 do
+  for th := low(ths) to high(ths) do
     WaitForThreadTerminate(ths[th], 0);
 end;
 
