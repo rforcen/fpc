@@ -1,0 +1,29 @@
+object Form1: TForm1
+  Left = 835
+  Height = 1061
+  Top = 502
+  Width = 1023
+  Caption = 'mandelbrot'
+  ClientHeight = 1061
+  ClientWidth = 1023
+  DesignTimePPI = 192
+  OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
+  OnResize = FormResize
+  LCLVersion = '2.0.6.0'
+  object Image1: TImage
+    Left = 0
+    Height = 1023
+    Top = 0
+    Width = 1023
+    Align = alClient
+    OnClick = Image1Click
+  end
+  object StatusBar1: TStatusBar
+    Left = 0
+    Height = 38
+    Top = 1023
+    Width = 1023
+    Panels = <>
+  end
+end
