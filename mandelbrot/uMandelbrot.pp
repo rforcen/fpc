@@ -61,6 +61,7 @@ type
     procedure genImage;
     procedure genImageMT;
     procedure genImageMTT;
+    procedure genMTCPP;
     procedure writeBin(Name: string);
     procedure writePPM(Name: string);
 
@@ -271,6 +272,19 @@ begin
 end;
 
 
+// c++ interface
+{$link cpp/mandel.o}
+
+{$linklib c}
+{$linklib stdc++}
+{$linklib gcc_s}
+procedure genMandelbrotMT(image : pointer; w, h, iters : uint32; center,range:complex); cdecl; external;
+
+procedure Mandelbrot.genMTCPP; // fpc wrapper to cpp
+begin
+ genMandelbrotMT(@image[0], w, h, iters, center, range);
+end;
+//
 
 procedure Mandelbrot.print;
 begin

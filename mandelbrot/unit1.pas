@@ -97,7 +97,8 @@ begin
   mandel := Mandelbrot.Create(Image1.Width, Image1.Height, 200, center, range);
   // mandel.genImage;     // single thread
   t0:=now;
-  mandel.genImageMTT; // in multi thread mode
+  //mandel.genImageMTT; // in multi thread mode
+  mandel.genMTCPP;
   lap:=MilliSecondsBetween(now, t0);
   StatusBar1.SimpleText := format('w:%0d, h:%1d, center:(%2f,%3f), range:(%4f,%5f) | lap:%6dms',
     [Image1.Width, Image1.Height, center.re, center.im, range.re, range.im, lap]);
