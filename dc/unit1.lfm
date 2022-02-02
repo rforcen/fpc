@@ -1,0 +1,91 @@
+object Form1: TForm1
+  Left = 570
+  Height = 1209
+  Top = 288
+  Width = 1335
+  Caption = 'Domain Coloring'
+  ClientHeight = 1209
+  ClientWidth = 1335
+  DesignTimePPI = 192
+  OnCreate = FormCreate
+  OnResize = FormResize
+  LCLVersion = '2.0.6.0'
+  object Image1: TImage
+    Left = 0
+    Height = 1127
+    Top = 44
+    Width = 1335
+    Align = alClient
+  end
+  object StatusBar1: TStatusBar
+    Left = 0
+    Height = 38
+    Top = 1171
+    Width = 1335
+    Panels = <>
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 44
+    Top = 0
+    Width = 1335
+    Align = alTop
+    ClientHeight = 44
+    ClientWidth = 1335
+    TabOrder = 1
+    object eExpr: TEdit
+      Left = 133
+      Height = 42
+      Top = 1
+      Width = 643
+      Align = alClient
+      OnEditingDone = eExprEditingDone
+      TabOrder = 0
+    end
+    object cbPresets: TComboBox
+      Left = 776
+      Height = 42
+      Top = 1
+      Width = 558
+      Align = alRight
+      ItemHeight = 0
+      Items.Strings = (
+        '(1+i)*log(sin(z^3-1)/z)'
+        '(1+i)*sin(z)'
+        '(z+3)*(z+1)^2'
+        '(z/2)^2*(z+1-2i)*(z+2+2i)/z^3'
+        '(z^2)-0.75-(0.2*i)'
+        '(z^2+1)/(z^2-1)'
+        '(z^2+1)/z'
+        '(z^2-1) * (z-2-i)^2 / (z^2+2*i)'
+        '1/sin(1/sin(z))'
+        'acos((1+i)*log(sin(z^3-1)/z))'
+        'cos(z)/(sin(z^4-1))'
+        'log(sin(z))'
+        'sin(1/z)'
+        'sin(z)*c(1,2)'
+        'sin(z)*sin(1/z)'
+        'z'
+        'z + z^2/sin(z^4-1)'
+        'z^6-1'
+        'z * sin( c(1,1)/cos(3/z) + tan(1/z+1) )'
+      )
+      OnClick = cbPresetsSelect
+      OnSelect = cbPresetsSelect
+      TabOrder = 1
+      Text = '(1+i)*log(sin(z^3-1)/z)'
+    end
+    object Label2: TLabel
+      Left = 1
+      Height = 42
+      Top = 1
+      Width = 132
+      Align = alLeft
+      Alignment = taCenter
+      Caption = 'expression'
+      Font.Color = clBlue
+      ParentColor = False
+      ParentFont = False
+    end
+  end
+end
