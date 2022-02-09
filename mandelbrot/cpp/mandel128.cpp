@@ -1,4 +1,4 @@
-// mandel.cpp
+// mandelhp.cpp
 
 // g++ -O3 -c mandel.cpp
 
@@ -8,9 +8,11 @@
 using std::complex;
 
 typedef uint32_t u32;
+typedef long double f128;
+typedef complex<f128> Complex128;
 typedef complex<double> Complex64;
 
-class Mandelbrot
+class Mandelbrotf128
 {
 private:
   const u32 fire_pallete[256] = {
@@ -41,21 +43,21 @@ private:
 
 public:
   int w = 0, h = 0, iters = 200;
-  Complex64 center = Complex64(0.5, 0.0), range = Complex64(-2.0, 2.0), cr;
-  double rir, scale;
+  Complex128 center = Complex128(0.5, 0.0), range = Complex128(-2.0, 2.0), cr;
+  f128 rir, scale;
   u32 *image = nullptr;
 
 private:
-  inline Complex64 do_scale(double iw, double jh)
+  inline Complex128 do_scale(f128 iw, f128 jh)
   {
-    return cr + rir * Complex64(iw, jh);
+    return cr + rir * Complex128(iw, jh);
   }
 
 public:
   // works from external image array
-  Mandelbrot(u32 *image, u32 w, u32 h, u32 iters, Complex64 center, Complex64 range)
+  Mandelbrotf128(u32 *image, u32 w, u32 h, u32 iters, Complex64 center, Complex64 range)
       : w(w), h(h), iters(256), center(center), range(range), image(image),
-        cr(Complex64(range.real(), range.real())), rir((range.imag() - range.real())), scale(0.8 * double(w) / h)
+        cr(Complex128(range.real(), range.real())), rir((range.imag() - range.real())), scale(0.8 * f128(w) / h)
   {
   }
 
@@ -64,8 +66,8 @@ public:
 
   void gen_pixel(int index)
   {
-    const Complex64 c0 = scale * do_scale(double(index % w) / w, double(index / w) / h) - center;
-    Complex64 z = c0;
+    const Complex128 c0 = scale * do_scale(f128(index % w) / w, f128(index / w) / h) - center;
+    Complex128 z = c0;
 
     int ix = iters;
     for (int it = 0; it < iters; it++)
@@ -101,8 +103,8 @@ public:
 
 extern "C"
 {
-  void genMandelbrotMT(u32 *image, u32 w, u32 h, u32 iters, Complex64 center, Complex64 range)
+  void genMandelbrotMTf128(u32 *image, u32 w, u32 h, u32 iters, Complex64 center, Complex64 range)
   {
-    Mandelbrot(image, w, h, iters, center, range).maneldebrot_mt();
+    Mandelbrotf128(image, w, h, iters, center, range).maneldebrot_mt();
   }
 };

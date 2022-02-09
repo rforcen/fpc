@@ -8,6 +8,7 @@
 using std::complex;
 
 typedef uint32_t u32;
+typedef complex<float> Complex32;
 typedef complex<double> Complex64;
 
 class Mandelbrot
@@ -41,21 +42,23 @@ private:
 
 public:
   int w = 0, h = 0, iters = 200;
-  Complex64 center = Complex64(0.5, 0.0), range = Complex64(-2.0, 2.0), cr;
-  double rir, scale;
+  Complex32 center = Complex32(0.5f, 0.0f), range = Complex32(-2.0f, 2.0f), cr;
+  float rir, scale;
   u32 *image = nullptr;
 
 private:
-  inline Complex64 do_scale(double iw, double jh)
+  inline Complex32 do_scale(float iw, float jh)
   {
-    return cr + rir * Complex64(iw, jh);
+    return cr + rir * Complex32(iw, jh);
   }
 
 public:
   // works from external image array
   Mandelbrot(u32 *image, u32 w, u32 h, u32 iters, Complex64 center, Complex64 range)
-      : w(w), h(h), iters(256), center(center), range(range), image(image),
-        cr(Complex64(range.real(), range.real())), rir((range.imag() - range.real())), scale(0.8 * double(w) / h)
+      : w(w), h(h), iters(256),
+        center(Complex32(center.real(), center.imag())), range(Complex32(range.real(), range.imag())),
+        image(image),
+        cr(Complex32(range.real(), range.real())), rir((range.imag() - range.real())), scale(0.8f * float(w) / h)
   {
   }
 
@@ -64,14 +67,14 @@ public:
 
   void gen_pixel(int index)
   {
-    const Complex64 c0 = scale * do_scale(double(index % w) / w, double(index / w) / h) - center;
-    Complex64 z = c0;
+    const Complex32 c0 = scale * do_scale(float(index % w) / w, float(index / w) / h) - center;
+    Complex32 z = c0;
 
     int ix = iters;
     for (int it = 0; it < iters; it++)
     {
       z = z * z + c0;
-      if (norm(z) > 4.0)
+      if (norm(z) > 4.0f)
       {
         ix = it;
         break;
@@ -79,7 +82,8 @@ public:
     }
     image[index] = 0xff000000 | ((ix == iters)
                                      ? 0
-                                     : fire_pallete[256 * ix / 50]);
+                                     //: fire_pallete[256 * ix / 50]);
+                                     : fire_pallete[ix << 2]);
   }
 
   // single thread
@@ -101,7 +105,7 @@ public:
 
 extern "C"
 {
-  void genMandelbrotMT(u32 *image, u32 w, u32 h, u32 iters, Complex64 center, Complex64 range)
+  void genMandelbrotMTf32(u32 *image, u32 w, u32 h, u32 iters, Complex64 center, Complex64 range)
   {
     Mandelbrot(image, w, h, iters, center, range).maneldebrot_mt();
   }

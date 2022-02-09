@@ -10,7 +10,7 @@ using std::complex;
 typedef uint32_t u32;
 typedef complex<double> Complex64;
 
-class Mandelbrot
+class Mandelbrotf64
 {
 private:
   const u32 fire_pallete[256] = {
@@ -53,7 +53,7 @@ private:
 
 public:
   // works from external image array
-  Mandelbrot(u32 *image, u32 w, u32 h, u32 iters, Complex64 center, Complex64 range)
+  Mandelbrotf64(u32 *image, u32 w, u32 h, u32 iters, Complex64 center, Complex64 range)
       : w(w), h(h), iters(256), center(center), range(range), image(image),
         cr(Complex64(range.real(), range.real())), rir((range.imag() - range.real())), scale(0.8 * double(w) / h)
   {
@@ -79,7 +79,8 @@ public:
     }
     image[index] = 0xff000000 | ((ix == iters)
                                      ? 0
-                                     : fire_pallete[256 * ix / 50]);
+                                     //: fire_pallete[(256 * ix) / 50]);
+                                     : fire_pallete[ix << 2]);
   }
 
   // single thread
@@ -101,8 +102,8 @@ public:
 
 extern "C"
 {
-  void genMandelbrotMT(u32 *image, u32 w, u32 h, u32 iters, Complex64 center, Complex64 range)
+  void genMandelbrotMTf64(u32 *image, u32 w, u32 h, u32 iters, Complex64 center, Complex64 range)
   {
-    Mandelbrot(image, w, h, iters, center, range).maneldebrot_mt();
+    Mandelbrotf64(image, w, h, iters, center, range).maneldebrot_mt();
   }
 };

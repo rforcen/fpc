@@ -8,7 +8,7 @@ uses
   {$ENDIF}
 
   Interfaces, // this includes the LCL widgetset
-  Forms, Unit1, uMandelbrot;
+  Forms, lazcontrols, Unit1, uMandelbrot;
 
 {$R *.res}
 

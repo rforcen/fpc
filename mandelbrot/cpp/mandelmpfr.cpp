@@ -1,16 +1,23 @@
-// mandel.cpp
+// mandelhp.cpp
 
 // g++ -O3 -c mandel.cpp
 
 #include "Thread.h"
+#include "colormap.h"
+#include <mpreal.h>
 #include <complex>
+#include <iostream>
+#include <fstream>
+#include <string>
 
-using std::complex;
+using mpfr::mpreal;
+using namespace std;
 
 typedef uint32_t u32;
+typedef complex<mpreal> Complexmpreal;
 typedef complex<double> Complex64;
 
-class Mandelbrot
+class MandelbrotMPFR
 {
 private:
   const u32 fire_pallete[256] = {
@@ -41,22 +48,26 @@ private:
 
 public:
   int w = 0, h = 0, iters = 200;
-  Complex64 center = Complex64(0.5, 0.0), range = Complex64(-2.0, 2.0), cr;
-  double rir, scale;
+  Complexmpreal center = Complexmpreal(0.5, 0.0), range = Complexmpreal(-2.0, 2.0), cr;
+  mpreal rir, scale;
   u32 *image = nullptr;
+  u32* pallete = nullptr;
 
 private:
-  inline Complex64 do_scale(double iw, double jh)
+  inline Complexmpreal do_scale(mpreal iw, mpreal jh)
   {
-    return cr + rir * Complex64(iw, jh);
+    return cr + rir * Complexmpreal(iw, jh);
   }
 
 public:
   // works from external image array
-  Mandelbrot(u32 *image, u32 w, u32 h, u32 iters, Complex64 center, Complex64 range)
-      : w(w), h(h), iters(256), center(center), range(range), image(image),
-        cr(Complex64(range.real(), range.real())), rir((range.imag() - range.real())), scale(0.8 * double(w) / h)
+  MandelbrotMPFR(u32 *image, u32 * pallete, u32 w, u32 h, u32 iters, Complex64 center, Complex64 range)
+      : w(w), h(h), iters(iters), center(center), range(range), image(image), pallete(pallete),
+        cr(Complexmpreal(range.real(), range.real())), rir((range.imag() - range.real())), scale(0.8 * mpreal(w) / h)
   {
+    const int digits = 100;
+     mpreal::set_default_prec(mpfr::digits2bits(digits));
+    // std::cout << "center:" << this->center << ", range:" << this->range << std::endl;
   }
 
   int size_bytes() { return w * h * sizeof(*image); }
@@ -64,8 +75,8 @@ public:
 
   void gen_pixel(int index)
   {
-    const Complex64 c0 = scale * do_scale(double(index % w) / w, double(index / w) / h) - center;
-    Complex64 z = c0;
+    const Complexmpreal c0 = scale * do_scale(mpreal(index % w) / w, mpreal(index / w) / h) - center;
+    Complexmpreal z = c0;
 
     int ix = iters;
     for (int it = 0; it < iters; it++)
@@ -77,9 +88,8 @@ public:
         break;
       }
     }
-    image[index] = 0xff000000 | ((ix == iters)
-                                     ? 0
-                                     : fire_pallete[256 * ix / 50]);
+    image[index] = 0xff000000 | ((ix == iters) ? 0 : pallete[ix]);
+                                     //: fire_pallete[256 * ix / 50]);
   }
 
   // single thread
@@ -95,14 +105,40 @@ public:
     Thread(image_size()).run([this](int index)
                              { gen_pixel(index); });
   }
+
+  void writePPM(string name)
+  {
+    ofstream fs;
+    fs.open(name, ios::binary);
+    fs << "P7\nWIDTH " << w << "\nHEIGHT " << h << "\nDEPTH 4\nMAXVAL 255\nTUPLTYPE RGB_ALPHA\nENDHDR\n";
+    fs.write((const char *)image, w * h * sizeof(u32));
+    fs.close();
+  }
 };
 
 // ffi interface
 
 extern "C"
 {
-  void genMandelbrotMT(u32 *image, u32 w, u32 h, u32 iters, Complex64 center, Complex64 range)
+  void genMandelbrotMTmpreal(u32 *image, u32* pallete, u32 w, u32 h, u32 iters, Complex64 center, Complex64 range)
   {
-    Mandelbrot(image, w, h, iters, center, range).maneldebrot_mt();
+    MandelbrotMPFR(image, pallete, w, h, iters, center, range).maneldebrot_mt();
   }
 };
+
+#ifdef _TEST
+int main()
+{
+  int w = 256, h = w, iters = 200;
+  u32 *image = new u32[w * h];
+  u32 *pallete = new u32[iters];
+  Color c;
+  for (int i=0; i<iters; i++) {
+      c=colormap(float(i)/iters, 0, iters, 0);
+      pallete[i]=0xff000000 | (int(c[0] * 255) << 16) | (int(c[1] * 255) << 8) | int(c[2] * 255);
+  }
+  printf("mandel mpfr %dx%dx%d\n", w, h, iters);
+  genMandelbrotMTmpreal(image, pallete, w, h, iters, Complex64(0.5, 0.0), Complex64(-2.0, 2.0));
+  delete image;
+}
+#endif

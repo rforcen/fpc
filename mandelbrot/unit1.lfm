@@ -1,29 +1,161 @@
 object Form1: TForm1
-  Left = 835
-  Height = 1061
-  Top = 502
-  Width = 1023
+  Left = 701
+  Height = 1201
+  Top = 401
+  Width = 1419
   Caption = 'mandelbrot'
-  ClientHeight = 1061
-  ClientWidth = 1023
+  ClientHeight = 1201
+  ClientWidth = 1419
   DesignTimePPI = 192
   OnCreate = FormCreate
-  OnKeyDown = FormKeyDown
+  OnDestroy = FormDestroy
   OnResize = FormResize
   LCLVersion = '2.0.6.0'
   object Image1: TImage
-    Left = 0
-    Height = 1023
-    Top = 0
-    Width = 1023
+    Left = 312
+    Height = 1111
+    Top = 52
+    Width = 1107
     Align = alClient
-    OnClick = Image1Click
+    OnMouseDown = Image1MouseDown
+    OnMouseWheel = Image1MouseWheel
   end
   object StatusBar1: TStatusBar
     Left = 0
     Height = 38
-    Top = 1023
-    Width = 1023
+    Top = 1163
+    Width = 1419
     Panels = <>
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 52
+    Top = 0
+    Width = 1419
+    Align = alTop
+    ClientHeight = 52
+    ClientWidth = 1419
+    TabOrder = 1
+    object btSave: TButton
+      Left = 647
+      Height = 50
+      Top = 1
+      Width = 94
+      Align = alLeft
+      Caption = '&save'
+      OnClick = btSaveClick
+      TabOrder = 0
+    end
+    object btInit: TButton
+      Left = 553
+      Height = 50
+      Top = 1
+      Width = 94
+      Align = alLeft
+      Caption = '&reset'
+      OnClick = btInitClick
+      TabOrder = 1
+    end
+    object cbEngines: TComboBox
+      Left = 312
+      Height = 50
+      Hint = 'fractal engine'
+      Top = 1
+      Width = 241
+      Align = alLeft
+      ItemHeight = 0
+      ItemIndex = 4
+      Items.Strings = (
+        'cpp f32'
+        'cpp f64'
+        'cpp f128'
+        'fpc MT'
+        'fpc MT-Thread'
+        'cpp mpfr'
+      )
+      OnChange = FormResize
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 2
+      Text = 'fpc MT-Thread'
+    end
+    object btBookMark: TButton
+      Left = 1
+      Height = 50
+      Top = 1
+      Width = 111
+      Align = alLeft
+      Caption = '+&mark'
+      OnClick = btBookMarkClick
+      TabOrder = 3
+    end
+    object btdelBookMark: TButton
+      Left = 112
+      Height = 50
+      Top = 1
+      Width = 111
+      Align = alLeft
+      Caption = '-&mark'
+      OnClick = btdelBookMarkClick
+      TabOrder = 4
+    end
+    object Label1: TLabel
+      Left = 223
+      Height = 50
+      Top = 1
+      Width = 89
+      Align = alLeft
+      AutoSize = False
+      ParentColor = False
+    end
+    object seIters: TSpinEditEx
+      Left = 835
+      Height = 50
+      Hint = '# iterations'
+      Top = 1
+      Width = 123
+      Align = alLeft
+      MaxLength = 0
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 5
+      OnClick = seItersClick
+      OnEditingDone = seItersEditingDone
+      Increment = 100
+      MaxValue = 4096
+      MinValue = 256
+      Value = 256
+    end
+    object btSaveExt: TButton
+      Left = 741
+      Height = 50
+      Hint = 'save extended precision'
+      Top = 1
+      Width = 94
+      Align = alLeft
+      Caption = '&xsave'
+      OnClick = btSaveExtClick
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 6
+    end
+  end
+  object lbBookMark: TListBox
+    Left = 0
+    Height = 1111
+    Top = 52
+    Width = 304
+    Align = alLeft
+    ItemHeight = 0
+    OnClick = lbBookMarkClick
+    ScrollWidth = 302
+    TabOrder = 2
+    TopIndex = -1
+  end
+  object Splitter1: TSplitter
+    Left = 304
+    Height = 1111
+    Top = 52
+    Width = 8
   end
 end

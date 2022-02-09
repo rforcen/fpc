@@ -7,14 +7,53 @@ unit uMandelbrot;
 
 interface
 
-uses ucomplex, SysUtils, UTF8Process, cthreads, Classes;
+uses ipf, uComplex, SysUtils, UTF8Process, cthreads, Classes, ColorMap;
+
+type
+
+  Mandelbrot = class
+  public
+    w, h, iters: integer;
+    center, range, cr: complex;
+    image: array of uint32;
+    pallete: array of uint32;
+    difw, difh, scale: double;
+
+    constructor Create(_w, _h, _iters, _colorSet: integer; _center, _range: complex);
+
+    procedure print;
+    function do_scale(i, j: integer): complex; inline;
+    function size: integer;
+    function nBytes: integer;
+    procedure genPixel(index: integer);
+    procedure genImage;
+    procedure genImageMT;
+    procedure genImageMTT;
+
+    procedure genMTCPPf32; // cpp  wrappers
+    procedure genMTCPPf64;
+    procedure genMTCPPf128;
+    procedure genMPFR;
+
+    procedure writeBin(Name: string);
+    procedure writePPM(Name: string);
+
+    procedure genInterpolatedPallete;
+    procedure colorMapPallete(_colorSet: integer);
+  end;
+
+  pMandelbrot = ^Mandelbrot;
+
+  bytefile = file of byte;
+
+implementation
 
 const
   Black: uint32 = $ff000000;
 
-var
+
   firePallete: array[0..255] of
-  uint32 = (0, 0, 4, 12, 16, 24, 32, 36, 44, 48, 56, 64, 68, 76,
+    uint32 = (0, 0, 4, 12, 16, 24, 32, 36, 44, 48, 56, 64, 68, 76,
     80, 88, 96, 100, 108, 116, 120, 128, 132, 140, 148, 152, 160, 164,
     172, 180, 184, 192, 200, 1224, 3272, 4300, 6348, 7376, 9424,
     10448, 12500, 14548, 15576, 17624, 18648, 20700, 21724, 23776,
@@ -42,38 +81,9 @@ var
     112, 108, 104, 100, 96, 92, 88, 84, 80, 76, 72, 68, 64, 60, 56,
     52, 48, 44, 40, 36, 32, 28, 24, 20, 16, 12, 8, 0, 0);
 
-type
 
-  Mandelbrot = class
-  public
-    w, h, iters: integer;
-    center, range, cr: complex;
-    image: array of uint32;
-    difw, difh, scale: double;
-
-    constructor Create(_w, _h, _iters: integer; _center, _range: complex);
-
-    procedure print;
-    function do_scale(i, j: integer): complex; inline;
-    function size: integer;
-    function nBytes: integer;
-    procedure genPixel(index: integer);
-    procedure genImage;
-    procedure genImageMT;
-    procedure genImageMTT;
-    procedure genMTCPP;
-    procedure writeBin(Name: string);
-    procedure writePPM(Name: string);
-
-  end;
-
-  pMandelbrot = ^Mandelbrot;
-
-  bytefile = file of byte;
-
-implementation
-
-constructor Mandelbrot.Create(_w, _h, _iters: integer; _center, _range: complex);
+constructor Mandelbrot.Create(_w, _h, _iters, _colorSet: integer;
+  _center, _range: complex);
 var
   i: integer;
 begin
@@ -89,11 +99,70 @@ begin
   scale := 0.8 * w / h;
 
   setlength(image, w * h);
+  setLength(pallete, iters);
+
+  if iters > length(firePallete) then
+    genInterpolatedPallete
+  else
+  begin
+    for i := low(firePallete) to high(firePallete) do
+      pallete[i] := Black or firePallete[i];
+  end;
+
 
   FillDWord(image[0], w * h, Black); // image := $ff000000
+end;
 
-  for i := low(firePallete) to high(firePallete) do // firePallete:=$ff000000
-    firePallete[i] := firePallete[i] or Black;
+procedure Mandelbrot.colorMapPallete(_colorSet: integer);
+var
+  i: integer;
+  color: vec3;
+begin
+  for i := low(pallete) to high(pallete) do
+  begin
+    color := colorMap.colorMap(i / iters, 0, 1, _colorSet);
+    pallete[i] := Black or (round(color[0] * 255) shl 16) or
+      (round(color[1] * 255) shl 8) or round(color[2] * 255);
+    //pallete[i]:=random($00ffffff) or $ff000000;
+  end;
+end;
+
+procedure Mandelbrot.genInterpolatedPallete;
+var
+  i: integer;
+  x, y, d2s: array of extended;
+  term: longint = 0;
+  n: longint = length(firePallete);
+  xi, yi: extended;
+
+begin
+  setLength(x, n);
+  setLength(y, n);
+  setLength(d2s, n - 2);
+
+  // gen x=0..n-1, y(firePallete)
+  for i := low(firePallete) to high(firePallete) do
+  begin
+    x[i] := i;
+    y[i] := firePallete[i];
+  end;
+
+  // Interpolation
+  ipfisn(n - 1, x[0], y[0], d2s[0], term);
+
+  if term = 1 then // ok ?
+  begin
+    for i := low(pallete) to high(pallete) do // set interpolated values
+    begin
+      xi := i * n / length(pallete);
+      yi := ipfspn(n - 1, x[0], y[0], d2s[0], xi, term);
+
+      if yi < 0 then
+        yi := 0;
+
+      pallete[i] := Black or round(yi);
+    end;
+  end;
 end;
 
 function Mandelbrot.do_scale(i, j: integer): complex;
@@ -103,7 +172,7 @@ end;
 
 procedure Mandelbrot.genPixel(index: integer);
 
-  function abs2(z: complex): double;
+  function abs2(z: complex): double; inline;
   begin
     Result := (z.re * z.re) + (z.im * z.im);
   end;
@@ -121,7 +190,7 @@ begin
   for k := 0 to iters do
   begin
 
-    z := z * z + c0; // z*z is the typical 2nd order fractal
+    z := z * z + c0; //  z*z is the typical 2nd order fractal
 
     if abs2(z) > 4.0 then
     begin
@@ -130,12 +199,12 @@ begin
     end;
   end;
 
-  if ix < iters then
-    image[index] := firePallete[ix shl 2];
+  if ix <> iters then
+    image[index] := pallete[ix];
 
 end;
 
-procedure Mandelbrot.genImage;
+procedure Mandelbrot.genImage; // single thread sequential
 var
   i: integer;
 begin
@@ -153,7 +222,7 @@ begin
   Result := w * h * sizeof(uint32);
 end;
 
-// MT section, 2 implementations:
+// MT section,  2 implementations:
 // 1. BeginThread / WaitForThreadTerminate
 // 2. TThread
 
@@ -185,7 +254,7 @@ begin
   with pparam^, pmandel^ do
   begin
     i := th; // offset to image
-    while i <= high(image) do
+    while i < high(image) do
     begin
       genPixel(i);
       i := i + nth;
@@ -193,62 +262,6 @@ begin
   end;
   Result := 0;
 end;
-
-// MTrunner = class(TThrread)
-type
-  MTrunner = class(TThread)
-  private
-    pmandel: pMandelbrot;
-    th, nth: integer;
-  protected
-    procedure Execute; override;
-  public
-    constructor Create(_th, _nth: integer; _pmandel: pMandelbrot);
-  end;
-
-constructor MTrunner.Create(_th, _nth: integer; _pmandel: pMandelbrot);
-begin
-  inherited Create(False); // suspended=false -> start
-  FreeOnTerminate := True;
-
-  th := _th;
-  nth := _nth;
-  pmandel := _pmandel;
-
-end;
-
-procedure MTrunner.Execute;
-var
-  i: integer;
-begin
-  with pmandel^ do
-  begin
-    i := th; // thread index is image offset
-    while i <= high(image) do
-    begin
-      genPixel(i);
-      i := i + nth;
-    end;
-  end;
-end;
-
-procedure Mandelbrot.genImageMTT; // TThread
-var
-  nth, th: integer;
-  ths: array of MTrunner;
-
-begin
-  nth := GetSystemThreadCount;
-  setlength(ths, nth);
-
-  for th := low(ths) to high(ths) do
-    ths[th] := MTrunner.Create(th, nth, @self);
-
-  for th := low(ths) to high(ths) do
-    ths[th].WaitFor;
-
-end;
-
 
 procedure Mandelbrot.genImageMT;  // BeginThread / WaitForThreadTerminate
 var
@@ -268,23 +281,108 @@ begin
   end;
 
   for th := low(ths) to high(ths) do
+  begin
     WaitForThreadTerminate(ths[th], 0);
+    thParam[th].Free;
+  end;
+end;
+
+// MTrunner = class(TThrread)
+type
+  MTrunner = class(TThread)
+  private
+    pmandel: pMandelbrot;
+    th, nth: integer;
+  protected
+    procedure Execute; override;
+  public
+    constructor Create(_th, _nth: integer; _pmandel: pMandelbrot);
+  end;
+
+constructor MTrunner.Create(_th, _nth: integer; _pmandel: pMandelbrot);
+begin
+  inherited Create(False); // suspended=false -> start
+  FreeOnTerminate := False;
+
+  th := _th;
+  nth := _nth;
+  pmandel := _pmandel;
+
+end;
+
+procedure MTrunner.Execute;
+var
+  i: integer;
+begin
+  with pmandel^ do
+  begin
+    i := th; // thread index is image offset
+    while i < high(image) do
+    begin
+      genPixel(i);
+      i := i + nth;
+    end;
+  end;
+end;
+
+procedure Mandelbrot.genImageMTT; // TThread   slower than BeginThread
+var
+  nth, th: integer;
+  ths: array of MTrunner;
+
+begin
+  nth := GetSystemThreadCount;
+  setlength(ths, nth);
+
+  for th := low(ths) to high(ths) do
+    ths[th] := MTrunner.Create(th, nth, @self);
+
+  for th := low(ths) to high(ths) do
+  begin
+    ths[th].WaitFor;
+    ths[th].Free;
+  end;
 end;
 
 
 // c++ interface
-{$link cpp/mandel.o}
-
 {$linklib c}
 {$linklib stdc++}
 {$linklib gcc_s}
-procedure genMandelbrotMT(image : pointer; w, h, iters : uint32; center,range:complex); cdecl; external;
+{$linklib m}
+{$linklib mpfr}
+{$linklib mandelbrot.a}
 
-procedure Mandelbrot.genMTCPP; // fpc wrapper to cpp
+
+procedure genMandelbrotMTf32(image: pointer; w, h, iters: uint32;
+  center, range: complex); cdecl; external;
+procedure genMandelbrotMTf64(image: pointer; w, h, iters: uint32;
+  center, range: complex); cdecl; external;
+procedure genMandelbrotMTf128(image: pointer; w, h, iters: uint32;
+  center, range: complex); cdecl; external;
+procedure genMandelbrotMTmpreal(image, pallete: pointer; w, h, iters: uint32;
+  center, range: complex); cdecl; external;
+
+procedure Mandelbrot.genMTCPPf32; // fpc wrapper to cpp
 begin
- genMandelbrotMT(@image[0], w, h, iters, center, range);
+  genMandelbrotMTf32(@image[0], w, h, iters, center, range);
 end;
-//
+
+procedure Mandelbrot.genMTCPPf64;
+begin
+  genMandelbrotMTf64(@image[0], w, h, iters, center, range);
+end;
+
+procedure Mandelbrot.genMTCPPf128;
+begin
+  genMandelbrotMTf128(@image[0], w, h, iters, center, range);
+end;
+
+procedure Mandelbrot.genMPFR;
+begin
+  genMandelbrotMTmpreal(@image[0], @pallete[0], w, h, iters, center, range);
+end;
+
 
 procedure Mandelbrot.print;
 begin
@@ -317,7 +415,7 @@ begin
   AssignFile(f, Name);
   Rewrite(f, 1); // ppm header
   writeString(f, format('P7'#10'WIDTH %0:d'#10'HEIGHT %1:d'#10'DEPTH 4'#10'MAXVAL 255'#10'TUPLTYPE RGB_ALPHA'#10'ENDHDR'#10'', [w, h]));
-  BlockWrite(f, image[0], w * h * 4);
+  BlockWrite(f, image[0], nBytes);
   CloseFile(f);
 end;
 
