@@ -1,0 +1,80 @@
+object Form1: TForm1
+  Left = 1145
+  Height = 932
+  Top = 487
+  Width = 960
+  Caption = 'Johnson polyhedron'
+  ClientHeight = 932
+  ClientWidth = 960
+  DesignTimePPI = 192
+  OnActivate = FormActivate
+  OnDestroy = FormDestroy
+  LCLVersion = '2.0.12.0'
+  object OpenGLControl1: TOpenGLControl
+    Left = 0
+    Height = 846
+    Top = 52
+    Width = 960
+    Align = alClient
+    OnMouseDown = OpenGLControl1MouseDown
+    OnMouseMove = OpenGLControl1MouseMove
+    OnMouseUp = OpenGLControl1MouseUp
+    OnMouseWheel = OpenGLControl1MouseWheel
+    OnPaint = OpenGLControl1Paint
+    OnResize = OpenGLControl1Resize
+  end
+  object StatusBar1: TStatusBar
+    Left = 0
+    Height = 34
+    Top = 898
+    Width = 960
+    Font.Height = -27
+    Font.Name = 'FreeMono'
+    Panels = <>
+    ParentFont = False
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 52
+    Top = 0
+    Width = 960
+    Align = alTop
+    ClientHeight = 52
+    ClientWidth = 960
+    TabOrder = 2
+    object polyDef: TEdit
+      Left = 1
+      Height = 50
+      Hint = 'polyhedron (TCIODPnAnUnahVnahJn)'
+      Top = 1
+      Width = 87
+      Align = alLeft
+      OnEditingDone = polyDefEditingDone
+      TabOrder = 0
+      Text = 'D'
+    end
+    object transform: TEdit
+      Left = 88
+      Height = 50
+      Hint = 'transformation (kagprdcwqnxlHPu)'
+      Top = 1
+      Width = 940
+      Align = alLeft
+      OnEditingDone = polyDefEditingDone
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+      Text = 'appka'
+    end
+    object randomPoly: TButton
+      Left = 864
+      Height = 50
+      Top = 1
+      Width = 95
+      Align = alRight
+      Caption = 'rand'
+      OnClick = randomPolyClick
+      TabOrder = 2
+    end
+  end
+end
