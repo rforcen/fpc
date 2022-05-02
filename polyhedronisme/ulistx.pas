@@ -95,7 +95,8 @@ begin
     else
       l := mid + 1;
   end;
-  Result := self[l]; // lower bound
+  if r < 0 then r := 0;
+  Result := self[r]; // lower bound
 end;
 
 
