@@ -6,10 +6,9 @@ unit uCommon;
 interface
 
 uses
-  Classes, SysUtils, fgl;
+  Classes, SysUtils, fgl, uvec3, uListX;
 
 type
-  TVec3 = array [0..2] of single;
   vecf = array of single;
   TFace = array of integer;
   TVertex = TVec3;
@@ -36,6 +35,7 @@ type
     index: integer;
     vertex: TVertex;
     procedure setIndex(_index: integer);
+    class operator = (const a, b: TVertexIndex): boolean;
   end;
 
   TMapIndex = record
@@ -45,11 +45,11 @@ type
     class operator < (const a, b: TMapIndex): boolean;
   end;
 
-  TInt4x2 = record
-    i0, i1: Ti4;
-    class operator = (const a, b: TInt4x2): boolean;
-    class operator > (const a, b: TInt4x2): boolean;
-    class operator < (const a, b: TInt4x2): boolean;
+  TReci4v = record
+    i4: Ti4;
+    vix: TVertexIndex;
+    class operator = (const a, b: TReci4v): boolean;
+    procedure setIndex(i: integer);
   end;
 
   TI4Vix = record
@@ -59,6 +59,15 @@ type
     class operator = (const a, b: TI4Vix): boolean;
   end;
 
+  Ti4Index = record
+    i4: Ti4;
+    index: integer;
+    class operator = (const a, b: Ti4Index): boolean;
+  end;
+
+  TFaceMap = specialize TListX<Ti4Index>;
+
+
   TColors = array of byte;
 
 const
@@ -66,7 +75,7 @@ const
 
 
 // util funcs
-function makeVertex(x, y, z: single): TVertex;
+function makeVertex(x, y, z: single): TVertex; inline;
 function makeFace(args: array of integer): TFace;
 function makeToken(c: char): integer;
 function randomPalette(n: integer): TVertexes;
@@ -74,14 +83,17 @@ function toArray(l: TListInt): TFace;
 function getColor(i: integer): TColors;
 
 // i4
-function cmpi4(const a, b: Ti4): integer;
+function cmpi4(const a, b: Ti4): integer; inline;
 function mki4(i0: integer = -1; i1: integer = -1; i2: integer = -1;
-  i3: integer = -1): Ti4;
+  i3: integer = -1): Ti4; inline;
 function i4Min(v1, v2: integer): Ti4;
-function i4Min(i,v1, v2: integer): Ti4;
+function i4Min(i, v1, v2: integer): Ti4;
 
-// TInt4x2
-function makeInt4x2(i0, i1: Ti4): TInt4x2;
+// TReci4v
+function mki4v(const i4: Ti4; const index: integer; const vertex: TVertex): TReci4v;
+function mki4v(const r4: TReci4v; const index: integer): TReci4v;
+function mki4v(const i4: Ti4): TReci4v;
+function cmpReci4v(const a, b: TReci4v): integer;
 
 // MapIndex
 function makeMapIndex(i0, i1, i2: Ti4): TMapIndex;
@@ -97,7 +109,12 @@ function mkVtxIdx(index: integer): TVertexIndex;
 function mkVtxIdx(index: integer; vertex: TVertex): TVertexIndex;
 
 
-implementation
+// TFMRec
+function cmpFM(const a, b: Ti4Index): integer;
+function mkFM(v1, v2, i: integer): Ti4Index;
+function mkFM(v1, v2: integer): Ti4Index;
+
+implementation  //////////////////////////
 
 function getColor(i: integer): TColors;
 const
@@ -124,43 +141,53 @@ begin
   index := _index;
 end;
 
-// TInt4x2
-function makeInt4x2(i0, i1: Ti4): TInt4x2;
+class operator TVertexIndex. = (const a, b: TVertexIndex): boolean;
 begin
-  Result.i0 := i0;
-  Result.i1 := i1;
+  Result := (a.index = b.index) and (a.vertex = b.vertex);
 end;
 
-class operator TInt4x2. = (const a, b: TInt4x2): boolean;
+// TReci4v
+class operator TReci4v. = (const a, b: TReci4v): boolean;
 begin
-  if a.i0 <> b.i0 then
-    exit(False);
-  if a.i1 <> b.i1 then
-    exit(False);
-  Result := True;
+  Result := (a.i4 = b.i4) and (a.vix = b.vix);
 end;
 
-class operator TInt4x2. > (const a, b: TInt4x2): boolean;
+procedure TReci4v.setIndex(i: integer); inline;
 begin
-  if a.i0 > b.i0 then
-    exit(True);
-  if a.i0 < b.i0 then
-    exit(False);
-  if a.i1 > b.i1 then
-    exit(True);
-  Result := False;
+  vix.index := i;
 end;
 
-class operator TInt4x2. < (const a, b: TInt4x2): boolean;
+function cmpReci4v(const a, b: TReci4v): integer;
 begin
-  if a.i0 < b.i0 then
-    exit(True);
-  if a.i0 > b.i0 then
-    exit(False);
-  if a.i1 < b.i1 then
-    exit(True);
-  Result := False;
+  if a.i4 < b.i4 then exit(-1);
+  if a.i4 > b.i4 then exit(+1);
+  Result := 0;
 end;
+
+function mki4v(const i4: Ti4; const vix: TVertexIndex): TReci4v;
+begin
+  Result.i4 := i4;
+  Result.vix := vix;
+end;
+
+function mki4v(const i4: Ti4): TReci4v;
+begin
+  Result.i4 := i4;
+end;
+
+function mki4v(const i4: Ti4; const index: integer; const vertex: TVertex): TReci4v;
+begin
+  Result.i4 := i4;
+  Result.vix.index := index;
+  Result.vix.vertex := vertex;
+end;
+
+function mki4v(const r4: TReci4v; const index: integer): TReci4v;
+begin
+  Result := r4;
+  Result.vix.index := index;
+end;
+
 
 // TMapIndex
 function makeMapIndex(i0, i1, i2: Ti4): TMapIndex;
@@ -210,13 +237,12 @@ begin
 end;
 
 function cmpMapIndex(const a, b: TMapIndex): integer;
-var
-  i: integer;
 begin
-  for i := 0 to 2 do
-    if a.v[i] <> b.v[i] then
-      exit(cmpi4(a.v[i], b.v[i]));
-  Result := 0;
+  if a.v[0] <> b.v[0] then
+    exit(cmpi4(a.v[0], b.v[0]));
+  if a.v[1] <> b.v[1] then
+    exit(cmpi4(a.v[1], b.v[1]));
+  Result := cmpi4(a.v[2], b.v[2]);
 end;
 
 // TI4Vix
@@ -302,6 +328,28 @@ begin
     Result := mki4(i, v2, v1);
 end;
 
+// Ti4Index
+function cmpFM(const a, b: Ti4Index): integer;
+begin
+  Result := cmpi4(a.i4, b.i4);
+end;
+
+class operator Ti4Index. = (const a, b: Ti4Index): boolean;
+begin
+  Result := cmpFM(a, b) = 0;
+end;
+
+function mkFM(v1, v2, i: integer): Ti4Index;
+begin
+  Result.i4 := mki4(v1, v2);
+  Result.index := i;
+end;
+
+function mkFM(v1, v2: integer): Ti4Index;
+begin
+  Result := mkFM(v1, v2, 0);
+end;
+
 // utils
 function makeVertex(x, y, z: single): TVertex;
 begin
@@ -322,7 +370,7 @@ end;
 
 function makeToken(c: char): integer;
 begin
-  Result := integer(c) shl 24;
+  Result := integer(c) shl (8 * (sizeof(integer) - 1));
 end;
 
 function toArray(l: TListInt): TFace;
@@ -390,7 +438,6 @@ begin
   for i := low(Result) to high(Result) do
     Result[i] := rndColor;
 end;
-
 
 
 end.

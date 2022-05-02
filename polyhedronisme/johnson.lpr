@@ -8,7 +8,7 @@ uses
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
   Forms, lazopenglcontext, ui_johnson, ujohnson, upoly, uCommon, uPlato, uvec3,
-  flags, uTrans;
+  flagsMap, uTrans;
 
 {$R *.res}
 

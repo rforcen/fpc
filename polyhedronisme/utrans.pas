@@ -64,7 +64,7 @@ begin
     'n': insetN(poly);
     'x': extrudeN(poly);
     'l': loft(poly);
-    //'H': hollow(poly);
+    'H': hollow(poly);
     else;
   end;
 end;
@@ -82,7 +82,7 @@ begin
   poly.calcCenters;
   poly.calcNormals;
 
-  flag := TFlag.Create(poly.nVertexes);
+  flag := TFlag.Create;
   for nface := 0 to high(poly.faces) do
   begin
     face := poly.faces[nface];
@@ -122,9 +122,10 @@ var
   m12, m23: Ti4;
   fOrigin: TVecInt4 = nil;
   io: integer = 0;
+
 begin
   dualToken := makeToken('d');
-  flag := TFlag.Create(poly.nVertexes);
+  flag := TFlag.Create;
 
   for face in poly.faces do
   begin
@@ -141,7 +142,7 @@ begin
       m23 := i4Min(v2, v3);
 
       if v1 < v2 then
-        flag.addVertex(m12, midpoint(poly.vertexes[v1], poly.vertexes[v2]));
+        flag.addVertex(m12, unitv(midpoint(poly.vertexes[v1], poly.vertexes[v2])));
 
       // One whose face corresponds to the original f:
       fOrigin[io] := m12;
@@ -174,7 +175,9 @@ var
 begin
   cntrToken := makeToken('c');
 
-  flag := TFlag.Create(poly.vertexes, poly.nVertexes);
+  flag := TFlag.Create;
+
+  flag.setVertexes(poly.vertexes, True);
 
   poly.calcCenters;
 
@@ -189,6 +192,7 @@ begin
 
     for v3 in face do
     begin
+
       flag.addVertex(
         mki4(v1, v2),
         oneThird(poly.vertexes[v1], poly.vertexes[v2])); // new v in face
@@ -221,7 +225,7 @@ var
   v1, v2, v3, flen: integer;
 
 begin
-  flag := TFlag.Create(poly.vertexes, poly.nVertexes);
+  flag := TFlag.Create(poly.vertexes);
 
   nface := 0;
   for face in poly.faces do
@@ -276,15 +280,13 @@ begin
     poly.vertexes[i] := -poly.vertexes[i];
   for i := 0 to high(poly.faces) do
     reverse(poly.faces[i]);
-  poly.Name += 'r';
+  poly.Name := 'r' + poly.Name;
 end;
 
 
 
 
 procedure dual(var poly: CPoly);
-type
-  TFaceMap = specialize TFPGmap<Ti4, integer>;
 
 var
   faceMap: TFaceMap = nil;
@@ -292,13 +294,14 @@ var
   nface: integer;
   face: TFace;
   v1, v2: integer;
+  ok: boolean = True;
 
   procedure genFaceMap;
   var
     i: integer;
   begin
     faceMap := TFaceMap.Create;
-    faceMap.Capacity := length(poly.faces) * 5;
+    faceMap.Capacity := poly.nVertexes;
 
     for i := 0 to high(poly.faces) do
     begin
@@ -306,14 +309,15 @@ var
       v1 := face[high(face)];
       for v2 in face do
       begin
-        faceMap.add(mki4(v1, v2), i);
+        faceMap.add(mkFM(v1, v2, i));
         v1 := v2;
       end;
     end;
+    faceMap.sort(@cmpFM);
   end;
 
 begin
-  flag := TFlag.Create(poly.nVertexes);
+  flag := TFlag.Create;
 
   genFaceMap;
   poly.calcCenters;
@@ -325,14 +329,25 @@ begin
     flag.addVertex(mki4(nface), poly.centers[nface]);
     for v2 in face do
     begin
-      flag.addFace(mki4(v1), mki4(faceMap[mki4(v2, v1)]), mki4(nface));
-      v1 := v2; // current becomes previous
+      if length(face) > 2 then
+      begin
+        flag.addFace(mki4(v1), mki4(faceMap.binaryFind(mkFM(v2, v1), @cmpFM).index),
+          mki4(nface));
+        v1 := v2; // current becomes previous
+      end
+      else
+      begin
+        ok := False;
+        break;
+      end;
     end;
   end;
 
   faceMap.Free;
 
-  flag.toPoly('d', poly);
+  if ok then
+    flag.toPoly('d', poly);
+
   flag.Free;
 
 end;
@@ -350,7 +365,7 @@ begin
   origToken := makeToken('o');
   hexToken := makeToken('h');
 
-  flag := TFlag.Create(poly.nVertexes);
+  flag := TFlag.Create;
   poly.calcNormals;
 
   for nface := 0 to high(poly.faces) do
@@ -404,10 +419,10 @@ var
   cv1name, cv2name: Ti4;
 
 begin
-  cntrToken := makeToken('n');
   cToken := makeToken('c');
+  cntrToken := makeToken('t');
 
-  flag := TFlag.Create(poly.vertexes, poly.nVertexes);
+  flag := TFlag.Create(poly.vertexes);
   poly.calcCenters;
 
   for nface := 0 to high(poly.faces) do
@@ -459,7 +474,7 @@ var
   midpt, innerpt: TVertex;
 begin
 
-  flag := TFlag.Create(poly.nVertexes);
+  flag := TFlag.Create;
   poly.calcCenters;
 
   for nface := 0 to high(poly.faces) do
@@ -507,7 +522,7 @@ begin
     flag.addFace(vi4);
   end;
 
-  flag.toPoly('w', poly);
+  flag.toPoly('q', poly);
   flag.Free;
 
 end;
@@ -525,7 +540,9 @@ var
   foundAny: boolean = False;
 
 begin
-  flag := TFlag.Create(poly.vertexes, poly.nVertexes);
+  flag := TFlag.Create;
+  flag.setVertexes(poly.vertexes);
+
   poly.calcNormals;
   poly.calcCenters;
 
@@ -589,16 +606,19 @@ var
   nface: integer;
   face: TFace;
   v1, v2: integer;
-  normals: TVertexes;
+  avgNormals: TVertexes;
 
   finToken, fdwnToken, vToken: integer;
 begin
+
   finToken := makeToken('f');   // tokens
   fdwnToken := makeToken('d');
   vToken := makeToken('v');
 
-  flag := TFlag.Create(poly.vertexes, poly.nVertexes);
-  normals := poly.avgNormals;
+  flag := TFlag.Create;
+  flag.setVertexes(poly.vertexes);
+
+  avgNormals := poly.avgNormals;
   poly.calcCenters;
 
   for nface := 0 to high(poly.faces) do
@@ -610,11 +630,11 @@ begin
     begin
       // new inset vertex for every vert in face
       flag.addVertex(mki4(finToken, nface, vToken, v2),
-        tween(poly.vertexes[v2], poly.centers[nface], insetDist));
+        (tween(poly.vertexes[v2], poly.centers[nface], insetDist)));
 
       flag.addVertex(mki4(fdwnToken, nface, vToken, v2),
-        tween(poly.vertexes[v2], poly.centers[nface], insetDist) -
-        (normals[nface] * thickness));
+        (tween(poly.vertexes[v2], poly.centers[nface], insetDist) -
+        (avgNormals[nface] * thickness)));
 
       flag.addFace([mki4(v1), mki4(v2), mki4(finToken, nface, vToken, v2),
         mki4(finToken, nface, vToken, v1)]);

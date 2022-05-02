@@ -6,7 +6,10 @@ unit uvec3;
 interface
 
 uses
-  Classes, SysUtils, uCommon, Math;
+  Classes, SysUtils, Math;
+
+type
+  TVec3 = array [0..2] of single;
 
 operator +(a, b: TVec3) r: TVec3;
 operator -(a, b: TVec3) r: TVec3;
@@ -14,7 +17,9 @@ operator -(a: TVec3) r: TVec3;
 operator / (a: TVec3; f: single) r: TVec3;
 operator * (a: TVec3; f: single) r: TVec3;
 operator := (f: single) r: TVec3;
-operator = (a, b: TVec3) r: boolean;
+operator = (const a, b: TVec3) r: boolean;
+
+function equal(const a, b: TVec3): boolean;
 procedure zero(var v: TVec3);
 function dot(a, b: TVec3): single;
 function cross(a, b: TVec3): TVec3;
@@ -29,13 +34,21 @@ function tween(a, b: TVec3; t: single): TVec3;
 function oneThird(a, b: TVec3): TVec3;
 function midpoint(a, b: TVec3): TVec3;
 
+const
+  zerov: TVec3 = (0, 0, 0);
+
 implementation
 
 // TVec3
 
-operator = (a, b: TVec3) r: boolean;
+operator = (const a, b: TVec3) r: boolean;
 begin
   r := (a[0] = b[0]) and (a[1] = b[1]) and (a[2] = b[2]);
+end;
+
+function equal(const a, b: TVec3): boolean;
+begin
+  Result := (a = b);
 end;
 
 operator +(a, b: TVec3) r: TVec3;
@@ -102,24 +115,26 @@ begin
   Result := cross(v1 - v0, v2 - v1);
 end;
 
-function distSq(v: TVec3): single;
+function distSq(v: TVec3): single;   inline;
 begin
   Result := dot(v, v);
 end;
 
-function dist(v: TVec3): single;
+function dist(v: TVec3): single; inline;
 begin
-  Result := sqrt(dot(v, v));
+  Result := sqrt(distSq(v));
 end;
 
-function unitv(v: TVec3): TVec3;
+function unitv(v: TVec3): TVec3; inline;
 begin
-  Result := v / distSq(v);
+  if v = zerov then Result := v
+  else
+    Result := v / dist(v);
 end;
 
 function normalize(v: TVec3): TVec3;
 begin
-  Result := v / dist(v);
+  Result := unitv(v);
 end;
 
 function maxAbs(v: TVec3): single;

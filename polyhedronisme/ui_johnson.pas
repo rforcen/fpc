@@ -9,11 +9,15 @@ uses
   ComCtrls, ExtCtrls, OpenGLContext, gl, Types, Math, uPoly, uCommon,
   uJohnson, DateUtils, uPlato, uTrans;
 
+const
+  CompiledScene: integer = 5;
+
 type
 
   { TForm1 }
 
   TForm1 = class(TForm)
+    Label1: TLabel;
     randomPoly: TButton;
     polyDef: TEdit;
     OpenGLControl1: TOpenGLControl;
@@ -50,6 +54,7 @@ type
     procedure sceneInit;
     procedure genPoly;
     procedure dispStat;
+    procedure drawScene;
   end;
 
 
@@ -112,25 +117,24 @@ begin
   glEnable(GL_DEPTH_TEST);
 end;
 
-procedure TForm1.OpenGLControl1Paint(Sender: TObject);
-
+procedure TForm1.drawScene;
 var
 
   face: TFace;
   ix, ixf: integer;
 
   procedure drawFaces;
+
   begin
     ixf := 0;
     for face in poly.faces do
     begin
       glBegin(GL_POLYGON);
+      glColor3fv(@poly.colors[ixf][0]);
 
       for ix in face do
       begin
         glNormal3fv(@poly.normals[ixf][0]);
-        glColor3fv(@poly.colors[ixf][0]);
-
         glVertex3fv(@poly.vertexes[ix][0]);
       end;
       Inc(ixf);
@@ -151,9 +155,16 @@ var
   end;
 
 begin
+  drawFaces;
+  if length(poly.faces) < 500 then
+    drawLines;
+end;
+
+procedure TForm1.OpenGLControl1Paint(Sender: TObject);
+
+begin
   if poly <> nil then
   begin
-
     OpenGLControl1Resize(nil);
 
     glClearColor(0, 0, 0, 1);
@@ -167,9 +178,7 @@ begin
     glRotatef(anglex, 1, 0, 0);
     glRotatef(-angley, 0, 1, 0);
 
-    drawFaces;
-    if length(poly.faces) < 500 then
-      drawLines;
+    glCallList(CompiledScene);
 
     OpenGLControl1.SwapBuffers;
   end;
@@ -198,7 +207,6 @@ begin
   glLoadIdentity();
   perspectiveGL(45, w / h, 1, 1000);
   glMatrixMode(GL_MODELVIEW);
-
 
   OpenGLControl1.Invalidate;
 end;
@@ -235,6 +243,11 @@ begin
   Caption := poly.Name;
   StatusBar1.SimpleText := Format('%0d faces, %1d vertexes, lap:%2dms',
     [length(poly.faces), length(poly.vertexes), lap]);
+
+  glNewList(CompiledScene, GL_COMPILE);  // compile scene
+  drawScene;
+  glEndList;
+
 end;
 
 procedure TForm1.FormActivate(Sender: TObject);
@@ -276,6 +289,7 @@ begin
     mbRight:
     begin
       poly.reColor;
+      dispStat;
       OpenGLControl1.Invalidate;
     end;
   end;

@@ -1,35 +1,47 @@
-unit flags;
+unit flagsMap;
 
 {$mode objfpc}{$H+}
 
 interface
 
 uses
-  Classes, SysUtils, uCommon, fgl, uPoly, uvec3, uListX;
+  Classes, SysUtils, uCommon, fgl, uPoly;
 
 type
+  TMapi4v = specialize TFPGmap<Ti4, TVertexIndex>;
 
-  TListI4v = specialize TListX<TReci4v>;
-  TListMix = specialize TListX<TMapIndex>;
+  TReci4v = record
+    i4: Ti4;
+    vix: TVertexIndex;
+  end;
+  TVeci4v = array of TReci4v;
+
+  TListMix = specialize TFPGlist<TMapIndex>;
   TListvi4 = specialize TFPGlist<TVecInt4>;
 
   TFlag = class
     faces: TFaces;
     vertexes: TVertexes;
-    v: TListI4v;
+    v: TMapi4v;
+
+    vv : TVeci4v;
+    ivv:integer;
+
     m: TListMix;
     fcs: TListvi4;
+    vIndex: integer;
     valid: boolean;
 
-    constructor Create; overload;
-    constructor Create(const _vertexes: Tvertexes);
+    constructor Create(const estimation: integer = 1000); overload;
+    constructor Create(const _vertexes: Tvertexes; const estimation: integer = 1000);
       overload;
     destructor Free;
-    procedure initFPGs;
+    procedure initFPGs(const estimation: integer);
 
-    procedure setVertexes(const _vertexes: TVertexes; const withUnit: boolean = False);
+    procedure setVertexes(const _vertexes: TVertexes);
     procedure addFace(const i0, i1, i2: Ti4);
     procedure addFace(const vf: TVecInt4);
+    procedure addVertex(const _vIndex: integer; const ix: Ti4; const vtx: TVertex);
     procedure addVertex(const ix: Ti4; const vtx: TVertex);
 
     function findVertexIndex(const ix: Ti4): integer;
@@ -39,96 +51,136 @@ type
     procedure toPoly(const tok: string; var poly: CPoly);
     procedure process_m;
     procedure process_fcs;
-    function check: boolean;
   end;
 
 implementation
 
-constructor TFlag.Create; overload;
+
+constructor TFlag.Create(const estimation: integer = 1000); overload;
 begin
-  initFPGs;
+  initFPGs(estimation);
 end;
 
-constructor TFlag.Create(const _vertexes: Tvertexes);
+constructor TFlag.Create(const _vertexes: Tvertexes; const estimation: integer);
 begin
-  initFPGs;
-  setVertexes(_vertexes, true);
+  initFPGs(estimation);
+  setVertexes(_vertexes);
 end;
 
-procedure TFlag.initFPGs;
+procedure TFlag.initFPGs(const estimation: integer);
 begin
-  v := TListI4v.Create;
+  v := TMapi4v.Create;
+  v.Capacity := estimation;
+  v.Sorted := True;
+  v.Duplicates := dupIgnore;
+
+  setLength(vv,estimation);
+  ivv:=0;
+
   fcs := TListvi4.Create;
-  m := TListMix.Create;
+  fcs.Capacity := estimation;
 
-  valid := True;
+  m := TListMix.Create;
+  m.Capacity := estimation;
 end;
 
 destructor TFlag.Free;
 begin
+  v.Free;
   fcs.Free;
   m.Free;
-  v.Free;
 end;
 
-procedure TFlag.addFace(const i0, i1, i2: Ti4); inline;
+procedure TFlag.addFace(const i0, i1, i2: Ti4);
 begin
   m.add(makeMapIndex(i0, i1, i2));
 end;
 
-procedure TFlag.addFace(const vf: TVecInt4); inline;
+procedure TFlag.addFace(const vf: TVecInt4);
 begin
   fcs.add(vf);
 end;
 
-procedure TFlag.addVertex(const ix: Ti4; const vtx: TVertex); inline;
+procedure TFlag.addVertex(const _vIndex: integer; const ix: Ti4; const vtx: TVertex);
+var
+  vix: TVertexIndex;
 begin
-  v.add(mki4v(ix, 0, vtx));
+  vix := mkVtxIdx(_vIndex, vtx);
+  v.add(ix, vix);
+
+  vv[ivv].i4:=ix;
+  vv[ivv].vix:=vix;
+  inc(ivv);
+end;
+
+procedure TFlag.addVertex(const ix: Ti4; const vtx: TVertex);
+begin
+  addVertex(vIndex, ix, vtx);
+  Inc(vIndex);
 end;
 
 function TFlag.findVertexIndex(const ix: Ti4): integer;
 begin
-  Result := v.binaryFind(mki4v(ix), @cmpReci4v).vix.index;
+  Result := v[ix].index;
 end;
 
-procedure TFlag.setVertexes(const _vertexes: TVertexes; const withUnit: boolean = False);
+procedure TFlag.setVertexes(const _vertexes: TVertexes);
 var
   i: integer;
 begin
+  v.Capacity := length(_vertexes);
+  setLength(vv, length(_vertexes));
+
   for i := 0 to high(_vertexes) do
-    if withUnit then addVertex(mki4(i), unitv(_vertexes[i]))
-    else
-      addVertex(mki4(i), _vertexes[i]);
+    addVertex(0, mki4(i), _vertexes[i]);
 end;
 
 function TFlag.findM(i0, i1: Ti4): Ti4;
+
+  function lowerBound(l, r: integer; const x: TMapIndex): integer;
+  var
+    mid: integer;
+  begin
+    if r >= l then
+    begin
+      mid := l + (r - l) div 2;
+      if m[mid] > x then
+        exit(lowerBound(l, mid - 1, x));
+      exit(lowerBound(mid + 1, r, x));
+    end
+    else
+      exit(l); // lower bound
+  end;
+
 begin
-  Result := m.lowerBound(makeMapIndex(i0, i1), @cmpMapIndex).v[2];
+  Result := m[lowerBound(0, m.Count - 1, makeMapIndex(i0, i1))].v[2];
 end;
 
 procedure TFlag.indexVertexes; // v, numerate vertexes index & create vertexes[]
 var
-  index: integer;
+  i: integer;
+  tv: TVertexIndex;
 begin
-  v.sortUnique(@cmpReci4v);
-  setLength(vertexes, v.Count);
-
-  for index := 0 to v._high do
+  // v. is map sorted
+  setLength(vertexes, v.Count); // numerate & create vertexes[]
+  for i := 0 to v.Count - 1 do
   begin // <index, vertex>
-    v[index] := mki4v(v[index], index);
-    vertexes[index] := v[index].vix.vertex;
+    tv := v.Data[i];
+    tv.index := i;
+    v.Data[i] := tv;
+    vertexes[i] := v.Data[i].vertex;
   end;
 end;
 
 procedure TFlag.toPoly(const tok: string; var poly: CPoly);
-
 begin
-  indexVertexes;
+  valid := True;
 
+  indexVertexes;
   setLength(faces, 0);
   process_m;
 
-  if valid and check then
+  if valid then
   begin
     process_fcs;
 
@@ -137,6 +189,11 @@ begin
     poly.vertexes := vertexes;
 
     poly.normalize;
+
+    setLength(poly.centers, 0);
+    setLength(poly.normals, 0);
+    setLength(poly.colors, 0);
+    setLength(poly.areas, 0);
   end;
 end;
 
@@ -176,7 +233,7 @@ begin
 
   c0 := m[0].v[0];
 
-  for i := 0 to m._high do
+  for i := 0 to m.Count - 1 do
   begin
     if m[i].v[0] <> c0 then
     begin
@@ -239,15 +296,6 @@ begin
   end;
 
   ft.Free;
-end;
-
-function TFlag.check: boolean;
-var
-  face: TFace;
-begin
-  for face in faces do
-    if length(face) < 3 then exit(False);
-  Result := True;
 end;
 
 end.

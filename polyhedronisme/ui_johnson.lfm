@@ -2,19 +2,19 @@ object Form1: TForm1
   Left = 1145
   Height = 932
   Top = 487
-  Width = 960
+  Width = 915
   Caption = 'Johnson polyhedron'
   ClientHeight = 932
-  ClientWidth = 960
+  ClientWidth = 915
   DesignTimePPI = 192
   OnActivate = FormActivate
   OnDestroy = FormDestroy
-  LCLVersion = '2.0.12.0'
+  LCLVersion = '2.2.0.4'
   object OpenGLControl1: TOpenGLControl
     Left = 0
-    Height = 846
+    Height = 845
     Top = 52
-    Width = 960
+    Width = 915
     Align = alClient
     OnMouseDown = OpenGLControl1MouseDown
     OnMouseMove = OpenGLControl1MouseMove
@@ -25,9 +25,9 @@ object Form1: TForm1
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 34
-    Top = 898
-    Width = 960
+    Height = 35
+    Top = 897
+    Width = 915
     Font.Height = -27
     Font.Name = 'FreeMono'
     Panels = <>
@@ -37,10 +37,10 @@ object Form1: TForm1
     Left = 0
     Height = 52
     Top = 0
-    Width = 960
+    Width = 915
     Align = alTop
     ClientHeight = 52
-    ClientWidth = 960
+    ClientWidth = 915
     TabOrder = 2
     object polyDef: TEdit
       Left = 1
@@ -58,16 +58,16 @@ object Form1: TForm1
       Height = 50
       Hint = 'transformation (kagprdcwqnxlHPu)'
       Top = 1
-      Width = 940
+      Width = 512
       Align = alLeft
       OnEditingDone = polyDefEditingDone
       ParentShowHint = False
       ShowHint = True
       TabOrder = 1
-      Text = 'appka'
+      Text = 'qaqaqa'
     end
     object randomPoly: TButton
-      Left = 864
+      Left = 819
       Height = 50
       Top = 1
       Width = 95
@@ -75,6 +75,14 @@ object Form1: TForm1
       Caption = 'rand'
       OnClick = randomPolyClick
       TabOrder = 2
+    end
+    object Label1: TLabel
+      Left = 600
+      Height = 50
+      Top = 1
+      Width = 215
+      Align = alLeft
+      Caption = 'kagprdcwqnxlHPu'
     end
   end
 end

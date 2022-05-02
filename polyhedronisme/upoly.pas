@@ -27,10 +27,12 @@ type
     function avgNormals: TVertexes;
     procedure scaleVertexes;
     function centroid(face: TFace): TVertex;
-    procedure simplify;
+    procedure normalize;
     function nVertexes: integer;
+    function maxFaceIndex: integer;
 
     procedure calcAll;
+    function check: boolean;
   end;
 
 function pyramid(n: integer = 4): CPoly;
@@ -134,18 +136,18 @@ end;
 
 procedure CPoly.calcNormals;
 var
-  f: integer;
+  nface: integer;
   face: TFace;
 begin
   if length(normals) <> length(faces) then
   begin
     setLength(normals, length(faces));
 
-    f := 0;
+    nface := 0;
     for face in faces do
     begin
-      normals[f] := normal(vertexes[face[0]], vertexes[face[1]], vertexes[face[2]]);
-      Inc(f);
+      normals[nface] := normal(vertexes[face[0]], vertexes[face[1]], vertexes[face[2]]);
+      Inc(nface);
     end;
 
   end;
@@ -191,7 +193,7 @@ end;
 
 procedure CPoly.calcCenters;
 var
-  f, i: integer;
+  nface, i: integer;
   fcenter: TVertex = (0, 0, 0);
   face: TFace;
 begin
@@ -199,15 +201,15 @@ begin
   begin
     setLength(centers, length(faces));
 
-    f := 0;
+    nface := 0;
     for face in faces do
     begin
       zero(fcenter);
       for i in face do
         fcenter += vertexes[i];
 
-      centers[f] := fcenter / length(face);
-      Inc(f);
+      centers[nface] := fcenter / length(face);
+      Inc(nface);
     end;
 
   end;
@@ -221,7 +223,7 @@ end;
 
 procedure CPoly.calcColors;
 
-  function sigDigs(f: single; nsigs: integer = 4): single;
+  function sigDigs(f: single; nsigs: integer = 2): integer;
   var
     mant: single;
   begin
@@ -229,38 +231,37 @@ procedure CPoly.calcColors;
     if f = 0 then
       exit(0);
     mant := f / power(10, floor(log10(f)));
-    Result := floor(mant * power(10, (nsigs - 1)));
+    Result := integer(floor(mant * power(10, (nsigs - 1))));
   end;
 
 const
   nColors = 256;
 type
-  TColorDict = specialize TFPGmap<single, TVertex>;
+  TColorDict = specialize TFPGmap<integer, TVertex>;
 
 var
   colorDict: TColorDict;
-  f: single;
+  area: single;
   colPalette: TVertexes;
   i: integer = 0;
 
 begin
   if length(colors) <> length(faces) then
   begin
-    if length(areas) <> length(faces) then
-      calcAreas;  // requires areas
+    calcAreas;  // requires areas
 
     colPalette := randomPalette(nColors);
 
     colorDict := TColorDict.Create;
     colorDict.Duplicates := dupIgnore;
 
-    for f in areas do
-      colorDict.add(sigDigs(f), colPalette[colorDict.Count mod nColors]);
+    for area in areas do
+      colorDict.add(sigDigs(area), colPalette[colorDict.Count mod nColors]);
 
     setLength(colors, length(areas));
-    for f in areas do
+    for area in areas do
     begin
-      colors[i] := colorDict[sigDigs(f)];
+      colors[i] := colorDict[sigDigs(area)];
       Inc(i);
     end;
 
@@ -293,8 +294,8 @@ begin
   begin
 
     normalV := 0;
-    v1 := vertexes[high(face) - 1];
-    v2 := vertexes[high(face)];
+    v1 := vertexes[face[length(face) - 2]];
+    v2 := vertexes[face[length(face) - 1]];
 
     for ix in face do
     begin
@@ -304,7 +305,7 @@ begin
       v2 := v3;  // shift over one
     end;
 
-    Result[ixf] := unitv(normalV);
+    Result[ixf] := unitv(normalV); // normalize
     Inc(ixf);
   end;
 
@@ -585,44 +586,66 @@ begin
     Result += length(face);
 end;
 
-procedure CPoly.simplify;
-type
-  TIIMap = specialize TFPGmap<integer, integer>;
+function CPoly.maxFaceIndex: integer;
 var
-  oldNew: TIIMap;
   face: TFace;
-  ix, index, j, nv: integer;
+  ix: integer;
+begin
+  Result := -1;
+  for face in faces do
+    for ix in face do
+      Result := max(Result, ix);
+end;
+
+procedure CPoly.normalize;  // remove unused vertexes
+var
+  oldNew: array of integer = nil;
+  face: TFace;
+  ix, i, nv, nvdx: integer;
   usedVtx: TVertexes = nil;
 
 begin
+  setLength(oldNew, maxFaceIndex + 1);
+  for i := 0 to high(oldNew) do oldNew[i] := -1;
 
-  nv := nVertexes;
-  oldNew := TIIMap.Create; // create oldNew map
-  oldNew.Sorted := True;
-  oldNew.Capacity := nv;
-
-  setLength(usedVtx, nv);   // used vtx in faces
+  setLength(usedVtx, nVertexes);   // used vtx in faces
   nv := 0;
+  nvdx := 0;
   for face in faces do
   begin
     for ix in face do
     begin
-      if not oldNew.find(ix, index) then
+      if oldNew[ix] = -1 then
       begin
-        oldNew.add(ix, oldNew.Count);
+        oldNew[ix] := nvdx;
+        Inc(nvdx);
+
         usedVtx[nv] := vertexes[ix];
         Inc(nv);
       end;
     end;
   end;
-  setLength(usedVtx, nv);
 
+  setLength(usedVtx, nv); // reassign face index
   for ix := 0 to high(faces) do
-    for j := 0 to high(faces[ix]) do
-      faces[ix][j] := oldNew[faces[ix][j]];
+    for i := 0 to high(faces[ix]) do
+      faces[ix][i] := oldNew[faces[ix][i]];
 
-  oldNew.Free;
   vertexes := usedVtx;
+
+  setLength(centers, 0);
+  setLength(normals, 0);
+  setLength(colors, 0);
+  setLength(areas, 0);
+end;
+
+function CPoly.check: boolean;
+var
+  face: TFace;
+begin
+  for face in faces do
+    if length(face) < 3 then exit(False);
+  Result := True;
 end;
 
 end.
