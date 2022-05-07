@@ -1,0 +1,69 @@
+object Form1: TForm1
+  Left = 1223
+  Height = 942
+  Top = 559
+  Width = 1141
+  Caption = 'Algrbraic Surface'
+  ClientHeight = 942
+  ClientWidth = 1141
+  DesignTimePPI = 192
+  OnActivate = FormActivate
+  LCLVersion = '2.2.0.4'
+  object OpenGLControl1: TOpenGLControl
+    Left = 200
+    Height = 907
+    Top = 0
+    Width = 941
+    Align = alClient
+    OnMouseDown = OpenGLControl1MouseDown
+    OnMouseMove = OpenGLControl1MouseMove
+    OnMouseUp = OpenGLControl1MouseUp
+    OnMouseWheel = OpenGLControl1MouseWheel
+    OnPaint = OpenGLControl1Paint
+    OnResize = OpenGLControl1Resize
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 907
+    Top = 0
+    Width = 200
+    Align = alLeft
+    Caption = 'Panel1'
+    ClientHeight = 907
+    ClientWidth = 200
+    TabOrder = 1
+    object lbNames: TListBox
+      Left = 1
+      Height = 855
+      Top = 51
+      Width = 200
+      Align = alLeft
+      ItemHeight = 0
+      OnClick = lbNamesClick
+      TabOrder = 0
+      TopIndex = -1
+    end
+    object resolution: TSpinEdit
+      Left = 1
+      Height = 50
+      Hint = 'resolution'
+      Top = 1
+      Width = 198
+      Align = alTop
+      MaxValue = 2048
+      MinValue = 64
+      OnChange = resolutionChange
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+      Value = 256
+    end
+  end
+  object StatusBar1: TStatusBar
+    Left = 0
+    Height = 35
+    Top = 907
+    Width = 1141
+    Panels = <>
+  end
+end
