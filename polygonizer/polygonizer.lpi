@@ -54,6 +54,11 @@
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <CompilerMessages>
+              <IgnoredMessages idx6058="True" idx3124="True" idx3123="True"/>
+            </CompilerMessages>
+          </Other>
         </CompilerOptions>
       </Item>
       <Item Name="Release">
@@ -76,6 +81,7 @@
             <Debugging>
               <GenerateDebugInfo Value="False"/>
               <DebugInfoType Value="dsDwarf2Set"/>
+              <UseValgrind Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
             <Options>
@@ -84,6 +90,11 @@
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <CompilerMessages>
+              <IgnoredMessages idx6058="True" idx3124="True" idx3123="True"/>
+            </CompilerMessages>
+          </Other>
         </CompilerOptions>
       </Item>
     </BuildModes>
@@ -118,6 +129,39 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
       </Unit>
+      <Unit>
+        <Filename Value="unim.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uNim"/>
+      </Unit>
+      <Unit>
+        <Filename Value="ucpp.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uCpp"/>
+      </Unit>
+      <Unit>
+        <Filename Value="uglrender.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uGLRender"/>
+      </Unit>
+      <Unit>
+        <Filename Value="implicitfuncs.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="implicitFuncs"/>
+      </Unit>
+      <Unit>
+        <Filename Value="uctm.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="umesh.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uMesh"/>
+      </Unit>
+      <Unit>
+        <Filename Value="upolygonizer.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -144,5 +188,10 @@
         </Win32>
       </Options>
     </Linking>
+    <Other>
+      <CompilerMessages>
+        <IgnoredMessages idx6058="True" idx3124="True" idx3123="True"/>
+      </CompilerMessages>
+    </Other>
   </CompilerOptions>
 </CONFIG>

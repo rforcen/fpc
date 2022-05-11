@@ -1,0 +1,647 @@
+unit upolygonizer;
+
+{$mode ObjFPC}{$H+}
+{$modeSwitch advancedRecords}
+
+interface
+
+uses
+  Classes, SysUtils, implicitFuncs, v3, fgl, uMesh, Math, uCtm;
+
+const
+  FuncNames: array of string =
+    ('Sphere', 'Blob', 'NordstarndWeird', 'DecoCube', 'Cassini',
+    'Orth', 'Orth3', 'Pretzel', 'Tooth', 'Pilz', 'Bretzel', 'BarthDecic',
+    'Clebsch0', 'Clebsch', 'Chubs', 'Chair', 'Roman', 'TangleCube', 'Goursat', 'Sinxyz');
+
+type
+  int = integer;
+
+
+  TArrayInt = array of int;
+  TArray2s = array of array of single;
+
+  TEdge = record
+    index, startVertexIndex, endVertexIndex: int;
+    connectedEdge0, connectedEdge1: ^TEdge;
+  end;
+
+
+  TFace = record
+    index: int;
+    edges: array of ^TEdge;
+    ambiguous: boolean;
+  end;
+
+  TCube = record
+    index: int;
+    edges: array of ^TEdge;
+    faces: array of TFace;
+  end;
+
+  TLookupTable = record
+    cubes: array of TCube;
+  end;
+
+  TEdgeKey = record
+    i0, j0, k0, i1, j1, k1: int;
+    class operator > (const a, b: TEdgeKey): boolean;
+    class operator < (const a, b: TEdgeKey): boolean;
+  end;
+
+  pTEdge = ^TEdge;
+
+
+
+  TPolygonizer = record
+    min, max, d, nd: vec3;
+    idiv: vec3int;
+    isovalue: single;
+    func:
+    function(x, y, z: single): single;
+    lookUpTable: TLookupTable;
+    scale: single;
+
+    mesh: TMesh;
+  end;
+
+// polygonizer methods
+function newPolygonizer(bounds: single; idiv: int; func: vec3Func): TPolygonizer;
+procedure freePolygonizer(var p: TPolygonizer);
+procedure scalePolygonizer(var p: TPolygonizer);
+procedure writeCTM(const p: TPolygonizer; Name: string);
+
+implementation
+
+// aux's
+
+// TEdgeKey
+class operator TEdgeKey. > (const a, b: TEdgeKey): boolean;
+begin
+  if a.i0 > b.i0 then exit(True);
+  if a.i0 < b.i0 then exit(False);
+  if a.j0 > b.j0 then exit(True);
+  if a.j0 < b.j0 then exit(False);
+  if a.k0 > b.k0 then exit(True);
+  if a.k0 < b.k0 then exit(False);
+
+  if a.i1 > b.i1 then exit(True);
+  if a.i1 < b.i1 then exit(False);
+  if a.j1 > b.j1 then exit(True);
+  if a.j1 < b.j1 then exit(False);
+  if a.k1 > b.k1 then exit(True);
+  if a.k1 < b.k1 then exit(False);
+  Result := False;
+end;
+
+class operator TEdgeKey. < (const a, b: TEdgeKey): boolean;
+begin
+  if a.i0 < b.i0 then exit(True);
+  if a.i0 > b.i0 then exit(False);
+  if a.j0 < b.j0 then exit(True);
+  if a.j0 > b.j0 then exit(False);
+  if a.k0 < b.k0 then exit(True);
+  if a.k0 > b.k0 then exit(False);
+
+  if a.i1 < b.i1 then exit(True);
+  if a.i1 > b.i1 then exit(False);
+  if a.j1 < b.j1 then exit(True);
+  if a.j1 > b.j1 then exit(False);
+  if a.k1 < b.k1 then exit(True);
+  if a.k1 > b.k1 then exit(False);
+  Result := False;
+end;
+
+operator in (i: pTEdge; a: array of pTEdge): boolean;
+var
+  b: pTEdge;
+begin
+  Result := False;
+  for b in a do
+  begin
+    Result := i = b;
+    if Result then Break;
+  end;
+end;
+
+// edge
+function newEdge(index: int): TEdge;
+const
+  EDGE_VERTICES: array[0..11, 0..1] of int =
+    ((0, 1), (1, 2), (3, 2), (0, 3), (4, 5), (5, 6), (7, 6), (4, 7),
+    (0, 4), (1, 5), (2, 6), (3, 7));
+begin
+  Result.index := index;
+  Result.startVertexIndex := EDGE_VERTICES[index][0];
+  Result.endVertexIndex := EDGE_VERTICES[index][1];
+end;
+
+procedure setConnectedEdge(var e: TEdge; index: int; edge: pTEdge);
+begin
+  if (index <> 0) and (index <> 1) then
+    raise Exception.Create('edge index out of bounds');
+  if index = 0 then e.connectedEdge0 := edge
+  else
+    e.connectedEdge1 := edge;
+end;
+
+function getConnectedEdge(e: TEdge; index: int): pTEdge;
+begin
+  if (index <> 0) and (index <> 1) then
+    raise Exception.Create('edge index out of bounds');
+
+  if index = 0 then Result := e.connectedEdge0
+  else
+    Result := e.connectedEdge1;
+end;
+
+// edgekey
+function newEdgeKey(p0, p1: vec3int): TEdgeKey;
+begin
+  if p1 < p1 then
+  begin
+    Result.i0 := p0[0];
+    Result.j0 := p0[1];
+    Result.k0 := p0[2];
+    Result.i1 := p1[0];
+    Result.j1 := p1[1];
+    Result.k1 := p1[2];
+  end
+  else
+  begin
+    Result.i0 := p1[0];
+    Result.j0 := p1[1];
+    Result.k0 := p1[2];
+    Result.i1 := p0[0];
+    Result.j1 := p0[1];
+    Result.k1 := p0[2];
+  end;
+end;
+
+function hash(ek: TEdgeKey): int;
+const
+  BIT_SHIFT: int = 10;
+var
+  BIT_MASK: int;
+begin
+  BIT_MASK := (1 shl BIT_SHIFT) - 1;
+
+  Result := (((((ek.i0 and BIT_MASK) shl BIT_SHIFT) or (ek.j0 and BIT_MASK)) shl
+    BIT_SHIFT) or (ek.k0 and BIT_MASK)) +
+    (((((ek.i1 and BIT_MASK) shl BIT_SHIFT) or (ek.j1 and BIT_MASK)) shl BIT_SHIFT) or
+    (ek.k1 and BIT_MASK));
+end;
+
+// faceFactory
+function createFace(faceindex, bitPatternOnCube: int; edges: array of pTEdge): TFace;
+const
+  FACE_VERTICES: array[0..5, 0..3] of int =
+    ((0, 1, 2, 3), (0, 1, 5, 4), (0, 3, 7, 4), (4, 5, 6, 7), (3, 2, 6, 7), (1, 2, 6, 5));
+  FACE_EDGES: array[0..5, 0..3] of int =
+    ((0, 1, 2, 3), (0, 9, 4, 8), (3, 11, 7, 8), (4, 5, 6, 7),
+    (2, 10, 6, 11), (1, 10, 5, 9));
+  EDGE_CONNECTIVITY_ON_FACE: array of array of array of int =
+    (((-1, -1, -1, -1), ()), ((-1, -1, -1, 0), ()),
+    ((1, -1, -1, -1), ()), ((-1, -1, -1, 1), ()), ((-1, 2, -1, -1), ()),
+    ((-1, 0, -1, 2), (-1, 2, -1, 0)),
+    ((2, -1, -1, -1), ()), ((-1, -1, -1, 2), ()), ((-1, -1, 3, -1), ()),
+    ((-1, -1, 0, -1), ()),
+    ((1, -1, 3, -1), (3, -1, 1, -1)), ((-1, -1, 1, -1), ()),
+    ((-1, 3, -1, -1), ()), ((-1, 0, -1, -1), ()), ((3, -1, -1, -1), ()),
+    ((-1, -1, -1, -1), ()));
+  CW: int = 1;
+  // CCW: int = 0;
+  FACE_ORIENTATION: array [0..5] of int = (1, 0, 1, 0, 1, 0);
+  // [CW, CCW, CW, CCW, CW, CCW]
+
+var
+  bitPatternOnFace, i, vertexIndex: int;
+  connectivity: array of array of int;
+
+  function isAmbiguousBitPattern(bitPatternOnFace: int): boolean;
+  begin
+    Result := (bitPatternOnFace = 5) or (bitPatternOnFace = 10);
+  end;
+
+  function buildBitPatternOnFace(bitPatternOnCube, faceIndex: int): int;
+
+    function isBitOn(bitPatternOnCube, vertexIndex: int): boolean;
+    begin
+      Result := (bitPatternOnCube and (1 shl vertexIndex)) <> 0;
+    end;
+
+  var
+    vertexIndex: int;
+
+  begin
+    Result := 0;
+    for vertexIndex := 0 to 4 - 1 do
+      if isBitOn(bitPatternOnCube, FACE_VERTICES[faceIndex][vertexIndex]) then
+        Result := Result or (1 shl vertexIndex);
+  end;
+
+begin
+
+  bitPatternOnFace := buildBitPatternOnFace(bitPatternOnCube, faceIndex);
+
+  Result.index := faceindex;
+  setLength(Result.edges, 4);
+
+  for i := 0 to 3 do
+    Result.edges[i] := edges[FACE_EDGES[faceIndex][i]];
+
+  Result.ambiguous := isAmbiguousBitPattern(bitPatternOnFace);
+
+  connectivity := EDGE_CONNECTIVITY_ON_FACE[bitPatternOnFace];
+
+  for i := 0 to 2 - 1 do
+  begin
+    if length(connectivity[i]) <> 0 then
+      for vertexIndex := 0 to 4 - 1 do
+      begin
+        if connectivity[i][vertexIndex] <> -1 then
+          if FACE_ORIENTATION[faceIndex] = CW then
+            setConnectedEdge(Result.edges[vertexIndex]^, i,
+              Result.edges[connectivity[i][vertexIndex]])
+          else
+            setConnectedEdge(Result.edges[connectivity[i][vertexIndex]]^, i,
+              Result.edges[vertexIndex]);
+      end;
+  end;
+end;
+
+// cube
+function newCube(index: int): TCube;
+var
+  edgeIndex, faceIndex: int;
+  pe: ^TEdge;
+begin
+  Result.index := index;
+
+  setLength(Result.edges, 12);
+  for edgeIndex := 0 to 12 - 1 do
+  begin
+    new(pe);
+    pe^ := newEdge(edgeIndex);
+    Result.edges[edgeIndex] := pe;
+  end;
+  setLength(Result.faces, 6);
+  for faceindex := 0 to 6 - 1 do Result.faces[faceindex] :=
+      createFace(faceindex, index, Result.edges);
+end;
+
+
+function getEdgeConnectivity(c: TCube; connectionSwitches: TArrayInt): TArrayInt;
+
+const
+  initArray: TArrayInt = (-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
+var
+  faceIndex, edgeIndex: int;
+  face: TFace;
+  edge: TEdge;
+begin
+  Result := initArray;
+
+  for faceIndex := 0 to 6 - 1 do
+  begin
+    face := c.faces[faceIndex];
+    if (face.ambiguous = False) and (connectionSwitches[faceIndex] <> 0) then
+      raise Exception.Create('face in cube is not ambigous');
+
+    for edgeIndex := 0 to 4 - 1 do
+    begin
+      edge := face.edges[edgeIndex]^;
+      if getConnectedEdge(edge, 0) in face.edges then
+        Result[edge.index] :=
+          getConnectedEdge(edge, connectionSwitches[faceIndex])^.index;
+    end;
+  end;
+end;
+
+
+// evaluate func
+procedure sample(p: TPolygonizer; var plane: TArray2s; z: single);
+var
+  i, j: int;
+  x, y: single;
+begin
+  for j := 0 to p.idiv[1] do
+  begin
+    y := p.min[1] + j * p.d[1];
+    for i := 0 to p.idiv[0] do
+    begin
+      x := p.min[0] + i * p.d[0];
+      plane[j][i] := p.func(x, y, z);
+    end;
+  end;
+end;
+
+function lerp(t: single; v0, v1: vec3): vec3;
+begin
+  Result := mkvec3(v0[0] + t * (v1[0] - v0[0]), v0[1] + t * (v1[1] - v0[1]),
+    v0[2] + t * (v1[2] - v0[2]));
+end;
+
+function calcNormal(p: TPolygonizer; v: vec3): vec3;
+var
+  x, y, z, l, f: single;
+begin
+
+  x := v[0];
+  y := v[1];
+  z := v[2];
+  f := p.func(x, y, z);
+
+  Result := mkvec3(-(p.func(x + p.nd[0], y, z) - f) / p.nd[0],
+    -(p.func(x, y + p.nd[1], z) - f) / p.nd[1],
+    -(p.func(x, y, z + p.nd[2]) - f) / p.nd[2]);
+
+  l := distance(Result);
+
+  if l <> 0 then Result /= l;
+end;
+
+function initCubes: TLookupTable;
+var
+  i: int;
+begin
+  Result.cubes := nil;
+  setLength(Result.cubes, 256);
+  for i := 0 to 256 - 1 do Result.cubes[i] := newCube(i);
+end;
+
+// polygonize
+procedure polygonize(var p: TPolygonizer);
+
+type
+  vecss = array of array of single;
+  TIndexTable = specialize TFPGmap<TEdgeKey, int>;
+
+var
+  edgeToIndex: array[0..11] of int = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+  indexTable: TIndexTable;
+  upperPlane: vecss = nil;
+  lowerPlane: vecss = nil;
+  tmpPlane: vecss;
+  eps: single;
+
+  i, j, k, ii, cubeIndex, p2val, edgeIndex, faceIndex: int;
+
+  x1, x2, y1, y2, z1, z2, t, d0, d1: single;
+
+  v: vec3;
+
+  values: array[0..7] of single;
+  positionsD: array [0..7] of vec3;
+  positionsI: array[0..7] of vec3int;
+  cube: TCube;
+  face: TFace;
+  edge: TEdge;
+  connectionSwitches: array[0..5] of int;
+  connectivity: TArrayInt;
+
+  index0, index1, index2: int;
+  key: TEdgeKey;
+
+begin
+
+  setLength(upperPlane, p.idiv[1] + 1, p.idiv[0] + 1);
+  setLength(lowerPlane, p.idiv[1] + 1, p.idiv[0] + 1);
+
+  indexTable := TIndexTable.Create;
+  //indexTable.sorted := True;
+
+  if p.isovalue = 0 then eps := 1.0e-5
+  else
+    eps := p.isovalue * 1.0e-5;
+
+  p.mesh.shape.Clear; // clear mesh
+  p.mesh.trigs.Clear;
+
+  p.d := (p.max - p.min) / p.idiv;
+  p.nd := p.d * 0.001;
+
+  sample(p, lowerPlane, p.min[2]);
+
+  for k := 0 to p.idiv[2] - 1 do
+  begin
+    z1 := p.min[2] + k * p.d[2];
+    z2 := p.min[2] + (k + 1) * p.d[2];
+
+    sample(p, upperPlane, z2);
+
+    for j := 0 to p.idiv[1] - 1 do
+    begin
+      y1 := p.min[1] + j * p.d[1];
+      y2 := p.min[1] + (j + 1) * p.d[1];
+
+      for i := 0 to p.idiv[0] - 1 do
+      begin
+
+        x1 := p.min[0] + i * p.d[0];
+        x2 := p.min[0] + (i + 1) * p.d[0];
+
+        // Set sampled function values on each corner of the cube
+        values[0] := lowerPlane[j][i];
+        values[1] := lowerPlane[j + 1][i];
+        values[2] := lowerPlane[j + 1][i + 1];
+        values[3] := lowerPlane[j][i + 1];
+        values[4] := upperPlane[j][i];
+        values[5] := upperPlane[j + 1][i];
+        values[6] := upperPlane[j + 1][i + 1];
+        values[7] := upperPlane[j][i + 1];
+
+        // Adjust the function values which are almost same as the
+        // isovalue
+        for ii := 0 to 7 do
+          if abs(values[ii] - p.isovalue) < eps then values[ii] += 10.0 * eps;
+
+
+        // Calculate index into the lookup table
+        cubeIndex := 0;
+        p2val := 1;
+
+        for ii := 0 to 7 do
+        begin
+          if values[ii] > p.isovalue then cubeIndex += p2val;
+          p2val := p2val shl 1;
+        end;
+
+        // Skip the empty cube
+        if (cubeIndex = 0) or (cubeIndex = 255) then
+          continue;
+
+        // Set up corner positions of the cube (fixed array MUCH faster than dyn)
+        positionsD[0] := mkvec3(x1, y1, z1);
+        positionsD[1] := mkvec3(x1, y2, z1);
+        positionsD[2] := mkvec3(x2, y2, z1);
+        positionsD[3] := mkvec3(x2, y1, z1);
+        positionsD[4] := mkvec3(x1, y1, z2);
+        positionsD[5] := mkvec3(x1, y2, z2);
+        positionsD[6] := mkvec3(x2, y2, z2);
+        positionsD[7] := mkvec3(x2, y1, z2);
+
+        positionsI[0] := mkvec3int(i, j, k);
+        positionsI[1] := mkvec3int(i, j + 1, k);
+        positionsI[2] := mkvec3int(i + 1, j + 1, k);
+        positionsI[3] := mkvec3int(i + 1, j, k);
+        positionsI[4] := mkvec3int(i, j, k + 1);
+        positionsI[5] := mkvec3int(i, j + 1, k + 1);
+        positionsI[6] := mkvec3int(i + 1, j + 1, k + 1);
+        positionsI[7] := mkvec3int(i + 1, j, k + 1);
+
+        // Find the cube edges which have intersection points with the isosurface
+        cube := p.lookupTable.cubes[cubeIndex];
+        indexTable.Clear;
+
+        for edgeIndex := 0 to 12 - 1 do
+        begin
+          edge := cube.edges[edgeIndex]^;
+          if getConnectedEdge(edge, 0) <> nil then
+          begin
+            key := newEdgeKey(positionsI[edge.startVertexIndex],
+              positionsI[edge.endVertexIndex]);
+
+            if indexTable.indexOf(key) <> -1 then
+              edgeToIndex[edgeIndex] := indexTable[key]
+            else
+            begin
+              t := (p.isovalue - values[edge.startVertexIndex]) /
+                (values[edge.endVertexIndex] - values[edge.startVertexIndex]);
+              v := lerp(t, positionsD[edge.startVertexIndex],
+                positionsD[edge.endVertexIndex]);
+
+              p.mesh.shape.add(mkVertex(v, calcNormal(p, v), mkvec3(0, 0, 0),
+                mkvec3(0.5, 0.5, 0)));
+
+              edgeToIndex[edgeIndex] := p.mesh.shape.Count - 1;
+              indexTable[key] := p.mesh.shape.Count - 1;
+            end;
+          end;
+        end;
+        // Resolve topological ambiguity on cube faces
+
+        for faceIndex := 0 to 6 - 1 do
+        begin
+          face := cube.faces[faceIndex];
+          if face.ambiguous then
+          begin
+            d0 := values[face.edges[0]^.endVertexIndex] -
+              values[face.edges[0]^.startVertexIndex];
+            d1 := values[face.edges[2]^.endVertexIndex] -
+              values[face.edges[2]^.startVertexIndex];
+            t := (p.isovalue - values[face.edges[1]^.startVertexIndex]) /
+              (values[face.edges[1]^.endVertexIndex] -
+              values[face.edges[1]^.startVertexIndex]);
+            if t > -d0 / (d1 - d0) then connectionSwitches[faceIndex] := 1
+            else
+              connectionSwitches[faceIndex] := 0;
+          end
+          else
+            connectionSwitches[faceIndex] := 0;
+        end;
+
+
+        // Get the connectivity graph of the cube edges and trace
+        // it to generate triangles
+
+        connectivity := getEdgeConnectivity(cube, connectionSwitches);
+        edgeIndex := 0;
+
+        while edgeIndex < 12 do
+        begin
+          if connectivity[edgeIndex] <> -1 then
+          begin
+            index0 := edgeIndex;
+            index1 := connectivity[index0];
+            index2 := connectivity[index1];
+
+            p.mesh.trigs.add(mkTrig(edgeToIndex[index0], edgeToIndex[index1],
+              edgeToIndex[index2]));
+
+            connectivity[index0] := -1;
+            connectivity[index1] := -1;
+
+            if connectivity[index2] <> index0 then
+            begin
+              connectivity[index0] := index2;
+              continue;
+            end;
+            connectivity[index2] := -1;
+          end;
+          Inc(edgeIndex);
+        end;
+      end; // i
+    end; // j
+
+    // Swap the lower and upper plane
+    tmpPlane := lowerPlane;
+    lowerPlane := upperPlane;
+    upperPlane := tmpPlane;
+
+  end; //k
+
+  indexTable.Free;
+end;
+
+
+// Polygonizer constructors
+function newPolygonizer(min, max: vec3; idiv: vec3int; isovalue: single;
+  func: vec3Func): TPolygonizer;
+begin
+  Result.min := min;
+  Result.max := max;
+  Result.idiv := idiv;
+  Result.isovalue := isovalue;
+  Result.func := func;
+  Result.scale := 1;
+
+  Result.lookupTable := initCubes;
+
+  Result.mesh.shape := TVertexList.Create;
+  Result.mesh.trigs := TTrigList.Create;
+end;
+
+procedure scalePolygonizer(var p: TPolygonizer);
+var
+  trig: TTrig;
+  ix: int;
+begin
+  p.scale := -1e32;
+  for trig in p.mesh.trigs do
+    for ix in trig.toVec3u do
+      p.scale := max(p.scale, maxvec3(p.mesh.shape[ix].pos));
+end;
+
+function newPolygonizer(bounds: single; idiv: int; func: vec3Func): TPolygonizer;
+var
+  b: single;
+begin
+  b := bounds;
+  Result := newPolygonizer(mkvec3(-b, -b, -b), mkvec3(b, b, b),
+    mkvec3int(idiv, idiv, idiv), 0, func);
+  polygonize(Result);
+  scalePolygonizer(Result);
+end;
+
+procedure freePolygonizer(var p: TPolygonizer);
+var
+  i: int;
+  cube: TCube;
+begin
+  p.mesh.shape.Free;
+  p.mesh.trigs.Free;
+
+  for cube in p.lookUpTable.cubes do
+  begin
+    for i := 0 to 12 - 1 do
+      dispose(cube.edges[i]);
+  end;
+end;
+
+procedure writeCTM(const p: TPolygonizer; Name: string);
+begin
+  writeMeshCTM(p.mesh, Name);
+end;
+
+end.
