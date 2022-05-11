@@ -301,17 +301,28 @@ proc polygonize(p:var Polygonizer)=
     # Swap the lower and upper plane
     swap lowerPlane, upperPlane
   
-
 ## FFI, nim c -d:release -d:danger --app:staticlib --noMain:on --mm:arc polygonizer
 # all funcs using function pointer should be declared .noSideEffect
 
 {.push cdecl, exportc.}
 
+proc scale(p:ref Polygonizer)=
+    var m : cfloat = -1e32
+    for v in p.mesh.shape:
+        m = max(m, v.pos.max)
+    if m!=0:
+        for v in p.mesh.shape.mitems:
+            v.pos /= m
+            
 func newPolygonizer*(bounds:cfloat, idiv:cint, funcidx:cint) : ref Polygonizer =
     result=new(Polygonizer)
     result[] = newPolygonizer(bounds, idiv, ImplicitFuncs[funcidx])
-    result[].polygonize       
-      
+    result[].polygonize  
+    result.scale     
+
+proc freePolygonizer*(p:var ref Polygonizer)=
+    p=nil;
+            
 proc writeCTM*(p:ref Polygonizer, name : cstring)=
     p.mesh.CTMWrite($name)
  
@@ -328,7 +339,6 @@ type
 proc getMesh(p:ref Polygonizer, vertexes:Vec[Vertex], trigs:Vec[TTrig])=
     for i,v in p[].mesh.shape:  vertexes[i]=v     
     for i,t in p[].mesh.trigs:  trigs[i] = TTrig(f:t)
-    echo "sizeof ttrig:", TTrig.sizeof
         
 {.pop.}
 ##
