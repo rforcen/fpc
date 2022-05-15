@@ -6,7 +6,7 @@ unit upolygonizer;
 interface
 
 uses
-  Classes, SysUtils, implicitFuncs, v3, uMesh, Math, uCtm, contnrs, gcontnrs;
+  Classes, SysUtils, implicitFuncs, v3, uMesh, Math, uCtm, contnrs, Common;
 
 const
   FuncNames: array of string =
@@ -15,10 +15,7 @@ const
     'Clebsch0', 'Clebsch', 'Chubs', 'Chair', 'Roman', 'TangleCube', 'Goursat', 'Sinxyz');
 
 type
-  int = integer;
-  TPint = ^integer;
-  TVec12i = array[0..11] of int;
-  TVec2ds = array of array of single;
+
 
   TEdge = record
     index, startVertexIndex, endVertexIndex: int;
@@ -55,8 +52,7 @@ type
     _min, _max, d, nd: vec3;
     idiv: vec3int;
     isovalue, sBounds: single;
-    func:
-    function(x, y, z: single): single;
+    func: vec3Func;
     lookUpTable: TLookupTable;
 
   private
@@ -75,6 +71,8 @@ type
     procedure polygonize;
     procedure scalePolygonizer;
     procedure writeCTM(Name: string);
+
+    procedure polygonize_C;
   end;
 
 
@@ -659,6 +657,7 @@ begin
   mesh.trigs := TTrigList.Create;
 
   polygonize;
+
   scalePolygonizer;
 end;
 
@@ -678,6 +677,12 @@ end;
 procedure TPolygonizer.writeCTM(Name: string);
 begin
   writeMeshCTM(mesh, Name);
+end;
+
+
+procedure TPolygonizer.polygonize_C;
+begin
+  //_polygonize_C(nil, sBounds, idiv[0], mesh);
 end;
 
 end.

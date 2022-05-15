@@ -130,16 +130,6 @@
         <UnitName Value="Unit1"/>
       </Unit>
       <Unit>
-        <Filename Value="unim.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="uNim"/>
-      </Unit>
-      <Unit>
-        <Filename Value="ucpp.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="uCpp"/>
-      </Unit>
-      <Unit>
         <Filename Value="uglrender.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uGLRender"/>
@@ -160,6 +150,10 @@
       </Unit>
       <Unit>
         <Filename Value="upolygonizer.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="common.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
     </Units>

@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, OpenGLContext, gl, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, Spin, ExtCtrls, DateUtils, Types, ComCtrls, v3, upolygonizer, implicitFuncs, uMesh;
+  StdCtrls, Spin, ExtCtrls, DateUtils, Types, ComCtrls, v3, upolygonizer,
+   implicitFuncs, uMesh;
 //, uNim, uCpp;
 
 { TForm1 }
@@ -84,6 +85,7 @@ begin
   // list box with function names
   for nm in FuncNames do lbNames.addItem(nm, nil);
   doPoly;
+
 end;
 
 procedure TForm1.fsBoundsChange(Sender: TObject);
@@ -107,7 +109,7 @@ end;
 
 procedure TForm1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-    polyg.free;
+  polyg.Free;
 end;
 
 procedure TForm1.lbNamesClick(Sender: TObject);
@@ -129,14 +131,12 @@ begin
   bounds := fsBounds.Value;
   if bounds = 0 then bounds := 0.1;
 
-  polyg.free;
-
   t0 := now;
 
+  polyg.Free;
   polyg := TPolygonizer.Create(bounds, resol, ImplicitFunctions[nfunc]);
 
   lap := MilliSecondsBetween(now, t0);
-
 
   dispStat;
   isInit := True;

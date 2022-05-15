@@ -1,5 +1,6 @@
 {nim interface}
 unit uNim;
+
 {$mode ObjFPC}{$H+}
 
 // link with 'c' and libengine.a
@@ -10,7 +11,7 @@ unit uNim;
 interface
 
 uses
-  Classes, SysUtils, v3;
+  Classes, SysUtils, v3, common, uMesh;
 
 
 { libpolygonizer.a interface }
@@ -20,49 +21,55 @@ const
     'Orth', 'Orth3', 'Pretzel', 'Tooth', 'Pilz', 'Bretzel', 'BarthDecic',
     'Clebsch0', 'Clebsch', 'Chubs', 'Chair', 'Roman', 'TangleCube', 'Goursat', 'Sinxyz');
 
-type
-  TPolygonizer = pointer;
-
-  TVertex = record
-    pos, norm, uv, color: vec3;
-  end;
-
-
-function newPolygonizer(bounds: single; idiv: integer; funcidx: integer): TPolygonizer;
-  cdecl; external;
-procedure freePolygonizer(var polyg: TPolygonizer); cdecl; external;
-procedure writeCTM(polyg: TPolygonizer; Name: PChar); cdecl; external;
-function getNVertex(polyg: TPolygonizer): integer; cdecl; external;
-function getNTrigs(polyg: TPolygonizer): integer; cdecl; external;
-procedure getMesh(polyg: TPolygonizer; vertexes: pointer; trigs: pointer);
-  cdecl; external;
-
+procedure polygonizer_Nim(func: vec3Func; bounds: single; resol: int; var mesh: TMesh);
 
 implementation
 
+type
+  TPolygonizerNim = pointer;
+
+function CreatePolygonizer(bounds: single; idiv: integer;
+  func: vec3Func): TPolygonizerNim;
+  cdecl; external;
+procedure freePolygonizer(var polyg: TPolygonizerNim); cdecl; external;
+procedure writeCTM(polyg: TPolygonizerNim; Name: PChar); cdecl; external;
+function getNVertex(polyg: TPolygonizerNim): integer; cdecl; external;
+function getNTrigs(polyg: TPolygonizerNim): integer; cdecl; external;
+procedure getMesh(polyg: TPolygonizerNim; vertexes: pointer; trigs: pointer);
+  cdecl; external;
+
+procedure polygonizer_Nim(func: vec3Func; bounds: single; resol: int; var mesh: TMesh);
+var
+  polyg: TPolygonizerNim;
+  vertexes: array of TVertex = nil;
+  vtx: TVertex;
+  trigs: array of TTrig = nil;
+  i: int;
+begin
+  if bounds = 0 then bounds := 0.1;
+
+  polyg := CreatePolygonizer(bounds, resol, func);
+
+  setLength(vertexes, getNVertex(polyg));
+  setLength(trigs, getNTrigs(polyg));
+
+  getMesh(polyg, @vertexes[0], @trigs[0]);
+
+  mesh.shape.Clear;
+  mesh.trigs.clear;
+
+  mesh.shape.Reserve(length(vertexes));
+  for i := 0 to high(vertexes) do
+  begin
+    vtx := vertexes[i];
+    mesh.shape.Append(mkVertex(vtx.pos, vtx.norm, mkvec3(0, 0, 0), vtx.color));
+  end;
+
+  mesh.trigs.Reserve(length(trigs));
+  for i := 0 to high(trigs) do
+    mesh.trigs.Append(trigs[i]);
+end;
+
+
+
 end.
-
-//procedure TForm1.doPoly_nim;
-//begin
-//  resol := seResol.Value;
-//  nfunc := lbNames.ItemIndex;
-//  if nfunc = -1 then nfunc := 0;
-//  bounds := fsBounds.Value;
-//  if bounds = 0 then bounds := 0.1;
-
-//  if polyg <> nil then
-//    freePolygonizer(polyg);
-
-//  t0 := now;
-
-//  polyg := newPolygonizer(bounds, resol, nfunc);
-//  setLength(vertexes, getNVertex(polyg));
-//  setLength(trigs, getNTrigs(polyg));
-//  getMesh(polyg, @vertexes[0], @trigs[0]);
-
-//  lap := MilliSecondsBetween(now, t0);
-
-//  dispStat;
-
-//  OpenGLControl1.Invalidate;
-//end;

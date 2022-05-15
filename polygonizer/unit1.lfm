@@ -57,7 +57,7 @@ object Form1: TForm1
       ParentShowHint = False
       ShowHint = True
       TabOrder = 1
-      Value = 150
+      Value = 80
     end
     object fsBounds: TFloatSpinEdit
       Left = 1

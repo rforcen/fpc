@@ -36,6 +36,7 @@ operator / (a: vec3; b: vec3int): vec3;
 
 function mkvec3int(a, b, c: integer): vec3int; inline;
 function maxvec3(a: vec3): single;
+function maxabsvec3(a: vec3): single;
 function mkvec4(a: vec3): vec4;
 
 const
@@ -175,6 +176,12 @@ function maxvec3(a: vec3): single;
 begin
   Result := max(a[0], max(a[1], a[2]));
 end;
+
+function maxabsvec3(a: vec3): single;
+begin
+  Result := max(abs(a[0]), max(abs(a[1]), abs(a[2])));
+end;
+
 
 function mkvec4(a: vec3): vec4;
 begin

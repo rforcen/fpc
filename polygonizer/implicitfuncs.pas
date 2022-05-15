@@ -5,10 +5,7 @@ unit implicitFuncs;
 interface
 
 uses
-  Classes, SysUtils, Math;
-
-type
-  vec3Func = function(x, y, z: single): single;
+  Classes, SysUtils, Math, Common;
 
 function Sphere(x, y, z: single): single;
 function Blob(x, y, z: single): single;
@@ -70,7 +67,6 @@ begin
   if rsq < 1e-5 then rsq := 1e-5;
   Result := 1.0 / rsq;
 end;
-
 
 function DecoCube(x, y, z: single): single; inline;
 const
