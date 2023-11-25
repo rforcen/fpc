@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <Version Value="12"/>
+    <BuildModes Count="1" Active="Release">
+      <Item1 Name="Release">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <Target>
+            <Filename Value="sh"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+        </CompilerOptions>
+      </Item1>
+    </BuildModes>
+    <Units Count="23">
+      <Unit0>
+        <Filename Value="sh.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="28" Y="22"/>
+        <UsageCount Value="35"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="frmsh.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FormSH"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="frmSH"/>
+        <CursorPos Y="82"/>
+        <FoldState Value=" T3ie0l="/>
+        <UsageCount Value="35"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="usphericalharmonics.pas"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="26"/>
+        <CursorPos X="29" Y="48"/>
+        <UsageCount Value="35"/>
+        <Loaded Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="v3.pp"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="35"/>
+        <CursorPos X="11" Y="31"/>
+        <UsageCount Value="26"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="shcodes.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="shCodes"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="153"/>
+        <UsageCount Value="20"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="bufferedfilestream.pas"/>
+        <UnitName Value="BufferedFileStream"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="23"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="../test/ogl/unitgl.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="103"/>
+        <CursorPos X="26" Y="143"/>
+        <UsageCount Value="11"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="../mandelbrot/uMandelbrot.pp"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="48" Y="10"/>
+        <UsageCount Value="11"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="../../../.lazarus/onlinepackagemanager/packages/ct4laz/pl_components/pl_opengl/source/OpenGLPanel.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="431"/>
+        <CursorPos X="38" Y="443"/>
+        <UsageCount Value="10"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="/usr/lib/lazarus/2.0.6/lcl/stdctrls.pp"/>
+        <UnitName Value="StdCtrls"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="360"/>
+        <CursorPos X="46" Y="379"/>
+        <UsageCount Value="10"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="../voronoi/uvoronoi.pas"/>
+        <UnitName Value="uVoronoi"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="6"/>
+        <CursorPos X="15" Y="26"/>
+        <UsageCount Value="10"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="../voronoi/ivoronoi.pas"/>
+        <UnitName Value="iVoronoi"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="141"/>
+        <CursorPos Y="172"/>
+        <UsageCount Value="10"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="ColorMap.c"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="25" Y="2"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="C++"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="colormap.pas"/>
+        <UnitName Value="colorMap"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="8" Y="7"/>
+        <UsageCount Value="10"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="../mandel_cli/u32toimage.pp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="15"/>
+        <CursorPos X="46" Y="30"/>
+        <UsageCount Value="10"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="../mandel_cli/umandelbrot.pp"/>
+        <UnitName Value="uMandelbrot"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="198"/>
+        <CursorPos X="22" Y="218"/>
+        <UsageCount Value="11"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="/usr/lib/lazarus/2.0.6/lcl/lclmessageglue.pas"/>
+        <UnitName Value="LCLMessageGlue"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="95"/>
+        <CursorPos Y="116"/>
+        <UsageCount Value="10"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="/usr/share/fpcsrc/3.0.4/rtl/inc/systemh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="334"/>
+        <CursorPos X="3" Y="354"/>
+        <UsageCount Value="10"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="/usr/lib/lazarus/2.0.6/lcl/include/customlistbox.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="461"/>
+        <CursorPos Y="481"/>
+        <UsageCount Value="10"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="/usr/lib/lazarus/2.0.6/lcl/include/wincontrol.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="7513"/>
+        <CursorPos Y="7532"/>
+        <UsageCount Value="10"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="/usr/share/fpcsrc/3.0.4/rtl/inc/threadh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="15"/>
+        <CursorPos X="52" Y="35"/>
+        <UsageCount Value="10"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="frmsh.lfm"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="28" Y="23"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="LFM"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="../polygonizer/unit1.pas"/>
+        <UnitName Value="Unit1"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="35" Y="13"/>
+        <UsageCount Value="10"/>
+      </Unit22>
+    </Units>
+    <JumpHistory Count="30" HistoryIndex="29">
+      <Position1>
+        <Filename Value="usphericalharmonics.pas"/>
+        <Caret Line="221" Column="17" TopLine="206"/>
+      </Position1>
+      <Position2>
+        <Filename Value="usphericalharmonics.pas"/>
+        <Caret Line="260" Column="25" TopLine="228"/>
+      </Position2>
+      <Position3>
+        <Filename Value="usphericalharmonics.pas"/>
+        <Caret Line="303" TopLine="296"/>
+      </Position3>
+      <Position4>
+        <Filename Value="usphericalharmonics.pas"/>
+        <Caret Line="183" Column="37" TopLine="161"/>
+      </Position4>
+      <Position5>
+        <Filename Value="usphericalharmonics.pas"/>
+        <Caret Line="243" Column="29" TopLine="205"/>
+      </Position5>
+      <Position6>
+        <Filename Value="usphericalharmonics.pas"/>
+        <Caret Line="241" Column="29" TopLine="208"/>
+      </Position6>
+      <Position7>
+        <Filename Value="usphericalharmonics.pas"/>
+        <Caret Line="243" Column="21" TopLine="209"/>
+      </Position7>
+      <Position8>
+        <Filename Value="usphericalharmonics.pas"/>
+        <Caret Line="241" Column="54" TopLine="227"/>
+      </Position8>
+      <Position9>
+        <Filename Value="usphericalharmonics.pas"/>
+        <Caret Line="245" Column="50" TopLine="227"/>
+      </Position9>
+      <Position10>
+        <Filename Value="usphericalharmonics.pas"/>
+        <Caret Line="198" Column="28" TopLine="178"/>
+      </Position10>
+      <Position11>
+        <Filename Value="usphericalharmonics.pas"/>
+        <Caret Line="222" Column="39" TopLine="208"/>
+      </Position11>
+      <Position12>
+        <Filename Value="usphericalharmonics.pas"/>
+        <Caret Line="261" Column="26" TopLine="229"/>
+      </Position12>
+      <Position13>
+        <Filename Value="usphericalharmonics.pas"/>
+        <Caret Line="266" Column="72" TopLine="234"/>
+      </Position13>
+      <Position14>
+        <Filename Value="usphericalharmonics.pas"/>
+        <Caret Line="222" Column="66" TopLine="202"/>
+      </Position14>
+      <Position15>
+        <Filename Value="usphericalharmonics.pas"/>
+        <Caret Line="7" Column="17"/>
+      </Position15>
+      <Position16>
+        <Filename Value="usphericalharmonics.pas"/>
+        <Caret Line="67" Column="31" TopLine="37"/>
+      </Position16>
+      <Position17>
+        <Filename Value="frmsh.pas"/>
+        <Caret Line="80" Column="36" TopLine="59"/>
+      </Position17>
+      <Position18>
+        <Filename Value="usphericalharmonics.pas"/>
+        <Caret Line="50" Column="68" TopLine="19"/>
+      </Position18>
+      <Position19>
+        <Filename Value="frmsh.pas"/>
+        <Caret Line="10" Column="25"/>
+      </Position19>
+      <Position20>
+        <Filename Value="frmsh.pas"/>
+        <Caret Line="32" Column="44" TopLine="9"/>
+      </Position20>
+      <Position21>
+        <Filename Value="frmsh.pas"/>
+        <Caret Line="28" Column="26" TopLine="9"/>
+      </Position21>
+      <Position22>
+        <Filename Value="usphericalharmonics.pas"/>
+        <Caret Line="19" Column="30"/>
+      </Position22>
+      <Position23>
+        <Filename Value="frmsh.pas"/>
+        <Caret Line="9" Column="32"/>
+      </Position23>
+      <Position24>
+        <Filename Value="frmsh.pas"/>
+        <Caret Line="21"/>
+      </Position24>
+      <Position25>
+        <Filename Value="frmsh.pas"/>
+        <Caret Line="69" TopLine="50"/>
+      </Position25>
+      <Position26>
+        <Filename Value="frmsh.pas"/>
+        <Caret Line="171" Column="47" TopLine="152"/>
+      </Position26>
+      <Position27>
+        <Filename Value="frmsh.pas"/>
+        <Caret Line="184" Column="14" TopLine="165"/>
+      </Position27>
+      <Position28>
+        <Filename Value="frmsh.pas"/>
+        <Caret Line="82" TopLine="193"/>
+      </Position28>
+      <Position29>
+        <Filename Value="usphericalharmonics.pas"/>
+        <Caret Line="43" Column="20" TopLine="19"/>
+      </Position29>
+      <Position30>
+        <Filename Value="usphericalharmonics.pas"/>
+        <Caret Line="273" Column="3" TopLine="272"/>
+      </Position30>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes ActiveMode=""/>
+    </RunParams>
+  </ProjectSession>
+  <Debugging>
+    <Watches>
+      <Item>
+        <Expression Value="n*n"/>
+      </Item>
+    </Watches>
+  </Debugging>
+</CONFIG>
