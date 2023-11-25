@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <Version Value="12"/>
+    <BuildModes Active="Release"/>
+    <Units Count="44">
+      <Unit0>
+        <Filename Value="johnson.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="29" Y="15"/>
+        <UsageCount Value="112"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="ui_johnson.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Form1"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <TopLine Value="11"/>
+        <CursorPos Y="225"/>
+        <FoldState Value=" T3iR0l12218 pkdmP0G2v"/>
+        <UsageCount Value="112"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="ujohnson.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="29" Y="7"/>
+        <UsageCount Value="112"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="upoly.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="17"/>
+        <CursorPos X="30" Y="39"/>
+        <UsageCount Value="107"/>
+        <Loaded Value="True"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="ucommon.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uCommon"/>
+        <EditorIndex Value="6"/>
+        <CursorPos X="48" Y="27"/>
+        <UsageCount Value="100"/>
+        <Loaded Value="True"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="uplato.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uPlato"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="29" Y="8"/>
+        <UsageCount Value="100"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="uvec3.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="44"/>
+        <CursorPos X="41" Y="128"/>
+        <UsageCount Value="97"/>
+        <Loaded Value="True"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="flagsmap.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="flagsMap"/>
+        <EditorIndex Value="8"/>
+        <TopLine Value="28"/>
+        <CursorPos X="32" Y="8"/>
+        <UsageCount Value="78"/>
+        <Loaded Value="True"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="utrans.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uTrans"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <CursorPos X="31" Y="15"/>
+        <UsageCount Value="68"/>
+        <Loaded Value="True"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="../../qt-old/Polyhedronisme/poly/johnson.cpp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="4230"/>
+        <CursorPos Y="4268"/>
+        <UsageCount Value="2"/>
+        <DefaultSyntaxHighlighter Value="C++"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="../../qt-old/Polyhedronisme/poly/johnson.hpp"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="2"/>
+        <DefaultSyntaxHighlighter Value="C++"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="johnsonpoly.pas"/>
+        <EditorIndex Value="7"/>
+        <CursorPos X="24" Y="29"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="/usr/share/fpcsrc/3.2.2/packages/opengl/src/gl.pp"/>
+        <UnitName Value="GL"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1357"/>
+        <CursorPos X="10" Y="1377"/>
+        <UsageCount Value="2"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="glrenderer.pas"/>
+        <UnitName Value="glRenderer"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="21" Y="27"/>
+        <UsageCount Value="13"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="../../qt-old/VSlibQt/opengl.cpp"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="2"/>
+        <UsageCount Value="2"/>
+        <DefaultSyntaxHighlighter Value="C++"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="../../qt-old/VSlibQt/renderer.cpp"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="14"/>
+        <UsageCount Value="2"/>
+        <DefaultSyntaxHighlighter Value="C++"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="../../qt-old/VSlibQt/renderer.h"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="18"/>
+        <UsageCount Value="2"/>
+        <DefaultSyntaxHighlighter Value="C++"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="../../qt/Polyhedronisme/poly/polyhedron.hpp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="18"/>
+        <CursorPos X="54" Y="28"/>
+        <UsageCount Value="16"/>
+        <DefaultSyntaxHighlighter Value="C++"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="../../qt/Polyhedronisme/poly/point3.h"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="131"/>
+        <CursorPos X="25" Y="59"/>
+        <UsageCount Value="7"/>
+        <DefaultSyntaxHighlighter Value="C++"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="../../qt/Polyhedronisme/poly/common.hpp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="134"/>
+        <CursorPos X="30" Y="238"/>
+        <UsageCount Value="21"/>
+        <DefaultSyntaxHighlighter Value="C++"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="../../qt/Polyhedronisme/poly/seeds.hpp"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="69" Y="182"/>
+        <UsageCount Value="12"/>
+        <DefaultSyntaxHighlighter Value="C++"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="../../qt/Polyhedronisme/poly/color.hpp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="22"/>
+        <CursorPos X="78" Y="56"/>
+        <UsageCount Value="4"/>
+        <DefaultSyntaxHighlighter Value="C++"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="ucolor.pas"/>
+        <UnitName Value="uColor"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="14"/>
+        <UsageCount Value="15"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="/usr/share/fpcsrc/3.2.2/rtl/inc/objpash.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="187"/>
+        <CursorPos X="23" Y="206"/>
+        <UsageCount Value="4"/>
+      </Unit23>
+      <Unit24>
+        <Filename Value="/usr/lib/lazarus/2.0.12/lcl/controls.pp"/>
+        <UnitName Value="Controls"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="168"/>
+        <CursorPos X="3" Y="187"/>
+        <UsageCount Value="4"/>
+      </Unit24>
+      <Unit25>
+        <Filename Value="/usr/share/fpcsrc/3.2.2/rtl/objpas/fgl.pp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="105"/>
+        <CursorPos X="19" Y="125"/>
+        <UsageCount Value="11"/>
+      </Unit25>
+      <Unit26>
+        <Filename Value="../../qt/Polyhedronisme/poly/polyflag.hpp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="16"/>
+        <UsageCount Value="8"/>
+        <DefaultSyntaxHighlighter Value="C++"/>
+      </Unit26>
+      <Unit27>
+        <Filename Value="/usr/share/fpcsrc/3.2.2/rtl/objpas/sysutils/sysstrh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="177"/>
+        <CursorPos X="23" Y="200"/>
+        <UsageCount Value="4"/>
+      </Unit27>
+      <Unit28>
+        <Filename Value="/usr/share/fpcsrc/3.2.2/rtl/objpas/sysutils/syshelph.inc"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="33" Y="48"/>
+        <UsageCount Value="5"/>
+      </Unit28>
+      <Unit29>
+        <Filename Value="../../qt/Polyhedronisme/poly/poly_operations.hpp"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="56" Y="12"/>
+        <UsageCount Value="8"/>
+        <DefaultSyntaxHighlighter Value="C++"/>
+      </Unit29>
+      <Unit30>
+        <Filename Value="../../qt/Polyhedronisme/poly/fastflags.h"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="176"/>
+        <CursorPos X="31" Y="190"/>
+        <UsageCount Value="20"/>
+        <DefaultSyntaxHighlighter Value="C++"/>
+      </Unit30>
+      <Unit31>
+        <Filename Value="../../qt/Polyhedronisme/poly/poly_operations_mt.hpp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="255"/>
+        <CursorPos X="39" Y="272"/>
+        <UsageCount Value="17"/>
+        <DefaultSyntaxHighlighter Value="C++"/>
+      </Unit31>
+      <Unit32>
+        <Filename Value="../../nim/poly_32/flag.nim"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="139"/>
+        <CursorPos X="24" Y="175"/>
+        <UsageCount Value="6"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit32>
+      <Unit33>
+        <Filename Value="../../nim/poly_32/polyhedron.nim"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="6"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit33>
+      <Unit34>
+        <Filename Value="../../nim/poly_32/common.nim"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="411"/>
+        <CursorPos X="36" Y="443"/>
+        <UsageCount Value="6"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit34>
+      <Unit35>
+        <Filename Value="/usr/lib/lazarus/2.0.12/lcl/interfaces/gtk2/gtk2proc.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="3761"/>
+        <CursorPos Y="3780"/>
+        <UsageCount Value="6"/>
+      </Unit35>
+      <Unit36>
+        <Filename Value="/usr/lib/lazarus/2.0.12/lcl/include/customedit.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="509"/>
+        <CursorPos Y="528"/>
+        <UsageCount Value="6"/>
+      </Unit36>
+      <Unit37>
+        <Filename Value="../mandelbrot/frmmandelbrot.pas"/>
+        <UnitName Value="frmMandelbrot"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="20" Y="10"/>
+        <UsageCount Value="7"/>
+      </Unit37>
+      <Unit38>
+        <Filename Value="../mandelbrot/mandelbrot.lpr"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="8"/>
+      </Unit38>
+      <Unit39>
+        <Filename Value="../dc/dc.lpr"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="8"/>
+      </Unit39>
+      <Unit40>
+        <Filename Value="flags.pas"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="202"/>
+        <CursorPos Y="233"/>
+        <UsageCount Value="22"/>
+        <Loaded Value="True"/>
+      </Unit40>
+      <Unit41>
+        <Filename Value="/usr/lib/lazarus/2.2.0/lcl/include/control.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="598"/>
+        <CursorPos Y="617"/>
+        <UsageCount Value="9"/>
+      </Unit41>
+      <Unit42>
+        <Filename Value="ulistx.pas"/>
+        <UnitName Value="uListX"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="3"/>
+        <CursorPos Y="94"/>
+        <UsageCount Value="12"/>
+        <Loaded Value="True"/>
+      </Unit42>
+      <Unit43>
+        <Filename Value="../../../../AppData/lazarus/fpc/3.2.2/source/rtl/objpas/fgl.pp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="13"/>
+        <UsageCount Value="10"/>
+      </Unit43>
+    </Units>
+    <JumpHistory Count="30" HistoryIndex="29">
+      <Position1>
+        <Filename Value="ui_johnson.pas"/>
+        <Caret Line="273" Column="8" TopLine="258"/>
+      </Position1>
+      <Position2>
+        <Filename Value="ui_johnson.pas"/>
+        <Caret Line="55" Column="15" TopLine="32"/>
+      </Position2>
+      <Position3>
+        <Filename Value="ui_johnson.pas"/>
+        <Caret Line="242" Column="3" TopLine="239"/>
+      </Position3>
+      <Position4>
+        <Filename Value="ui_johnson.pas"/>
+        <Caret Line="8" Column="27" TopLine="4"/>
+      </Position4>
+      <Position5>
+        <Filename Value="ui_johnson.pas"/>
+        <Caret Line="34" Column="79" TopLine="10"/>
+      </Position5>
+      <Position6>
+        <Filename Value="ui_johnson.pas"/>
+        <Caret Column="16"/>
+      </Position6>
+      <Position7>
+        <Filename Value="ui_johnson.pas"/>
+        <Caret Line="222" Column="11" TopLine="214"/>
+      </Position7>
+      <Position8>
+        <Filename Value="flagsmap.pas"/>
+        <Caret Line="8" Column="32"/>
+      </Position8>
+      <Position9>
+        <Filename Value="ui_johnson.pas"/>
+        <Caret Line="42" TopLine="10"/>
+      </Position9>
+      <Position10>
+        <Filename Value="ui_johnson.pas"/>
+        <Caret Line="273" Column="7" TopLine="253"/>
+      </Position10>
+      <Position11>
+        <Filename Value="utrans.pas"/>
+        <Caret Line="15" Column="11"/>
+      </Position11>
+      <Position12>
+        <Filename Value="utrans.pas"/>
+        <Caret Line="39" Column="3"/>
+      </Position12>
+      <Position13>
+        <Filename Value="utrans.pas"/>
+        <Caret Line="15" Column="11"/>
+      </Position13>
+      <Position14>
+        <Filename Value="utrans.pas"/>
+        <Caret Line="39" Column="3"/>
+      </Position14>
+      <Position15>
+        <Filename Value="utrans.pas"/>
+        <Caret Line="15" Column="11"/>
+      </Position15>
+      <Position16>
+        <Filename Value="utrans.pas"/>
+        <Caret Line="39" Column="3"/>
+      </Position16>
+      <Position17>
+        <Filename Value="utrans.pas"/>
+        <Caret Line="15" Column="11"/>
+      </Position17>
+      <Position18>
+        <Filename Value="utrans.pas"/>
+        <Caret Line="39" Column="3"/>
+      </Position18>
+      <Position19>
+        <Filename Value="upoly.pas"/>
+        <Caret Line="36" Column="19" TopLine="21"/>
+      </Position19>
+      <Position20>
+        <Filename Value="upoly.pas"/>
+        <Caret Line="39" Column="14" TopLine="11"/>
+      </Position20>
+      <Position21>
+        <Filename Value="upoly.pas"/>
+        <Caret Line="657" Column="45" TopLine="597"/>
+      </Position21>
+      <Position22>
+        <Filename Value="ui_johnson.pas"/>
+        <Caret Line="283" Column="42" TopLine="256"/>
+      </Position22>
+      <Position23>
+        <Filename Value="ui_johnson.pas"/>
+        <Caret Line="284" Column="7" TopLine="256"/>
+      </Position23>
+      <Position24>
+        <Filename Value="ui_johnson.pas"/>
+        <Caret Line="56" Column="25" TopLine="33"/>
+      </Position24>
+      <Position25>
+        <Filename Value="utrans.pas"/>
+        <Caret Line="39" Column="3"/>
+      </Position25>
+      <Position26>
+        <Filename Value="ui_johnson.pas"/>
+        <Caret Line="273" Column="23" TopLine="255"/>
+      </Position26>
+      <Position27>
+        <Filename Value="ui_johnson.pas"/>
+        <Caret Line="242" Column="7" TopLine="225"/>
+      </Position27>
+      <Position28>
+        <Filename Value="ui_johnson.pas"/>
+        <Caret Line="56" Column="29" TopLine="33"/>
+      </Position28>
+      <Position29>
+        <Filename Value="ui_johnson.pas"/>
+        <Caret Line="242" Column="7" TopLine="224"/>
+      </Position29>
+      <Position30>
+        <Filename Value="ui_johnson.pas"/>
+        <Caret Line="56" Column="28" TopLine="33"/>
+      </Position30>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes ActiveMode=""/>
+    </RunParams>
+  </ProjectSession>
+  <Debugging>
+    <Watches>
+      <Item>
+        <Expression Value="self[mid]"/>
+      </Item>
+    </Watches>
+  </Debugging>
+</CONFIG>
