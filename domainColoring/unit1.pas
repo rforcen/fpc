@@ -24,6 +24,7 @@ type
     OpenDialog1: TOpenDialog;
     Panel1: TPanel;
     Panel2: TPanel;
+    pnlTools: TPanel;
     seWidth: TSpinEdit;
     StatusBar1: TStatusBar;
     procedure btnLoadFormulasClick(Sender: TObject);
@@ -32,7 +33,7 @@ type
     procedure cbPresetsSelect(Sender: TObject);
     procedure eExprEditingDone(Sender: TObject);
     procedure FormActivate(Sender: TObject);
-    procedure FormKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
+    procedure FormKeyDown(Sender: TObject; var Key: word; {%H-}Shift: TShiftState);
     procedure FormResize(Sender: TObject);
     procedure Image1DblClick(Sender: TObject);
 
@@ -104,8 +105,7 @@ begin
     FOrigBounds := BoundsRect;
     WindowState := wsFullScreen;
     BorderStyle := bsNone;
-    Panel1.Hide;
-    Panel2.Hide;
+    pnlTools.Hide;
     StatusBar1.Hide;
   end
   else
@@ -113,8 +113,7 @@ begin
     WindowState := wsNormal;
     BoundsRect := FOrigBounds;
     BorderStyle := bsSizeable;
-    Panel1.Show;
-    Panel2.Show;
+    pnlTools.Show;
     StatusBar1.Show;
   end;
 end;
