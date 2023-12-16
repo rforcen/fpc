@@ -1,0 +1,189 @@
+object Form1: TForm1
+  Left = 570
+  Height = 1042
+  Top = 288
+  Width = 1031
+  Align = alLeft
+  Caption = 'Domain Coloring'
+  ClientHeight = 1042
+  ClientWidth = 1031
+  DesignTimePPI = 144
+  KeyPreview = True
+  OnActivate = FormActivate
+  OnKeyDown = FormKeyDown
+  OnResize = FormResize
+  LCLVersion = '2.2.6.0'
+  object Image1: TImage
+    Left = 0
+    Height = 903
+    Top = 104
+    Width = 1031
+    Align = alClient
+    OnDblClick = Image1DblClick
+  end
+  object StatusBar1: TStatusBar
+    Left = 0
+    Height = 35
+    Top = 1007
+    Width = 1031
+    Panels = <>
+  end
+  object pnlTools: TPanel
+    Left = 0
+    Height = 104
+    Top = 0
+    Width = 1031
+    Align = alTop
+    ClientHeight = 104
+    ClientWidth = 1031
+    TabOrder = 1
+    object Panel1: TPanel
+      Left = 1
+      Height = 48
+      Top = 1
+      Width = 1029
+      Align = alTop
+      ClientHeight = 48
+      ClientWidth = 1029
+      TabOrder = 0
+      object cbPresets: TComboBox
+        Left = 415
+        Height = 40
+        Hint = 'preset formulas'
+        Top = 1
+        Width = 613
+        Align = alClient
+        Font.CharSet = ANSI_CHARSET
+        Font.Color = clFuchsia
+        Font.Height = -24
+        Font.Pitch = fpVariable
+        Font.Quality = fqDraft
+        ItemHeight = 32
+        ItemIndex = 0
+        Items.Strings = (
+          '(1+i)*log(sin(z^3-1)/z)'
+          '(1+i)*sin(z)'
+          '(z+3)*(z+1)^2'
+          '(z/2)^2*(z+1-2i)*(z+2+2i)/z^3'
+          '(z^2)-0.75-(0.2*i)'
+          '(z^2+1)/(z^2-1)'
+          '(z^2+1)/z'
+          '(z^2-1) * (z-2-i)^2 / (z^2+2*i)'
+          '1/sin(1/sin(z))'
+          'acos((1+i)*log(sin(z^3-1)/z))'
+          'cos(z)/(sin(z^4-1))'
+          'log(sin(z))'
+          'sin(1/z)'
+          'sin(z)*c(1,2)'
+          'sin(z)*sin(1/z)'
+          'z'
+          'z + z^2/sin(z^4-1)'
+          'z^6-1'
+          'z * sin( c(1,1)/cos(3/z) + tan(1/z+1) )'
+        )
+        OnClick = cbPresetsSelect
+        OnSelect = cbPresetsSelect
+        ParentFont = False
+        ParentShowHint = False
+        ReadOnly = True
+        ShowHint = True
+        TabOrder = 0
+        Text = '(1+i)*log(sin(z^3-1)/z)'
+      end
+      object btnSave: TButton
+        Left = 1
+        Height = 46
+        Hint = 'save image to .png file in selected width'
+        Top = 1
+        Width = 113
+        Align = alLeft
+        Caption = '&Save'
+        OnClick = btnSaveClick
+        TabOrder = 1
+      end
+      object seWidth: TSpinEdit
+        Left = 114
+        Height = 46
+        Hint = 'width in Kb of saved image'
+        Top = 1
+        Width = 75
+        Align = alLeft
+        MaxValue = 32
+        MinValue = 1
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 2
+        Value = 1
+      end
+      object btnLoadFormulas: TButton
+        Left = 189
+        Height = 46
+        Hint = 'load text file with formulas (1 per line)'
+        Top = 1
+        Width = 113
+        Align = alLeft
+        Caption = '&load'
+        OnClick = btnLoadFormulasClick
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 3
+      end
+      object btnReset: TButton
+        Left = 302
+        Height = 46
+        Hint = 'reset formula list to preset values'
+        Top = 1
+        Width = 113
+        Align = alLeft
+        Caption = '&reset'
+        OnClick = btnResetClick
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 4
+      end
+    end
+    object Panel2: TPanel
+      Left = 1
+      Height = 51
+      Top = 49
+      Width = 1029
+      Align = alTop
+      ClientHeight = 51
+      ClientWidth = 1029
+      TabOrder = 1
+      object eExpr: TEdit
+        Left = 138
+        Height = 49
+        Top = 1
+        Width = 890
+        Align = alClient
+        Font.CharSet = ANSI_CHARSET
+        Font.Height = -22
+        Font.Name = 'Courier New'
+        Font.Pitch = fpFixed
+        Font.Quality = fqDraft
+        OnEditingDone = eExprEditingDone
+        ParentFont = False
+        TabOrder = 0
+      end
+      object Label2: TLabel
+        Left = 1
+        Height = 49
+        Top = 1
+        Width = 137
+        Align = alLeft
+        Alignment = taCenter
+        Caption = ' edit expression '
+        Font.Color = clBlue
+        Layout = tlCenter
+        ParentColor = False
+        ParentFont = False
+      end
+    end
+  end
+  object OpenDialog1: TOpenDialog
+    Filter = 'dc files|*.dc'
+    Left = 48
+    Top = 72
+  end
+end
