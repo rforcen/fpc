@@ -14,7 +14,7 @@ type
 
   { TStack }
 
-  TStack<T> = record
+  TStack<T> = object
     st: array[0..MAX_STACK] of T;
     sp: integer;
 

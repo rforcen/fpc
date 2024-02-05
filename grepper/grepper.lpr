@@ -10,7 +10,7 @@ uses
   athreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, uGrepper, uStack
+  Forms, uGrepper, uStack, uTree, uThread
   { you can add units after this };
 
 {$R *.res}

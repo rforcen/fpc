@@ -118,6 +118,16 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="uStack"/>
       </Unit>
+      <Unit>
+        <Filename Value="utree.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uTree"/>
+      </Unit>
+      <Unit>
+        <Filename Value="uthread.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uThread"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

@@ -3,14 +3,14 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="12"/>
-    <BuildModes Active="Release"/>
+    <BuildModes Active="Debug"/>
     <Units>
       <Unit>
         <Filename Value="grepper.lpr"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="26" Y="13"/>
-        <UsageCount Value="48"/>
+        <UsageCount Value="51"/>
       </Unit>
       <Unit>
         <Filename Value="ugrepper.pas"/>
@@ -19,15 +19,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="uGrepper"/>
-        <IsVisibleTab Value="True"/>
-        <TopLine Value="193"/>
-        <CursorPos X="60" Y="220"/>
-        <FoldState Value=" T3k70V0A5 PiWnK0U"/>
-        <UsageCount Value="48"/>
-        <Bookmarks Count="3">
-          <Item0 X="26" Y="235" ID="1"/>
-          <Item1 Y="43" ID="2"/>
-          <Item2 Y="276" ID="3"/>
+        <TopLine Value="73"/>
+        <CursorPos X="39" Y="202"/>
+        <UsageCount Value="51"/>
+        <Bookmarks Count="2">
+          <Item0 Y="78" ID="1"/>
+          <Item1 X="3" Y="16" ID="2"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -36,10 +33,31 @@
         <Filename Value="ustack.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="uStack"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="10"/>
-        <CursorPos X="17" Y="54"/>
-        <UsageCount Value="26"/>
+        <EditorIndex Value="4"/>
+        <CursorPos X="21" Y="17"/>
+        <UsageCount Value="29"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="utree.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uTree"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="14"/>
+        <CursorPos X="59" Y="27"/>
+        <UsageCount Value="23"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="uthread.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uThread"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="203"/>
+        <CursorPos Y="249"/>
+        <FoldState Value=" T3iS0V~"/>
+        <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -183,124 +201,133 @@
       <Unit>
         <Filename Value="C:\lazarus\lcl\lmessages.pp"/>
         <UnitName Value="LMessages"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="708"/>
-        <CursorPos X="15" Y="733"/>
-        <UsageCount Value="9"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="23"/>
+        <CursorPos X="3" Y="48"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
       </Unit>
     </Units>
-    <JumpHistory HistoryIndex="27">
+    <JumpHistory HistoryIndex="29">
       <Position>
-        <Filename Value="ugrepper.pas"/>
-        <Caret Line="438" Column="15" TopLine="415"/>
+        <Filename Value="uthread.pas"/>
+        <Caret Line="82" Column="6" TopLine="57"/>
+      </Position>
+      <Position>
+        <Filename Value="uthread.pas"/>
+        <Caret Line="9" Column="35"/>
+      </Position>
+      <Position>
+        <Filename Value="uthread.pas"/>
+        <Caret Line="93" Column="12" TopLine="68"/>
+      </Position>
+      <Position>
+        <Filename Value="uthread.pas"/>
+        <Caret Line="9" Column="45"/>
+      </Position>
+      <Position>
+        <Filename Value="uthread.pas"/>
+        <Caret Line="144" Column="11" TopLine="119"/>
+      </Position>
+      <Position>
+        <Filename Value="uthread.pas"/>
+        <Caret Line="8" Column="12"/>
       </Position>
       <Position>
         <Filename Value="ugrepper.pas"/>
-        <Caret Line="43" Column="45" TopLine="18"/>
-      </Position>
-      <Position>
-        <Filename Value="ustack.pas"/>
-        <Caret Line="15" Column="38"/>
-      </Position>
-      <Position>
-        <Filename Value="ustack.pas"/>
-        <Caret Line="24" Column="20"/>
-      </Position>
-      <Position>
-        <Filename Value="ustack.pas"/>
-        <Caret Line="31" Column="36"/>
-      </Position>
-      <Position>
-        <Filename Value="ustack.pas"/>
-        <Caret Line="38" Column="25"/>
-      </Position>
-      <Position>
-        <Filename Value="ustack.pas"/>
-        <Caret Line="36" TopLine="7"/>
-      </Position>
-      <Position>
-        <Filename Value="ustack.pas"/>
-        <Caret Line="22" Column="20" TopLine="5"/>
+        <Caret Line="18" Column="19"/>
       </Position>
       <Position>
         <Filename Value="ugrepper.pas"/>
-        <Caret Line="421" Column="33" TopLine="399"/>
+        <Caret Line="67" Column="72" TopLine="25"/>
+      </Position>
+      <Position>
+        <Filename Value="uthread.pas"/>
+        <Caret Line="144" Column="59" TopLine="119"/>
+      </Position>
+      <Position>
+        <Filename Value="uthread.pas"/>
+        <Caret Line="13" Column="5"/>
+      </Position>
+      <Position>
+        <Filename Value="uthread.pas"/>
+        <Caret Line="14" Column="3"/>
       </Position>
       <Position>
         <Filename Value="ugrepper.pas"/>
-        <Caret Line="57" Column="34" TopLine="19"/>
+        <Caret Line="100" TopLine="96"/>
       </Position>
       <Position>
         <Filename Value="ugrepper.pas"/>
-        <Caret Line="47" Column="19" TopLine="41"/>
+        <Caret Line="52" TopLine="22"/>
       </Position>
       <Position>
         <Filename Value="ugrepper.pas"/>
-        <Caret Line="43" Column="19" TopLine="22"/>
+        <Caret Line="247" Column="8" TopLine="219"/>
       </Position>
       <Position>
         <Filename Value="ugrepper.pas"/>
-        <Caret Line="232" Column="61" TopLine="207"/>
+        <Caret Line="17" Column="22"/>
       </Position>
       <Position>
         <Filename Value="ugrepper.pas"/>
-        <Caret Line="42" Column="42" TopLine="18"/>
+        <Caret Line="10" Column="14"/>
       </Position>
       <Position>
         <Filename Value="ugrepper.pas"/>
-        <Caret Line="296" Column="48" TopLine="252"/>
+        <Caret Line="176" TopLine="153"/>
       </Position>
       <Position>
         <Filename Value="ugrepper.pas"/>
-        <Caret Line="280" Column="25" TopLine="255"/>
+        <Caret Line="67" TopLine="43"/>
       </Position>
       <Position>
-        <Filename Value="ugrepper.pas"/>
-        <Caret Line="43" Column="52" TopLine="17"/>
+        <Filename Value="uthread.pas"/>
+        <Caret Line="9" Column="3"/>
       </Position>
       <Position>
-        <Filename Value="ugrepper.pas"/>
-        <Caret Line="47" Column="26" TopLine="35"/>
+        <Filename Value="uthread.pas"/>
+        <Caret Line="187" Column="10" TopLine="159"/>
       </Position>
       <Position>
-        <Filename Value="ugrepper.pas"/>
-        <Caret Line="459" Column="11" TopLine="425"/>
+        <Filename Value="uthread.pas"/>
+        <Caret Line="213" Column="10" TopLine="171"/>
       </Position>
       <Position>
-        <Filename Value="ugrepper.pas"/>
-        <Caret Line="109" Column="15" TopLine="85"/>
+        <Filename Value="uthread.pas"/>
+        <Caret Line="233" Column="10" TopLine="191"/>
       </Position>
       <Position>
-        <Filename Value="ugrepper.pas"/>
-        <Caret Line="417" Column="35" TopLine="317"/>
+        <Filename Value="uthread.pas"/>
+        <Caret Line="252" Column="10" TopLine="210"/>
       </Position>
       <Position>
-        <Filename Value="ugrepper.pas"/>
-        <Caret Line="204" Column="41" TopLine="193"/>
+        <Filename Value="uthread.pas"/>
+        <Caret Line="242" Column="45" TopLine="214"/>
       </Position>
       <Position>
-        <Filename Value="ustack.pas"/>
-        <Caret Line="54" Column="17" TopLine="10"/>
+        <Filename Value="uthread.pas"/>
+        <Caret Line="8" Column="84"/>
       </Position>
       <Position>
-        <Filename Value="ugrepper.pas"/>
-        <Caret Line="313" TopLine="288"/>
+        <Filename Value="uthread.pas"/>
+        <Caret Line="57" TopLine="15"/>
       </Position>
       <Position>
-        <Filename Value="ugrepper.pas"/>
-        <Caret Line="46" Column="20" TopLine="26"/>
+        <Filename Value="uthread.pas"/>
+        <Caret Line="185" TopLine="143"/>
       </Position>
       <Position>
-        <Filename Value="ugrepper.pas"/>
-        <Caret Line="222" Column="18" TopLine="191"/>
+        <Filename Value="uthread.pas"/>
+        <Caret Line="210" TopLine="168"/>
       </Position>
       <Position>
-        <Filename Value="ugrepper.pas"/>
-        <Caret Line="301" Column="58" TopLine="267"/>
+        <Filename Value="uthread.pas"/>
+        <Caret Line="227" TopLine="186"/>
       </Position>
       <Position>
-        <Filename Value="ugrepper.pas"/>
-        <Caret Line="46" Column="58" TopLine="21"/>
+        <Filename Value="uthread.pas"/>
+        <Caret Line="243" TopLine="201"/>
       </Position>
     </JumpHistory>
     <RunParams>
@@ -309,15 +336,6 @@
     </RunParams>
   </ProjectSession>
   <Debugging>
-    <BreakPoints>
-      <Item>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="ugrepper.pas"/>
-        <Line Value="346"/>
-      </Item>
-    </BreakPoints>
     <Watches>
       <Item>
         <Expression Value="msg"/>
