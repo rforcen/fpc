@@ -41,8 +41,8 @@ type
     procedure cbPresetsSelect(Sender: TObject);
     procedure cbShowSourceClick(Sender: TObject);
     procedure eExprEditingDone(Sender: TObject);
-    procedure FormActivate(Sender: TObject);
     procedure FormClose(Sender: TObject; var {%H-}CloseAction: TCloseAction);
+    procedure FormCreate(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: word; {%H-}Shift: TShiftState);
     procedure FormResize(Sender: TObject);
     procedure Image1Click(Sender: TObject);
@@ -219,7 +219,15 @@ begin
   CreateImage;
 end;
 
-procedure TForm1.FormActivate(Sender: TObject);
+procedure TForm1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+  freeImageList;
+  domCol.Free;
+
+  sess.Free;
+end;
+
+procedure TForm1.FormCreate(Sender: TObject);
 begin
   randomize;
 
@@ -232,14 +240,6 @@ begin
   populateImageList;
 
   sess := TSessionDC.Create;
-end;
-
-procedure TForm1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-begin
-  freeImageList;
-  domCol.Free;
-
-  sess.Free;
 end;
 
 procedure TForm1.FormKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);

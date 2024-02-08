@@ -9,14 +9,14 @@ object Form1: TForm1
   ClientWidth = 1517
   DesignTimePPI = 144
   KeyPreview = True
-  OnActivate = FormActivate
   OnClose = FormClose
+  OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnResize = FormResize
   LCLVersion = '2.2.6.0'
   object Image1: TImage
     Left = 0
-    Height = 957
+    Height = 950
     Top = 96
     Width = 1014
     Align = alClient
@@ -25,8 +25,8 @@ object Form1: TForm1
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 35
-    Top = 1053
+    Height = 42
+    Top = 1046
     Width = 1517
     Panels = <>
   end
@@ -167,7 +167,7 @@ object Form1: TForm1
       ClientWidth = 1515
       TabOrder = 1
       object eExpr: TEdit
-        Left = 138
+        Left = 159
         Height = 41
         Top = 1
         Width = 1376
@@ -185,7 +185,7 @@ object Form1: TForm1
         Left = 1
         Height = 41
         Top = 1
-        Width = 137
+        Width = 158
         Align = alLeft
         Alignment = taCenter
         Caption = ' edit expression '
@@ -198,17 +198,17 @@ object Form1: TForm1
   end
   object Panel3: TPanel
     Left = 1014
-    Height = 957
+    Height = 950
     Top = 96
     Width = 503
     Align = alRight
     Caption = 'Panel3'
-    ClientHeight = 957
+    ClientHeight = 950
     ClientWidth = 503
     TabOrder = 2
     object lvThumbs: TListView
       Left = 1
-      Height = 955
+      Height = 948
       Top = 1
       Width = 350
       Align = alRight
@@ -220,18 +220,18 @@ object Form1: TForm1
     end
     object Panel4: TPanel
       Left = 355
-      Height = 947
+      Height = 940
       Top = 5
       Width = 143
       Align = alRight
       BorderSpacing.Around = 4
-      ClientHeight = 947
+      ClientHeight = 940
       ClientWidth = 143
       TabOrder = 1
       object lbSrccode: TListBox
         Left = 1
-        Height = 916
-        Top = 30
+        Height = 904
+        Top = 35
         Width = 141
         Align = alClient
         ItemHeight = 0
@@ -239,7 +239,7 @@ object Form1: TForm1
       end
       object cbShowSource: TCheckBox
         Left = 6
-        Height = 29
+        Height = 34
         Top = 1
         Width = 131
         Align = alTop
