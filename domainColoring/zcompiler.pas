@@ -33,9 +33,16 @@ type
       tkSPI, tkSPHI, tkPUSHC, tkPUSHZ, tkPUSHI, tkPUSHCC, tkNEG);
 
   public
+    constructor Create;
+    destructor Destroy; override;
+
     function compile(expr: string): boolean;
-    function execute(z: complex): complex;
+    function Execute(z: complex): complex;
     function getErrMessage: string;
+    function getErr: boolean;
+    procedure deAssemble;
+    function deCompile: string;
+    procedure generateRandomExpression;
 
   private
     expression: string; // expression to evaluate;
@@ -55,6 +62,11 @@ type
     // compiler
     Code: array [0..MAX_CODE] of byte;
     ixCode, CodeSize: integer;
+
+  public
+    srcCode: TStringList;
+
+  private
 
     // funcs & proc's
     function getch: char;
@@ -77,12 +89,23 @@ type
 implementation
 
 const
-  fname: array of string = ('SIN', 'COS', 'TAN', 'EXP', 'LOG', 'LOG10', 'INT',
+  functionNames: array of string = ('SIN', 'COS', 'TAN', 'EXP', 'LOG', 'LOG10', 'INT',
     'SQRT', 'ASIN', 'ACOS', 'ATAN', 'ABS', 'C', 'PI', 'PHI');
 
   PHI = 0.6180339887;
 
 { TZCompiler }
+
+constructor TZCompiler.Create;
+begin
+  srcCode := TStringList.Create;
+end;
+
+destructor TZCompiler.Destroy;
+begin
+  srcCode.Free;
+  inherited Destroy;
+end;
 
 function TZCompiler.compile(expr: string): boolean;
 begin
@@ -103,15 +126,14 @@ begin
   Result := err;
 end;
 
-function TZCompiler.execute(z: complex): complex;
+function TZCompiler.Execute(z: complex): complex;
 var
   stack: array [0..MAX_STACK] of complex;
   // in MT runtime envirment MUST be local stack vars
-  sp, pc: integer;
+  sp: integer = 0;
+  pc: integer = 0;
 
 begin
-  sp := 0;
-  pc := 0;
 
   while pc < CodeSize do
   begin
@@ -120,17 +142,14 @@ begin
         pc += 1;
         stack[sp] := cinit(constants[Code[pc]], 0);
         sp += 1;
-        pc += 1;
       end;
 
       tkPUSHZ: begin
-        pc += 1;
         stack[sp] := z;
         sp += 1;
       end;
 
       tkPUSHI: begin
-        pc += 1;
         stack[sp] := uComplex.i;
         sp += 1;
       end;
@@ -138,89 +157,48 @@ begin
       tkPLUS: begin
         sp -= 1;
         stack[sp - 1] += stack[sp];
-        pc += 1;
       end;
 
       tkMINUS: begin
         sp -= 1;
         {%H-}stack[sp - 1] -= {%H-}stack[sp];
-        pc += 1;
       end;
 
       tkMULT: begin
         sp -= 1;
         stack[sp - 1] *= stack[sp];
-        pc += 1;
       end;
 
       tkDIV: begin
         sp -= 1;
         stack[sp - 1] /= stack[sp];
-        pc += 1;
       end;
 
       tkPOWER: begin
         sp -= 1;
         stack[sp - 1] := stack[sp - 1] ** stack[sp];
-        pc += 1;
       end;
 
-      tkNEG: begin
-        stack[sp - 1] := -stack[sp - 1];
-        pc += 1;
-      end;
+      tkNEG: stack[sp - 1] := -stack[sp - 1];
 
+      tkFSIN: stack[sp - 1] := csin(stack[sp - 1]);
+      tkFCOS: stack[sp - 1] := ccos(stack[sp - 1]);
+      tkFTAN: stack[sp - 1] := ctg(stack[sp - 1]);
+      tkFASIN: stack[sp - 1] := carc_sin(stack[sp - 1]);
+      tkFACOS: stack[sp - 1] := carc_cos(stack[sp - 1]);
+      tkFATAN: stack[sp - 1] := carc_tg(stack[sp - 1]);
 
-      tkFSIN: begin
-        stack[sp - 1] := csin(stack[sp - 1]);
-        pc += 1;
-      end;
-
-      tkFCOS: begin
-        stack[sp - 1] := ccos(stack[sp - 1]);
-        pc += 1;
-      end;
-
-      tkFTAN: begin
-        stack[sp - 1] := ctg(stack[sp - 1]);
-        pc += 1;
-      end;
-
-      tkFASIN: begin
-        stack[sp - 1] := carc_sin(stack[sp - 1]);
-        ixCode += 1;
-      end;
-
-      tkFACOS: begin
-        stack[sp - 1] := carc_cos(stack[sp - 1]);
-        pc += 1;
-      end;
-
-      tkFATAN: begin
-        stack[sp - 1] := carc_tg(stack[sp - 1]);
-        pc += 1;
-      end;
-
-      tkFEXP: begin
-        stack[sp - 1] := cexp(stack[sp - 1]);
-        pc += 1;
-      end;
-
-      tkFLOG: begin
-        stack[sp - 1] := cln(stack[sp - 1]);
-        pc += 1;
-      end;
-
-      tkFSQRT: begin
-        stack[sp - 1] := csqrt(stack[sp - 1]);
-        pc += 1;
-      end;
+      tkFEXP: stack[sp - 1] := cexp(stack[sp - 1]);
+      tkFLOG: stack[sp - 1] := cln(stack[sp - 1]);
+      tkFLOG10: stack[sp - 1] := cln(stack[sp - 1]); // implement log10
+      tkFSQRT: stack[sp - 1] := csqrt(stack[sp - 1]);
 
       tkFC: begin
         sp -= 1;
-        pc += 1;
         stack[sp - 1] := cinit(stack[sp - 1].re, stack[sp].re);
-      end
+      end;
+
+      tkFINT: ;
 
       else
       begin
@@ -228,6 +206,8 @@ begin
         break;
       end;
     end;
+
+    Inc(pc);
   end;
 
   if sp <> 0 then
@@ -239,6 +219,244 @@ end;
 function TZCompiler.getErrMessage: string;
 begin
   Result := errMessage;
+end;
+
+function TZCompiler.getErr: boolean;
+begin
+  Result := err;
+end;
+
+procedure TZCompiler.deAssemble;
+type
+  tkStr = record
+    k: Token;
+    s: string;
+  end;
+var
+  pc: integer = 0;
+  td: array of tkStr = ((k: tkPUSHZ; s: 'pushz'; ), (k: tkPUSHI;
+    s: 'pushi'; ), (k: tkPLUS; s: 'add'; ), (k: tkMINUS; s: 'sub';
+    ), (k: tkMULT; s: 'mul'; ), (k: tkDIV; s: 'div'; ), (k: tkPOWER;
+    s: 'pow'; ), (k: tkNEG; s: 'neg'; ), (k: tkFC; s: 'cplx'; ));
+
+  function getString(tk: Token): string; // find a token in 'td'
+  var
+    t: tkStr;
+  begin
+    Result := '';
+    for t in td do
+      if t.k = tk then
+      begin
+        Result := t.s;
+        break;
+      end;
+  end;
+
+begin
+
+  srcCode.Clear;
+
+  while pc < CodeSize do
+  begin
+    case Token(Code[pc]) of
+      tkPUSHC: begin
+        Inc(pc);
+        srcCode.Add(Format('pushc (%f, %f)', [constants[Code[pc]], 0.0]));
+      end;
+
+      tkPUSHZ,
+      tkPUSHI,
+      tkPLUS,
+      tkMINUS,
+      tkMULT,
+      tkDIV,
+      tkPOWER,
+      tkNEG,
+      tkFC {to complex}: srcCode.Add(getString(Token(Code[pc])));
+
+      tkFSIN, tkFCOS, tkFTAN, tkFASIN, tkFACOS, tkFATAN, tkFEXP, tkFLOG, tkFSQRT:
+        srcCode.Add(toLower(functionNames[Code[pc] - integer(tkFSIN)]{%H-}){%H-});
+
+      else
+      begin
+        err := True;
+        break;
+      end;
+    end;
+    Inc(pc);
+  end;
+end;
+
+function TZCompiler.deCompile: string;
+
+  function opPrecedence(tk: Token): integer;
+  begin
+    case tk of
+      tkPLUS, tkMINUS: Result := 0;
+      tkMULT, tkDIV: Result := 1;
+      tkPOWER: Result := 2;
+      else
+        Result := -1;
+    end;
+  end;
+
+  function op2Char(tk: Token): char;
+  begin
+    case tk of
+      tkPLUS: Result := '+';
+      tkMINUS: Result := '-';
+      tkMULT: Result := '*';
+      tkDIV: Result := '/';
+      tkPOWER: Result := '^';
+      else
+        Result := ' ';
+    end;
+  end;
+
+type
+  TStack = record
+    val: string;
+    prec: integer;
+  end;
+
+var
+  pc: integer = 0;
+  sp: integer = 0;
+  tk: Token;
+  stack: array [0..MAX_STACK] of TStack;
+  _prec: integer = 999;
+
+begin
+  while pc < CodeSize do
+  begin
+    tk := Token(Code[pc]);
+    case tk of
+      tkPUSHC: begin
+        Inc(pc);
+
+        stack[sp].val := Format('%.1f', [constants[Code[pc]]]);
+        stack[sp].prec := 999;
+
+        Inc(sp);
+      end;
+
+      tkPUSHZ: begin
+        stack[sp].val := 'z';
+        stack[sp].prec := 999;
+        Inc(sp);
+      end;
+      tkPUSHI: begin
+        stack[sp].val := 'i';
+        stack[sp].prec := 999;
+        Inc(sp);
+      end;
+
+      tkPLUS,
+      tkMINUS,
+      tkMULT,
+      tkDIV,
+      tkPOWER: begin
+        Dec(sp);
+
+        _prec := opPrecedence(tk);
+
+        with {%H-}stack[sp - 1] do
+        begin
+          if prec < _prec then  // left <op> | ( left ) <op>
+            val := '(' + val + ')';
+
+          val += op2Char(tk);
+
+          if stack[sp].prec < _prec then  //  right | (right)
+            val += '(' + stack[sp].val + ')'
+          else
+            val += stack[sp].val;
+
+          prec := _prec;
+        end;
+      end;
+
+      tkNEG: ;
+      tkFC {to complex}: begin
+        Dec(sp);
+        stack[sp - 1].val := 'c(' + stack[sp - 1].val + ',' + stack[sp].val + ')';
+      end;
+
+      tkFSIN, tkFCOS, tkFTAN, tkFASIN, tkFACOS, tkFATAN, tkFEXP, tkFLOG, tkFSQRT:
+        stack[sp - 1].val := toLower(functionNames[Code[pc] - integer(tkFSIN)]{%H-}) +
+          '(' + stack{%H-}[sp - 1].val {%H-}+ ')';
+      else
+      begin
+        err := True;
+        break;
+      end;
+    end;
+    Inc(pc);
+  end;
+
+  if sp <> 0 then
+    Result := stack[sp - 1].val
+  else
+    Result := '';
+end;
+
+procedure TZCompiler.generateRandomExpression;
+
+var
+  i: integer;
+
+  procedure generateRndConstants;
+  var
+    i: integer;
+  begin
+    ixConst := random(30);
+    for i := 0 to ixConst - 1 do constants[i] := random * 100.0;
+  end;
+
+  procedure genRndPush;
+  begin
+
+    case random(10) of
+      0..6: generate(tkPUSHZ);
+      else
+        generate(tkPUSHC, byte(random(ixConst)));
+    end;
+  end;
+
+  procedure genRndOper;
+  begin
+    case random(5) of
+      0: generate(tkPLUS);
+      1: generate(tkMINUS);
+      2: generate(tkMULT);
+      3: generate(tkDIV);
+
+      4: generate(tkPOWER);
+    end;
+  end;
+
+  function getRndFunc: Token;
+  begin
+    Result := Token(integer(tkFSIN) + random(integer(tkFATAN) - integer(tkFSIN)));
+  end;
+
+begin
+  ixCode := 0;
+
+  randomize;
+
+  generateRndConstants;
+
+  genRndPush;
+
+  for i := 0 to random(10) + 5 do
+  begin
+    genRndPush;
+    genRndOper;
+    if random(5) >= 3 then generate(getRndFunc);
+  end;
+
+  CodeSize := ixCode;
 end;
 
 function TZCompiler.getch: char;
@@ -288,7 +506,7 @@ begin
       else
       begin
         // is a func ?
-        ix := AnsiIndexStr(id, fname);
+        ix := AnsiIndexStr(id, functionNames);
         if ix <> -1 then
         begin
           sym := Token(ix + integer(tkFSIN)); // first symbol offset

@@ -7,7 +7,7 @@ uses
   //cthreads,
   {$endif}
   Interfaces, // this includes the LCL widgetset
-  Forms, Unit1, domainColoring, zCompiler, assignImage;
+  Forms, Unit1, domainColoring, zCompiler, utils;
 
 {$R *.res}
 

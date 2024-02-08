@@ -1,57 +1,59 @@
 object Form1: TForm1
   Left = 570
-  Height = 1042
+  Height = 1088
   Top = 288
-  Width = 1031
+  Width = 1517
   Align = alLeft
   Caption = 'Domain Coloring'
-  ClientHeight = 1042
-  ClientWidth = 1031
+  ClientHeight = 1088
+  ClientWidth = 1517
   DesignTimePPI = 144
   KeyPreview = True
   OnActivate = FormActivate
+  OnClose = FormClose
   OnKeyDown = FormKeyDown
   OnResize = FormResize
   LCLVersion = '2.2.6.0'
   object Image1: TImage
     Left = 0
-    Height = 903
-    Top = 104
-    Width = 1031
+    Height = 957
+    Top = 96
+    Width = 1014
     Align = alClient
+    OnClick = Image1Click
     OnDblClick = Image1DblClick
   end
   object StatusBar1: TStatusBar
     Left = 0
     Height = 35
-    Top = 1007
-    Width = 1031
+    Top = 1053
+    Width = 1517
     Panels = <>
   end
   object pnlTools: TPanel
     Left = 0
-    Height = 104
+    Height = 96
     Top = 0
-    Width = 1031
+    Width = 1517
     Align = alTop
-    ClientHeight = 104
-    ClientWidth = 1031
+    ClientHeight = 96
+    ClientWidth = 1517
     TabOrder = 1
     object Panel1: TPanel
       Left = 1
       Height = 48
       Top = 1
-      Width = 1029
+      Width = 1515
       Align = alTop
       ClientHeight = 48
-      ClientWidth = 1029
+      ClientWidth = 1515
       TabOrder = 0
       object cbPresets: TComboBox
-        Left = 415
+        Left = 528
         Height = 40
         Hint = 'preset formulas'
         Top = 1
-        Width = 613
+        Width = 986
         Align = alClient
         Font.CharSet = ANSI_CHARSET
         Font.Color = clFuchsia
@@ -91,7 +93,7 @@ object Form1: TForm1
         Text = '(1+i)*log(sin(z^3-1)/z)'
       end
       object btnSave: TButton
-        Left = 1
+        Left = 302
         Height = 46
         Hint = 'save image to .png file in selected width'
         Top = 1
@@ -102,7 +104,7 @@ object Form1: TForm1
         TabOrder = 1
       end
       object seWidth: TSpinEdit
-        Left = 114
+        Left = 1
         Height = 46
         Hint = 'width in Kb of saved image'
         Top = 1
@@ -113,10 +115,10 @@ object Form1: TForm1
         ParentShowHint = False
         ShowHint = True
         TabOrder = 2
-        Value = 1
+        Value = 2
       end
       object btnLoadFormulas: TButton
-        Left = 189
+        Left = 76
         Height = 46
         Hint = 'load text file with formulas (1 per line)'
         Top = 1
@@ -129,7 +131,7 @@ object Form1: TForm1
         TabOrder = 3
       end
       object btnReset: TButton
-        Left = 302
+        Left = 189
         Height = 46
         Hint = 'reset formula list to preset values'
         Top = 1
@@ -141,22 +143,35 @@ object Form1: TForm1
         ShowHint = True
         TabOrder = 4
       end
+      object btnRandom: TButton
+        Left = 415
+        Height = 46
+        Hint = 'reset formula list to preset values'
+        Top = 1
+        Width = 113
+        Align = alLeft
+        Caption = 'r&andom'
+        OnClick = btnRandomClick
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 5
+      end
     end
     object Panel2: TPanel
       Left = 1
-      Height = 51
+      Height = 43
       Top = 49
-      Width = 1029
+      Width = 1515
       Align = alTop
-      ClientHeight = 51
-      ClientWidth = 1029
+      ClientHeight = 43
+      ClientWidth = 1515
       TabOrder = 1
       object eExpr: TEdit
         Left = 138
-        Height = 49
+        Height = 41
         Top = 1
-        Width = 890
-        Align = alClient
+        Width = 1376
+        Align = alLeft
         Font.CharSet = ANSI_CHARSET
         Font.Height = -22
         Font.Name = 'Courier New'
@@ -168,7 +183,7 @@ object Form1: TForm1
       end
       object Label2: TLabel
         Left = 1
-        Height = 49
+        Height = 41
         Top = 1
         Width = 137
         Align = alLeft
@@ -181,9 +196,72 @@ object Form1: TForm1
       end
     end
   end
+  object Panel3: TPanel
+    Left = 1014
+    Height = 957
+    Top = 96
+    Width = 503
+    Align = alRight
+    Caption = 'Panel3'
+    ClientHeight = 957
+    ClientWidth = 503
+    TabOrder = 2
+    object lvThumbs: TListView
+      Left = 1
+      Height = 955
+      Top = 1
+      Width = 350
+      Align = alRight
+      Columns = <>
+      LargeImages = ImageList1
+      TabOrder = 0
+      ViewStyle = vsIcon
+      OnClick = lvThumbsClick
+    end
+    object Panel4: TPanel
+      Left = 355
+      Height = 947
+      Top = 5
+      Width = 143
+      Align = alRight
+      BorderSpacing.Around = 4
+      ClientHeight = 947
+      ClientWidth = 143
+      TabOrder = 1
+      object lbSrccode: TListBox
+        Left = 1
+        Height = 916
+        Top = 30
+        Width = 141
+        Align = alClient
+        ItemHeight = 0
+        TabOrder = 0
+      end
+      object cbShowSource: TCheckBox
+        Left = 6
+        Height = 29
+        Top = 1
+        Width = 131
+        Align = alTop
+        BorderSpacing.Left = 5
+        BorderSpacing.Right = 5
+        Caption = 'asm code'
+        Checked = True
+        OnClick = cbShowSourceClick
+        State = cbChecked
+        TabOrder = 1
+      end
+    end
+  end
   object OpenDialog1: TOpenDialog
     Filter = 'dc files|*.dc'
-    Left = 48
-    Top = 72
+    Left = 64
+    Top = 168
+  end
+  object ImageList1: TImageList
+    Height = 256
+    Width = 256
+    Left = 200
+    Top = 168
   end
 end

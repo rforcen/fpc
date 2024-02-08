@@ -25,12 +25,13 @@ type
     rt: TResultType; // u32, f32
 
   public
-    constructor Create(_rt: TResultType; _w, _h: integer; _expr: string); overload;
+    constructor Create; overload;
     destructor Destroy; override;
-    procedure genImage;
-    procedure genImageMT;
+    procedure genImage(_rt: TResultType; _w, _h: integer; _expr: string = '');
+    procedure genImageMT(_rt: TResultType; _w, _h: integer; _expr: string = '');
 
     function getError: string;
+    function ok: boolean;
   private
     procedure genPixel(i, j: integer);
     function HSV2int(_h, _s, _v: double): uint32;
@@ -46,22 +47,10 @@ const
 
 { TDomainColoring }
 
-constructor TDomainColoring.Create(_rt: TResultType; _w, _h: integer; _expr: string);
+constructor TDomainColoring.Create;
 begin
-  w := _w;
-  h := _h;
-  ci := cinit(1, 0);
-  rt := _rt;
-
   zComp := TZCompiler.Create;
-  zComp.compile(_expr);
-
-  case rt of
-    rt_u32: setLength(image, w * h);
-    rt_f32: setLength(f32image, w * h * 3) // rgb
-  end;
 end;
-
 
 destructor TDomainColoring.Destroy;
 begin
@@ -72,7 +61,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TDomainColoring.genImage;
+procedure TDomainColoring.genImage(_rt: TResultType; _w, _h: integer; _expr: string);
 
 var
   limit, rmi, rma, imi, ima, im, re, a, m, ranges, rangee, k, kk, sat, val: double;
@@ -85,6 +74,22 @@ var
   end;
 
 begin
+  // init
+  w := _w;
+  h := _h;
+  ci := cinit(1, 0);
+  rt := _rt;
+
+  if _expr <> '' then
+    zComp.compile(_expr);
+
+  case rt of
+    rt_u32: setLength(image, w * h);
+    rt_f32: setLength(f32image, w * h * 3) // rgb
+  end;
+
+
+  // calc
 
   limit := PI;
 
@@ -100,7 +105,7 @@ begin
     begin
       re := rma - (rma - rmi) * i / (w - 1);
 
-      v := zComp.execute(cinit(re, im)); // evaluate here
+      v := zComp.Execute(cinit(re, im)); // evaluate here
 
       a := carg(v);  // arg
       while (a < 0) do
@@ -154,7 +159,7 @@ begin
   im := ima - (ima - imi) * j / (h - 1);
   re := rma - (rma - rmi) * i / (w - 1);
 
-  v := zComp.execute(cinit(re, im)); // evaluate here
+  v := zComp.Execute(cinit(re, im)); // evaluate here
 
   a := carg(v);  // arg
   while (a < 0) do
@@ -197,6 +202,11 @@ end;
 function TDomainColoring.getError: string;
 begin
   Result := zComp.getErrMessage;
+end;
+
+function TDomainColoring.ok: boolean;
+begin
+  Result := not zComp.getErr;
 end;
 
 function TDomainColoring.HSV2int(_h, _s, _v: double): uint32;
@@ -386,13 +396,32 @@ end;
 
 
 // MT generation
-procedure TDomainColoring.genImageMT; // TThread
+procedure TDomainColoring.genImageMT(_rt: TResultType; _w, _h: integer;
+  _expr: string); // TThread
 var
   nth, th: integer;
   ths: array of DCThread;
 
 begin
+  // init
+  w := _w;
+  h := _h;
+  ci := cinit(1, 0);
+  rt := _rt;
+
+  if _expr <> '' then
+    zComp.compile(_expr);
+
+  case rt of
+    rt_u32: setLength(image, w * h);
+    rt_f32: setLength(f32image, w * h * 3) // rgb
+  end;
+
+  // calc
+
   nth := GetCPUCount;
+  ths := nil;
+
   setlength(ths, nth);
 
   for th := low(ths) to high(ths) do

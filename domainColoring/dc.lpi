@@ -72,7 +72,6 @@
             <Optimizations>
               <OptimizationLevel Value="3"/>
             </Optimizations>
-            <SmallerCode Value="True"/>
           </CodeGeneration>
           <Linking>
             <Debugging>
@@ -101,7 +100,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="6">
+    <Units Count="5">
       <Unit0>
         <Filename Value="dc.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -125,14 +124,9 @@
         <UnitName Value="zCompiler"/>
       </Unit3>
       <Unit4>
-        <Filename Value="assignimage.pas"/>
+        <Filename Value="utils.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="assignImage"/>
       </Unit4>
-      <Unit5>
-        <Filename Value="presetFormulas.dc.txt"/>
-        <IsPartOfProject Value="True"/>
-      </Unit5>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
