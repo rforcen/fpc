@@ -1,0 +1,186 @@
+object frmQueen: TfrmQueen
+  Left = 1095
+  Height = 1125
+  Top = 628
+  Width = 1207
+  Caption = 'the queens problem'
+  ClientHeight = 1125
+  ClientWidth = 1207
+  DesignTimePPI = 144
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnMouseWheel = FormMouseWheel
+  LCLVersion = '3.0.0.3'
+  object panelControl: TPanel
+    Left = 0
+    Height = 40
+    Top = 0
+    Width = 1207
+    Align = alTop
+    ClientHeight = 40
+    ClientWidth = 1207
+    TabOrder = 0
+    object goBtn: TButton
+      Left = 6
+      Height = 38
+      Top = 1
+      Width = 59
+      Align = alLeft
+      BorderSpacing.Left = 5
+      Caption = 'go!'
+      TabOrder = 0
+      OnClick = goBtnClick
+    end
+    object edNum: TSpinEdit
+      Left = 70
+      Height = 38
+      Hint = 'board size'
+      Top = 1
+      Width = 75
+      Align = alLeft
+      BorderSpacing.Left = 5
+      MaxValue = 50
+      MinValue = 4
+      OnChange = edNumChange
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+      Value = 8
+    end
+    object cbMT: TComboBox
+      Left = 150
+      Height = 38
+      Top = 1
+      Width = 154
+      Align = alLeft
+      BorderSpacing.Left = 5
+      ItemHeight = 30
+      ItemIndex = 1
+      Items.Strings = (
+        'SingleThread'
+        'MultiThread'
+      )
+      ReadOnly = True
+      TabOrder = 2
+      Text = 'MultiThread'
+    end
+    object currSolution: TSpinEdit
+      Left = 1112
+      Height = 38
+      Hint = '# solution'
+      Top = 1
+      Width = 94
+      Align = alRight
+      BorderSpacing.Left = 5
+      MinValue = 1
+      OnChange = currSolutionChange
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 3
+    end
+    object maxSols: TSpinEdit
+      Left = 309
+      Height = 38
+      Hint = 'find at least this # of solutions'
+      Top = 1
+      Width = 91
+      Align = alLeft
+      BorderSpacing.Left = 5
+      MaxValue = 1000
+      MinValue = 1
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 4
+      Value = 4
+    end
+    object saveBtn: TButton
+      Left = 405
+      Height = 38
+      Hint = 'save current board in a 4k image'
+      Top = 1
+      Width = 91
+      Align = alLeft
+      BorderSpacing.Left = 5
+      Caption = 'save 4k'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 5
+      OnClick = saveBtnClick
+    end
+    object Label1: TLabel
+      Left = 1012
+      Height = 38
+      Top = 1
+      Width = 95
+      Align = alRight
+      BorderSpacing.Left = 5
+      Caption = 'solution #'
+      OnClick = Label1Click
+    end
+    object trBtn: TButton
+      Left = 573
+      Height = 38
+      Hint = 'apply geo transformations to current board'
+      Top = 1
+      Width = 175
+      Align = alLeft
+      BorderSpacing.Left = 5
+      Caption = 'transformations'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 6
+      OnClick = trBtnClick
+    end
+    object cbAnimate: TCheckBox
+      Left = 753
+      Height = 38
+      Top = 1
+      Width = 102
+      Align = alLeft
+      Alignment = taLeftJustify
+      BorderSpacing.Left = 5
+      Caption = 'animate'
+      TabOrder = 7
+    end
+    object stcBtn: TButton
+      Left = 501
+      Height = 38
+      Hint = 'copy all solutions as text to clipboard'
+      Top = 1
+      Width = 67
+      Align = alLeft
+      BorderSpacing.Left = 5
+      Caption = 'copy'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 8
+      OnClick = stcBtnClick
+    end
+  end
+  object panelDisp: TPanel
+    Left = 0
+    Height = 1043
+    Top = 40
+    Width = 1207
+    Align = alClient
+    ClientHeight = 1043
+    ClientWidth = 1207
+    TabOrder = 1
+    object pbBoard: TPaintBox
+      Left = 1
+      Height = 1041
+      Top = 1
+      Width = 1205
+      Align = alClient
+      Enabled = False
+      OnPaint = pbBoardPaint
+    end
+  end
+  object sbar: TStatusBar
+    Left = 0
+    Height = 42
+    Top = 1083
+    Width = 1207
+    Panels = <>
+  end
+end
