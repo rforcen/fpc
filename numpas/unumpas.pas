@@ -105,6 +105,7 @@ type
     procedure rangeSlice(const index: TArrInt; out aStart, aEnd: integer);
     function startSlice(const slc: TArrInt): integer;
     function endSlice(const slc: TArrInt): integer;
+    function checkDims: boolean;
 
     {rand primitives}
     function TsRandInt(var seed: integer): integer; inline;
@@ -572,6 +573,15 @@ begin
   Result := calcIndex(widx);
 end;
 
+function TNumPas<T>.checkDims: boolean;
+var
+  i: integer;
+begin
+  if fNDims = 0 then exit(False);
+  for i in fDims do if i <= 0 then exit(False);
+  Result := True;
+end;
+
 { thread safe random funcs}
 function TNumPas<T>.TsRandInt(var seed: integer): integer;
 begin
@@ -924,7 +934,7 @@ var
   raDim, aDim, sDim, resDim: TArrInt;
   p: T;
 begin
-  if (fNDims = 0) or (a.fNdims = 0) then exit(nil);
+  if not (checkDims and a.checkDims) then exit(nil);
 
   pivotPos := Math.min(1, a.fNdims - 1); // position in a of pivot dim in  1|0
   pivd := a.dim(pivotPos); // pivot dimension, a.dim(1|0) = dim(0)
@@ -951,7 +961,7 @@ begin
 
   adim0 := a.dim(0);
   ahi0 := a.hi(0);
-  ahi1 := a.hi(1);
+  if a.fNdims > 1 then ahi1 := a.hi(1);
   ppivd := pred(pivd);
 
   sStart := 0;
@@ -998,68 +1008,6 @@ begin
   end;
 end;
 
-{
-function TNumPas<T>.dot(a: TNumPas<T>): TNumPas<T>;
-var
-  pivd: integer; // pivot dim in a -> inc offset in traverse self, a
-  resDim, leftDim, rightDim: TArrInt;
-  p: T;
-  i, ixs, c, r, ixr, ncols, nrows: integer;
-
-  function dimsMatch(a: NP; da: integer; b: NP; db: integer): boolean;
-  begin
-    Result := (a.fNDims = da) and (b.fNDims = db);
-  end;
-
-begin
-  assert((fNDims > 0) and (a.fNdims > 0), 'dot: both dims must be > 0 ');
-
-  if dimsMatch(self, 1, a, 1) then Result := dot1x1(a) // 1x1, 2x1, 1x2, 2x2
-  else if dimsMatch(self, 2, a, 1) then Result := dot2x1(a)
-  else if dimsMatch(self, 1, a, 2) then Result := dot1x2(a)
-  else if (self.fNdims > 1) and (a.fNdims = 1) then Result := dotnx1(a)
-  else
-  begin  // both dims >= 2
-    if fNDims >= a.fNdims then
-    begin
-
-      // general case
-      pivd := dim(0);
-      assert(dim(0) = a.dim(1), 'shapes not aligned');
-
-      rightDim := system.copy(a.fDims); // right: remove dim 1
-      Delete(rightDim, high(rightDim) - 1, 1);
-
-      resDim := system.copy(fDims, 0, high(fDims)); // left: except last
-      leftDim := system.copy(resDim);
-      insert(rightDim, resDim, length(resDim));
-
-      Result := NP.Create(resDim);
-
-      ncols := prod(rightDim);   // in a
-      nrows := Result.fNitems div ncols;
-
-      ixr := 0;
-
-      for r := 0 to pred(nrows) do
-      begin
-        for c := 0 to pred(ncols) do
-        begin
-          p := 0;
-          for i := 0 to pred(pivd) do p += self[r, i] * a[i, c];
-
-          Result[ixr] := p;
-          Inc(ixr);
-        end;
-      end;
-    end
-    else
-    begin // general form fNDims<a.fNDims
-
-    end;
-  end;
-end;
-}
 function TNumPas<T>.dot1x1(a: TNumPas<T>): TNumPas<T>;
 var
   p: T;
