@@ -35,15 +35,13 @@ type
 
   TNumPas<T> = record
   private
-  const
-    Eps = 1e-10;
+    {const  Eps = 1e-10;}
   type
     TArrArrInt = array of TArrInt;
     TArrT = array of T;
     PT = ^T;
     TFlatArrayHelper = class(TArrayHelper<T>);
     NP = TNumPas<T>;
-
     TNPFunction = function(v: T): T; //of object;
 
     { TValEnumerator }
@@ -62,7 +60,7 @@ type
 
     constructor rand(_dims: TArrInt); overload;
     constructor arange(nitems: integer); overload;
-    constructor linspace(astart, aend: real; _nitems: integer); overload;
+    constructor linspace(astart, aend: double; _nitems: integer); overload;
     constructor eye(nitems: integer); overload;
     constructor full(const _dims: TArrInt; avalue: T); overload;
     constructor ones(const _dims: TArrInt); overload;
@@ -72,10 +70,9 @@ type
     constructor transpose(const a: TNumPas<T>);
 
   private
-    fData: array of T;
     fDims: TArrInt;
-    fMlt: TArrInt; // mlt factor for index calc
     fNitems, fNdims: integer;
+    fMlt: TArrInt; // mlt factor for index calc
     fSizeBytes: integer;
 
     _typeInfo: PTypeInfo;
@@ -86,6 +83,7 @@ type
     fpf64: pdouble;
     fpf128: pfp128;
     fpdata: ^T;
+    fData: array of T;
 
 
   private
@@ -105,8 +103,8 @@ type
   public
     function calcIndex(const index: TArrInt): integer; inline;
     procedure rangeSlice(const index: TArrInt; out aStart, aEnd: integer);
-    function startRange(const slc: TArrInt): integer;
-    function endRange(const slc: TArrInt): integer;
+    function startSlice(const slc: TArrInt): integer;
+    function endSlice(const slc: TArrInt): integer;
 
     {rand primitives}
     function TsRandInt(var seed: integer): integer; inline;
@@ -150,6 +148,7 @@ type
     function dot1x1(a: NP): NP;
     function dot2x1(a: NP): NP;
     function dot1x2(a: NP): NP;
+    function dotnx1(a: NP): NP;
     function dot2x2(a: NP): NP;
     function dot(a: NP): NP;
     function apply(foo: TNPFunction): NP;
@@ -164,8 +163,8 @@ type
     function transpose2x2: NP;
     function cofactor: NP;
     function allEQ(const v: T): boolean;
+    function dims: TArrInt;
   public
-
     class operator := (values: TArrT): NP; // create a numpas by assign fDims
 
     class operator +(const a, b: NP): NP;
@@ -195,6 +194,7 @@ type
   end;
 
 function toString(a: TArrInt): string;
+function genCombs(const a: TArrInt; n: integer): TArrInt;
 
 implementation
 
@@ -283,10 +283,10 @@ begin
   for i := 0 to pred(nItems) do fData[i] := i;
 end;
 
-constructor TNumPas<T>.linspace(astart, aend: real; _nitems: integer);
+constructor TNumPas<T>.linspace(astart, aend: double; _nitems: integer);
 var
   i: integer;
-  ainc: real;
+  ainc: double;
 begin
   assert((astart < aend) and (_nitems > 0), 'linspace start > end and nitems > 0');
   self := TNumPas<T>.Create([_nitems]);
@@ -378,6 +378,8 @@ function TNumPas<T>.prod(a: TArrInt): integer;
 var
   i: integer;
 begin
+  if a = nil then exit(1);
+
   Result := 1;
   for i in a do Result *= i;
 end;
@@ -451,6 +453,7 @@ end;
 
 function TNumPas<T>.rget(r, c: integer): T; // r,c
 begin
+  if r = 0 then exit(fData[c]);
   Result := fData[r * dim(0) + c];
 end;
 
@@ -504,6 +507,8 @@ function TNumPas<T>.calcIndex(const index: TArrInt): integer;
 var
   i: integer;
 begin
+  if index = nil then exit(0);
+
   case fNDims of
     1: Result := index[0];
     2: Result := index[0] * fMlt[0] + index[1];
@@ -516,7 +521,7 @@ begin
         Result += fMlt[i] * index[i];
     end;
   end;
-  assert(Result < fNItems, 'index out of range');
+  assert(Result < fNItems, format('index %d out of range %d', [Result, fNItems]));
 end;
 
 procedure TNumPas<T>.rangeSlice(const index: TArrInt; out aStart, aEnd: integer);
@@ -524,25 +529,40 @@ var
   i: integer;
   widx: TArrInt;
 begin
-  widx := system.copy(index);
-  while length(widx) < fNDims do widx += [0]; // fill w/0
-  aStart := calcIndex(widx);
+  if index = nil then
+  begin
+    aStart := 0;
+    aEnd := 0;
+  end
+  else
+  begin
+    widx := system.copy(index);
+    while length(widx) < fNDims do widx += [0]; // fill w/0
+    aStart := calcIndex(widx);
 
-  widx := system.copy(index); // fill w/ fDims-1
-  for i := length(index) to high(fDims) do widx += [fDims[i] - 1];
-  aEnd := calcIndex(widx) + 1;
+    widx := system.copy(index); // fill w/ fDims-1
+    for i := length(index) to high(fDims) do widx += [fDims[i] - 1];
+    aEnd := calcIndex(widx) + 1;
+  end;
 end;
 
-function TNumPas<T>.startRange(const slc: TArrInt): integer;
+function TNumPas<T>.startSlice(const slc: TArrInt): integer;
 var
   widx: TArrInt;
+  i: integer;
 begin
-  widx := system.copy(slc);
-  while length(widx) < fNDims do widx += [0]; // fill w/0
+  setLength(widx, fNDims);
+  for i := 0 to high(widx) do
+    if i <= high(slc) then widx[i] := slc[i]
+    else
+      widx[i] := 0;
+
+  //widx := system.copy(slc);
+  //while length(widx) < fNDims do widx += [0]; // fill w/0
   Result := calcIndex(widx);
 end;
 
-function TNumPas<T>.endRange(const slc: TArrInt): integer;
+function TNumPas<T>.endSlice(const slc: TArrInt): integer;
 var
   i: integer;
   widx: TArrInt;
@@ -661,7 +681,8 @@ end;
 
 procedure TNumPas<T>.zero;
 begin
-  fillbyte(fData[0], fSizeBytes, 0);
+  if fSizeBytes > 0 then
+    fillbyte(fData[0], fSizeBytes, 0);
 end;
 
 
@@ -754,7 +775,7 @@ procedure TNumPas<T>.setValue(const slc: TArrInt; v: T);
 var
   i: integer;
 begin
-  for i := startRange(slc) to endRange(slc) do fData[i] := v;
+  for i := startSlice(slc) to endSlice(slc) do fData[i] := v;
 end;
 
 function TNumPas<T>.sameDims(a: TNumPas<T>): boolean;
@@ -894,6 +915,90 @@ begin
   for i := 0 to pred(fNItems) do Result[i] := foo(self[i]);
 end;
 
+
+function TNumPas<T>.dot(a: TNumPas<T>): TNumPas<T>;
+var
+  pivotPos, pivd, ppivd: integer;
+  ixs, ixa, ixr, prs, pra, r, c: integer;
+  sStart, aStart, adim0, ahi0, ahi1, aStride: integer; // ranges
+  raDim, aDim, sDim, resDim: TArrInt;
+  p: T;
+begin
+  if (fNDims = 0) or (a.fNdims = 0) then exit(nil);
+
+  pivotPos := Math.min(1, a.fNdims - 1); // position in a of pivot dim in  1|0
+  pivd := a.dim(pivotPos); // pivot dimension, a.dim(1|0) = dim(0)
+
+  assert(dim(0) = pivd, 'shapes not aligned'); // !!! = dim(0)
+
+  sDim := system.copy(fDims, 0, fNDims - 1); // all but dim(0)
+  aDim := system.copy(a.fDims); // remove 'pp' 0|1
+  Delete(aDim, high(a.fDims) - pivotPos, 1);
+
+  resDim := sDim + aDim;
+  if resDim = nil then resDim := [1];  // 1x1
+
+  if a.fNdims <= 2 then raDim := nil // last a.fndims - 2
+  else
+    raDim := system.copy(a.fDims, 0, a.fNdims - 2);
+
+  Result := NP.Create(resDim);
+
+  prs := prod(sDim); // mult all dims 1 if nil
+  pra := prod(raDim);
+
+  aStride := a.fNitems div pra; // a stride
+
+  adim0 := a.dim(0);
+  ahi0 := a.hi(0);
+  ahi1 := a.hi(1);
+  ppivd := pred(pivd);
+
+  sStart := 0;
+  ixr := 0;
+
+  case pivotPos of
+    0: begin   // 1x1 reduction of self
+      for ixs := 0 to pred(prs) do
+      begin
+        p := 0;   // calc dot 1x1
+        for r := 0 to ppivd do p += self[sStart + r] * a[r];
+
+        Result[ixr] := p;
+        Inc(ixr);
+
+        Inc(sStart, pivd); // next self pivd slice position
+      end;
+    end;
+
+    1: begin
+      for ixs := 0 to pred(prs) do   // 1x2 reduction of self
+      begin
+        aStart := 0;
+
+        for ixa := 0 to pred(pra) do
+        begin
+
+          for c := 0 to ahi0 do // 1x2 dot prod.
+          begin
+            p := 0;
+            for r := 0 to ahi1 do
+              p += self[sStart + r] * a[aStart + r * adim0 + c];
+
+            Result[ixr] := p;
+            Inc(ixr);
+          end;
+
+          Inc(aStart, aStride); // next a slice
+        end;
+
+        Inc(sStart, pivd); // next pivd slice of self
+      end;
+    end;
+  end;
+end;
+
+{
 function TNumPas<T>.dot(a: TNumPas<T>): TNumPas<T>;
 var
   pivd: integer; // pivot dim in a -> inc offset in traverse self, a
@@ -912,42 +1017,49 @@ begin
   if dimsMatch(self, 1, a, 1) then Result := dot1x1(a) // 1x1, 2x1, 1x2, 2x2
   else if dimsMatch(self, 2, a, 1) then Result := dot2x1(a)
   else if dimsMatch(self, 1, a, 2) then Result := dot1x2(a)
+  else if (self.fNdims > 1) and (a.fNdims = 1) then Result := dotnx1(a)
   else
   begin  // both dims >= 2
-    assert(fNDims >= a.fNdims, 'currently not supported');
-
-    // general case
-    pivd := dim(0);
-    assert(dim(0) = a.dim(1), 'shapes not aligned');
-
-    rightDim := system.copy(a.fDims); // right: remove dim 1
-    Delete(rightDim, high(rightDim) - 1, 1);
-
-    resDim := system.copy(fDims, 0, high(fDims)); // left: except last
-    leftDim := system.copy(resDim);
-    insert(rightDim, resDim, length(resDim));
-
-    Result := NP.Create(resDim);
-
-    ncols := prod(rightDim);   // in a
-    nrows := Result.fNitems div ncols;
-
-    ixr := 0;
-
-    for r := 0 to pred(nrows) do
+    if fNDims >= a.fNdims then
     begin
-      for c := 0 to pred(ncols) do
-      begin
-        p := 0;
-        for i := 0 to pred(pivd) do p += self[r, i] * a[i, c];
 
-        Result[ixr] := p;
-        Inc(ixr);
+      // general case
+      pivd := dim(0);
+      assert(dim(0) = a.dim(1), 'shapes not aligned');
+
+      rightDim := system.copy(a.fDims); // right: remove dim 1
+      Delete(rightDim, high(rightDim) - 1, 1);
+
+      resDim := system.copy(fDims, 0, high(fDims)); // left: except last
+      leftDim := system.copy(resDim);
+      insert(rightDim, resDim, length(resDim));
+
+      Result := NP.Create(resDim);
+
+      ncols := prod(rightDim);   // in a
+      nrows := Result.fNitems div ncols;
+
+      ixr := 0;
+
+      for r := 0 to pred(nrows) do
+      begin
+        for c := 0 to pred(ncols) do
+        begin
+          p := 0;
+          for i := 0 to pred(pivd) do p += self[r, i] * a[i, c];
+
+          Result[ixr] := p;
+          Inc(ixr);
+        end;
       end;
+    end
+    else
+    begin // general form fNDims<a.fNDims
+
     end;
   end;
 end;
-
+}
 function TNumPas<T>.dot1x1(a: TNumPas<T>): TNumPas<T>;
 var
   p: T;
@@ -973,8 +1085,31 @@ begin
   begin
     p := 0;
     for r := 0 to a.hi(1) do
-      p += a[r, c] * self[r];
+      p += self[r] * a[r, c];
     Result[c] := p;
+  end;
+end;
+
+function TNumPas<T>.dotnx1(a: TNumPas<T>): TNumPas<T>;
+var
+  i, pivd, xs, r: integer;
+  p: T;
+begin
+  assert((self.fNDims > 2) and (a.fNDims = 1) and (dim(0) = a.dim(0)),
+    'dot 1xn dims product not feasible');
+
+  pivd := hi(0);
+  Result := TNumPas<T>.zeros(system.copy(fDims, 0, high(fDims))); // all except last
+
+  r := 0;
+  xs := 0;
+
+  for r := 0 to pred(Result.size) do
+  begin
+    p := 0;
+    for i := 0 to pivd do p += self[xs + i] * a[i];
+    Result[r] := p;
+    Inc(xs, dim(0));
   end;
 end;
 
@@ -1231,6 +1366,11 @@ begin
   Result := True;
 end;
 
+function TNumPas<T>.dims: TArrInt;
+begin
+  Result := fDims;
+end;
+
 { operators }
 
 class operator TNumPas<T>.:=(values: TArrT): TNumPas<T>;
@@ -1269,6 +1409,7 @@ begin
     dtf32: for i := 0 to pred(a.fNItems) do Result.fpf32[i] += b;
     dtf64: for i := 0 to pred(a.fNItems) do Result.fpf64[i] += b;
     dtf128: for i := 0 to pred(a.fNItems) do Result.fpf128[i] += b;
+    else;
   end;
 end;
 
@@ -1283,6 +1424,7 @@ begin
     dtf32: for i := 0 to pred(a.fNItems) do Result.fpf32[i] += b;
     dtf64: for i := 0 to pred(a.fNItems) do Result.fpf64[i] += b;
     dtf128: for i := 0 to pred(a.fNItems) do Result.fpf128[i] += b;
+    else;
   end;
 end;
 
@@ -1505,6 +1647,7 @@ begin
   Result := eindex < en;
 end;
 
+{ aux funcs }
 function toString(a: TArrInt): string;
 var
   i: integer;
@@ -1516,6 +1659,24 @@ begin
     if i <> high(a) then Result += ',';
   end;
   Result += ']';
+end;
+
+function genCombs(const a: TArrInt; n: integer): TArrInt;
+var
+  i: integer;
+begin
+  Result := system.copy(a);
+
+  for i := high(a) downto 0 do
+  begin
+    if a[i] <> 0 then
+    begin
+      Result[i] := n mod a[i];
+      n := n div a[i];
+    end
+    else
+      Result[i] := 0;
+  end;
 end;
 
 initialization
