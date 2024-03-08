@@ -1,3 +1,2 @@
-# fpc
-free pascal / lazarus
-algebraic surfaces, domain coloring, polyhedron transformations, mandelbrot, polygonizer, spherical harmonics, logarithmic spirals, voronoi tiles, waterman polyhedrons
+# numpas
+python numpy inspired multidimensional array unit, contains some linear algebra facilities.
