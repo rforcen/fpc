@@ -100,6 +100,7 @@ type
     procedure swap(i, j: integer);
     function transposedCoord(c: integer): integer;
     function prod(a: TArrInt): integer;
+    procedure setPointers;
   public
     function calcIndex(const index: TArrInt): integer; inline;
     procedure rangeSlice(const index: TArrInt; out aStart, aEnd: integer);
@@ -207,18 +208,18 @@ constructor TNumPas<T>.Create(const _dims: TArrInt);
 var
   i, nn: integer;
 begin
-  assert(length(_dims) > 0, 'zero fDims are not allowed');
+  assert(length(_dims) > 0, 'zero dims are not allowed');
 
   fDims := system.copy(_dims);
   fNDims := length(fDims);
 
-  fNItems := 1; // fNItems items
+  fNItems := 1;
   for i in fDims do
     fNItems *= i;
   fSizeBytes := fNItems * sizeof(T);
 
   setLength(fData, fNItems);
-  zero;
+  // zero;
 
   nn := 1;
   setLength(fMlt, fNDims);  // mtl factor to improve indexing
@@ -228,11 +229,7 @@ begin
     nn *= fDims[high(fDims) - i];
   end;
 
-  fpint := pinteger(@fData[0]); // pointers to data
-  fpf32 := psingle(@fData[0]);
-  fpf64 := pdouble(@fData[0]);
-  fpf128 := pfp128(@fData[0]);
-  fpdata := @fData[0];
+  setPointers;
 
   _typeInfo := PTypeInfo(TypeInfo(T)); // data type of T
 
@@ -257,21 +254,13 @@ begin
   Create(a.fDims);
 
   fData := system.copy(a.fData);
-
-  fpint := pinteger(@fData[0]);
-  fpf32 := psingle(@fData[0]);
-  fpf64 := pdouble(@fData[0]);
-  fpf128 := pfp128(@fData[0]);
-  fpdata := @fData[0];
-
-  fDims := system.copy(a.fDims);
-  fMlt := system.copy(a.fMlt);
+  setPointers;
 end;
 
 constructor TNumPas<T>.rand(_dims: TArrInt);
 begin
   self := Create(_dims);
-  self.rand;
+  rand;
 end;
 
 constructor TNumPas<T>.arange(nitems: integer);
@@ -364,7 +353,6 @@ begin
     swap(i, transposedCoord(i));
 end;
 
-{ ------- }
 procedure TNumPas<T>.swap(i, j: integer);
 var
   tmp: T;
@@ -374,6 +362,14 @@ begin
   self[j] := tmp;
 end;
 
+procedure TNumPas<T>.setPointers;
+begin
+  fpint := pinteger(@fData[0]); // pointers to data
+  fpf32 := psingle(@fData[0]);
+  fpf64 := pdouble(@fData[0]);
+  fpf128 := pfp128(@fData[0]);
+  fpdata := @fData[0];
+end;
 
 function TNumPas<T>.prod(a: TArrInt): integer;
 var
@@ -460,7 +456,9 @@ end;
 
 procedure TNumPas<T>.rput(r, c: integer; AValue: T);
 begin
-  fData[r * dim(0) + c] := Avalue;
+  if r = 0 then fData[c] := Avalue
+  else
+    fData[r * dim(0) + c] := Avalue;
 end;
 
 function TNumPas<T>.combinations(const inArr: TArrInt): TArrArrInt;
@@ -558,8 +556,6 @@ begin
     else
       widx[i] := 0;
 
-  //widx := system.copy(slc);
-  //while length(widx) < fNDims do widx += [0]; // fill w/0
   Result := calcIndex(widx);
 end;
 
@@ -600,7 +596,6 @@ end;
 
 function TNumPas<T>.GetEnumerator: TValEnumerator;
 begin
-  //result:=TValEnumerator.Create(fNItems, fpdata);
   Result.epdata := fpdata;
   Dec(Result.epdata);
   Result.en := fNItems;
@@ -699,9 +694,7 @@ end;
 procedure TNumPas<T>.rand;
 var
   i: integer = 0;
-  seed: integer;
 begin
-  seed := random($7fff);
   case fDataType of
     dtint: for i := 0 to pred(fNItems) do fpint[i] := random(10000);
     dtf32: for i := 0 to pred(fNItems) do fpf32[i] := random; // fp32
@@ -1485,7 +1478,7 @@ class operator TNumPas<T>./(const a, b: TNumPas<T>): TNumPas<T>;
 var
   i: integer;
 begin
-  assert(a.sameDims(b), 'can''t / with different simensions');
+  assert(a.sameDims(b), 'can''t / with different dimensions');
   Result := a.copy;
   case a.fDataType of
     dtint: for i := 0 to pred(a.fNItems) do Result.fpint[i] := a.fpint[i] div b.fpint[i];
@@ -1542,7 +1535,7 @@ class operator TNumPas<T>.=(const a, b: TNumPas<T>): boolean;
 var
   i: integer;
 begin
-  assert(a.sameDims(b), 'can''t compare with different simensions');
+  assert(a.sameDims(b), 'can''t compare with different dimensions');
 
   for i := 0 to pred(a.fNItems) do if a.fData[i] <> b.fData[i] then exit(False);
   Result := True;
@@ -1557,7 +1550,7 @@ class operator TNumPas<T>.>(const a, b: TNumPas<T>): boolean;
 var
   i: integer;
 begin
-  assert(a.sameDims(b), 'can''t compare with different simensions');
+  assert(a.sameDims(b), 'can''t compare with different dimensions');
 
   for i := 0 to pred(a.fNItems) do if a.fData[i] <= b.fData[i] then exit(False);
   Result := True;
@@ -1567,7 +1560,7 @@ class operator TNumPas<T>.<(const a, b: TNumPas<T>): boolean;
 var
   i: integer;
 begin
-  assert(a.sameDims(b), 'can''t compare with different simensions');
+  assert(a.sameDims(b), 'can''t compare with different dimensions');
 
   for i := 0 to pred(a.fNItems) do if a.fData[i] >= b.fData[i] then exit(False);
   Result := True;
