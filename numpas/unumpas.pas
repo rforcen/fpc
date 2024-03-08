@@ -961,7 +961,9 @@ begin
 
   adim0 := a.dim(0);
   ahi0 := a.hi(0);
-  if a.fNdims > 1 then ahi1 := a.hi(1);
+  if a.fNdims > 1 then ahi1 := a.hi(1)
+  else
+    ahi1 := 0;
   ppivd := pred(pivd);
 
   sStart := 0;
