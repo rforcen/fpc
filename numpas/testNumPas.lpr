@@ -72,6 +72,7 @@ var
       a[v] := i;
       Inc(i);
     end;
+    i := 0;
     for v in a.combinations(a.fDims) do
     begin
       assert(a[v] = i, format('error in n dim indexing %d', [i]));
@@ -108,6 +109,7 @@ var
 
     deletefile('test.bin');
 
+    a:=NP.rand(d1);
     p := -1; // sort
     for t in a.sort do
     begin
@@ -147,17 +149,17 @@ var
       b := a.inv;
 
       a.toFile('a2.bin');
-      b.toFile('ainv.bin');
+      b.toFile('a2inv.bin');
 
       writeln(format('a2=np.fromfile("a2.bin", dtype=np.double).reshape(%s)',
         [toString(a.fDims)]));
-      writeln(format('ainv=np.fromfile("ainv.bin", dtype=np.double).reshape(%s)',
+      writeln(format('ainv=np.fromfile("a2inv.bin", dtype=np.double).reshape(%s)',
         [toString(b.fDims)]));
-      writeln('np.mean(np.dot(a2,ainv) - np.dot(a2,np.linalg.inv(a2))) # near 0');
+      writeln('np.mean(np.dot(a2,a2inv) - np.dot(a2,np.linalg.inv(a2))) # near 0');
       writeln;
 
       d := a.dot(a.inv);
-      Write(format('inv matrix acc. error:%.1g', [abs(d.sum - a.dim(0)) / d.size]));
+      Write(format('inv matrix acc. error:%.1g', [d.sum / d.size]));
     end
     else
       Write('det=0, no inv matrix');
@@ -175,6 +177,7 @@ var
       [toString(b.fDims)]));
     writeln('np.sum(a.T - b) # should be 0');
 
+    writeln('generated .bin files, consider removing them after usage');
     endMsg;
   end;
 
