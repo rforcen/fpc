@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="12"/>
+    <BuildModes Active="Debug">
+      <Item Name="Debug">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="testNumPas"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="..\units"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <IncludeAssertionCode Value="True"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+            <VerifyObjMethodCallValidity Value="True"/>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf3"/>
+              <UseHeaptrc Value="True"/>
+              <TrashVariables Value="True"/>
+              <UseExternalDbgSyms Value="True"/>
+            </Debugging>
+          </Linking>
+        </CompilerOptions>
+      </Item>
+    </BuildModes>
+    <Units>
+      <Unit>
+        <Filename Value="testNumPas.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="136"/>
+        <CursorPos X="65" Y="162"/>
+        <FoldState Value=" T3M2415"/>
+        <UsageCount Value="20"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\units\unumpas.pas"/>
+        <UnitName Value="uNumPas"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="1354"/>
+        <CursorPos Y="1380"/>
+        <FoldState Value=" T3uL0N69211122214 pn5qK0A213 pkClB0M223 Pifk60 T1.C0Dt"/>
+        <UsageCount Value="10"/>
+        <Bookmarks Count="3">
+          <Item0 X="23" Y="1247" ID="1"/>
+          <Item1 Y="202" ID="3"/>
+          <Item2 X="11" Y="381" ID="2"/>
+        </Bookmarks>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="testSeq.lpr"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="19"/>
+        <CursorPos X="22" Y="61"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\units\wavfile.pas"/>
+        <UnitName Value="WavFile"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="267"/>
+        <CursorPos X="21" Y="303"/>
+        <UsageCount Value="10"/>
+      </Unit>
+    </Units>
+    <JumpHistory HistoryIndex="29">
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1251" Column="46" TopLine="1217"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1253" TopLine="1227"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1251" TopLine="1227"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1252" TopLine="1227"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1253" TopLine="1227"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1251" TopLine="1227"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1244" Column="80" TopLine="1227"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="96" Column="26" TopLine="70"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="429" Column="33" TopLine="384"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="143" Column="21" TopLine="116"/>
+      </Position>
+      <Position>
+        <Filename Value="testNumPas.lpr"/>
+        <Caret Line="160" Column="67" TopLine="123"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1380" Column="20" TopLine="1356"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1483" Column="20" TopLine="1438"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1541" Column="20" TopLine="1496"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1556" Column="20" TopLine="1511"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1566" Column="20" TopLine="1521"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="136" Column="22" TopLine="109"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="757" Column="29" TopLine="710"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1380" Column="10" TopLine="1354"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="136" Column="22" TopLine="91"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="757" TopLine="710"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1380" TopLine="1356"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1381" TopLine="1356"/>
+      </Position>
+      <Position>
+        <Filename Value="testNumPas.lpr"/>
+        <Caret Line="75" Column="12" TopLine="22"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="757" TopLine="731"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1566" TopLine="1540"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="757" TopLine="731"/>
+      </Position>
+      <Position>
+        <Filename Value="testNumPas.lpr"/>
+        <Caret Line="112" Column="18" TopLine="74"/>
+      </Position>
+      <Position>
+        <Filename Value="testNumPas.lpr"/>
+        <Caret Line="162" Column="65" TopLine="137"/>
+      </Position>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes ActiveMode=""/>
+    </RunParams>
+  </ProjectSession>
+  <Debugging>
+    <Watches>
+      <Item>
+        <Expression Value="Result"/>
+      </Item>
+      <Item>
+        <Expression Value="a"/>
+      </Item>
+      <Item>
+        <Expression Value="b"/>
+      </Item>
+      <Item>
+        <Expression Value="p"/>
+      </Item>
+      <Item>
+        <Expression Value="t"/>
+      </Item>
+    </Watches>
+  </Debugging>
+</CONFIG>
