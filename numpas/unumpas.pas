@@ -70,9 +70,9 @@ type
 
   private
     fDims: TArrInt;
-    fNitems, fNdims: integer;
+    hitems, fNitems, fNdims: int64;
     fMlt: TArrInt; // mlt factor for index calc
-    fSizeBytes: integer;
+    fSizeBytes: int64;
 
     _typeInfo: PTypeInfo;
     fDataType: TDataType;
@@ -93,19 +93,23 @@ type
     function rget(r, c: integer): T; overload; inline;
     procedure rput(r, c: integer; AValue: T); overload; inline;
 
+    function nDims: integer;
     function combinations(const inArr: TArrInt = nil): TArrArrInt;
     function cmpData(constref a, b: T): integer;
     procedure swap(i, j, k, l: integer); inline;
     procedure swap(i, j: integer);
-    function prod(a: TArrInt): integer;
+    function prod(a: TArrInt): int64;
     procedure setPointers;
     function index2Dims(index: integer): TArrInt;
+    function transposedCoord(index: integer): integer;
+    function sqr(x: T): T; inline;
   public
     function calcIndex(const index: TArrInt): integer; inline;
     procedure rangeSlice(const index: TArrInt; out aStart, aEnd: integer);
     function startSlice(const slc: TArrInt): integer;
     function endSlice(const slc: TArrInt): integer;
-    function checkDims: boolean;
+    function checkDims: boolean; overload;
+    function checkDims(_dims: TArrInt): boolean; overload;
 
     {rand primitives}
     function TsRandInt(var seed: integer): integer; inline;
@@ -123,6 +127,7 @@ type
     function slice(index: TArrInt): NP;
     function copy: NP; // deep copy
     procedure zero;
+    procedure one;
     procedure rand; overload; // fill w/random values
     procedure randMT;
     function hi(index: integer): integer;  // -1 to math for loops->high
@@ -138,13 +143,17 @@ type
     function max: T;
     function min: T;
     function mean: T;
+    function std: T;
     function shape: TArrInt;
     procedure Assign(const a: NP; const _dims: TArrInt);
     procedure toFile(Name: string);
     procedure fromFile(Name: string);
+    procedure save(Name: string);
+    function load(Name: string): NP;
     function flatSort: NP;
     procedure _flatSort; // insite 1 x fNitems
     function sort: NP;
+    function sortMT: NP;
     function diagonal: NP;
     function dot1x1(a: NP): NP;
     function dot2x1(a: NP): NP;
@@ -152,21 +161,29 @@ type
     function dotnx1(a: NP): NP;
     function dot2x2(a: NP): NP;
     function dot(a: NP): NP;
+    function dotMT(a: NP): NP;
     function apply(foo: TNPFunction): NP;
+    function isQuadratic: boolean;
+    function reshape(ndim: TArrInt): NP;
     { algebra }
   private
     function det_nxn(const a: NP; ni: integer): T;
     function inv_nxn: NP;
   public
     function det: NP;
+    function detMT: NP;
     function detBareiss: T;
     function inv: NP;
+    function invMT: NP;
+    function solve(b: NP): NP;
     function transpose2x2: NP;
     function transpose: NP;
+    function transposeMT: NP;
     function cofactor: NP;
     function allEQ(const v: T): boolean;
     function allNE(const v: T): boolean;
     function dims: TArrInt;
+    function dimsStr: string;
   public
     class operator := (values: TArrT): NP; // create a numpas by assign fDims
 
@@ -196,9 +213,21 @@ type
 
   end;
 
+  TFileNPY = packed record // used in save/load
+  const
+    _id = #$93 + 'NUMPY';
+  public
+    id: array[0..5] of char;
+    mayVer, minVer: byte;
+    headLen: uint16;
+  end;
+
+{ aux's }
 function toString(a: TArrInt): string;
 function genCombs(const a: TArrInt; n: integer): TArrInt;
 function revArrInt(const a: TArrInt): TArrInt;
+function strToDims(sd: string): TarrInt;
+
 
 implementation
 
@@ -218,7 +247,11 @@ begin
   fNItems := 1;
   for i in fDims do
     fNItems *= i;
+  hitems := fNItems - 1;
+
   fSizeBytes := fNItems * sizeof(T);
+
+  assert(fNItems > 0, 'zero dims not supported');
 
   setLength(fData, fNItems);
   // zero;
@@ -368,7 +401,7 @@ end;
 
 function TNumPas<T>.index2Dims(index: integer): TArrInt;
 var
-  i, ih: integer;
+  i, ih, td: integer;
 begin
   Result := nil;
   setLength(Result, fNDims);
@@ -376,12 +409,32 @@ begin
   for i := 0 to high(fDims) do
   begin
     ih := high(fDims) - i;
-    Result[ih] := index mod fDims[ih];
-    index := index div fDims[ih];
+    td := fDims[ih];
+    Result[ih] := index mod td;
+    index := index div td;
   end;
 end;
 
-function TNumPas<T>.prod(a: TArrInt): integer;
+function TNumPas<T>.sqr(x: T): T; inline;
+begin
+  Result := x * x;
+end;
+
+function TNumPas<T>.transposedCoord(index: integer): integer;
+var
+  i: integer;
+begin
+  Result := 0;
+  for i := 0 to pred(fNDims) do
+  begin
+    if index = 0 then break;
+
+    Result += (index mod fDims[i]) * fMlt[i];
+    index := index div fDims[i];
+  end;
+end;
+
+function TNumPas<T>.prod(a: TArrInt): int64;
 var
   i: integer;
 begin
@@ -424,6 +477,11 @@ begin
   if r = 0 then fData[c] := Avalue
   else
     fData[r * dim(0) + c] := Avalue;
+end;
+
+function TNumPas<T>.nDims: integer;
+begin
+  Result := fNDims;
 end;
 
 function TNumPas<T>.combinations(const inArr: TArrInt): TArrArrInt;
@@ -540,11 +598,16 @@ begin
 end;
 
 function TNumPas<T>.checkDims: boolean;
+begin
+  Result := checkDims(fDims);
+end;
+
+function TNumPas<T>.checkDims(_dims: TArrInt): boolean;
 var
   i: integer;
 begin
-  if fNDims = 0 then exit(False);
-  for i in fDims do if i <= 0 then exit(False);
+  if length(_dims) = 0 then exit(False);
+  for i in _dims do if i <= 0 then exit(False);
   Result := True;
 end;
 
@@ -583,7 +646,7 @@ var
   i: integer;
 begin
   Result := '';
-  for i := 0 to pred(fNItems) do
+  for i := 0 to hitems do
   begin
 
     if i > 0 then
@@ -609,7 +672,7 @@ var
   i: integer;
 begin
   Result := varName + '=np.array([';
-  for i := 0 to pred(fNItems) do
+  for i := 0 to hitems do
   begin
     case fDataType of
       dtint: Result += format('%d', [fpint[i]]);
@@ -618,7 +681,7 @@ begin
       dtf128: Result += format('%s', [f128tos(fpf128[i])]);
       else;
     end;
-    if i <> pred(fNItems) then Result += ', ';
+    if i <> hitems then Result += ', ';
   end;
   Result += ']).reshape(';
   for i := 0 to pred(fNDims) do
@@ -660,16 +723,20 @@ begin
     fillbyte(fData[0], fSizeBytes, 0);
 end;
 
+procedure TNumPas<T>.one;
+begin
+  setValue(1);
+end;
 
 procedure TNumPas<T>.rand;
 var
   i: integer = 0;
 begin
   case fDataType of
-    dtint: for i := 0 to pred(fNItems) do fpint[i] := random(10000);
-    dtf32: for i := 0 to pred(fNItems) do fpf32[i] := random; // fp32
-    dtf64: for i := 0 to pred(fNItems) do fpf64[i] := random; // TsRandf64(seed); // fp64
-    dtf128: for i := 0 to pred(fNItems) do fpf128[i] := random;
+    dtint: for i := 0 to hitems do fpint[i] := random(10000);
+    dtf32: for i := 0 to hitems do fpf32[i] := random; // fp32
+    dtf64: for i := 0 to hitems do fpf64[i] := random; // TsRandf64(seed); // fp64
+    dtf128: for i := 0 to hitems do fpf128[i] := random;
     else;
   end;
 end;
@@ -729,7 +796,7 @@ end;
 function TNumPas<T>.Data(index: integer): T;
 begin
   assert((index < fNItems) or (index < 0), format('index %d out of range %d',
-    [index, pred(fNItems)]));
+    [index, hitems]));
   Result := fData[index];
 end;
 
@@ -742,7 +809,7 @@ procedure TNumPas<T>.setValue(v: T);
 var
   i: integer;
 begin
-  for i := 0 to pred(fNItems) do fData[i] := v;
+  for i := 0 to hitems do fData[i] := v;
 end;
 
 procedure TNumPas<T>.setValue(const slc: TArrInt; v: T);
@@ -804,6 +871,17 @@ begin
   Result := sum / fNItems;
 end;
 
+function TNumPas<T>.std: T;
+var
+  m, s: T;
+  i: integer;
+begin // sigma = sqrt(1/n * sum(sqr(x-mean)))
+  m := mean;
+  s := 0;
+  for i := 0 to pred(fNItems) do s += sqr(self[i] - m);
+  Result := sqrt(s / fNItems);
+end;
+
 function TNumPas<T>.shape: TArrInt;
 begin
   Result := fDims;
@@ -814,7 +892,7 @@ var
   i, aStart, aEnd: integer;
 begin
   rangeSlice(_dims, aStart, aEnd);
-  for i := 0 to pred(a.fNItems) do self[i + aStart] := a[i];
+  for i := 0 to a.hitems do self[i + aStart] := a[i];
 end;
 
 {
@@ -833,6 +911,84 @@ begin
     assert(bw = fSizeBytes, 'error writing binary file');
   finally
     fileClose(fh);
+  end;
+end;
+
+procedure TNumPas<T>.save(Name: string);
+
+  function dupeChar(ch: char; n: integer): string;
+  var
+    i: integer;
+  begin
+    setLength(Result, n);
+    for i := 1 to n do Result[i] := ch;
+  end;
+
+var
+  fh: THandle;
+  hr: TFileNPY;
+  desc: string;
+  szHdr: integer;
+begin
+  try
+    fh := FileCreate(Name + '.npy');
+
+    // length(desc)+len(header)+#$0a must be divisible by 64 for alignment purposes.
+    // 128-(6+1+1+2)=118
+    desc := format('{''descr'':''<f%d'', ''fortran_order'':False, ''shape'':(%s),}',
+      [sizeof(T), dimsStr]);
+
+    szHdr := sizeof(TFileNPY) + length(desc) + 1; // header size + $0a
+    desc += dupeChar(' ', 64 * succ(szHdr div 64) - szHdr) + #$0a;
+
+    with hr do
+    begin
+      id := _id;
+      mayVer := 1;
+      minVer := 0;
+      headLen := length(desc);
+    end;
+
+    FileWrite(fh, hr, sizeof(hr));        // header
+    FileWrite(fh, desc[1], length(desc)); // desc
+    FileWrite(fh, fData[0], fSizeBytes);  // data
+
+  finally
+    FileClose(fh);
+  end;
+end;
+
+{ this is a limited reader as it asumes same format as current NumPas<T>, no fortran mode}
+function TNumPas<T>.load(Name: string): NP;
+var
+  fh: THandle;
+  hr: TFileNPY;
+  desc: string;
+  _dims: TArrInt;
+  pd: integer;
+begin
+  try
+    fh := fileOpen(Name + '.npy', fmOpenRead);
+    fileRead(fh, hr, sizeof(hr)); // len(magic string) + 2 + len(length) + HEADER_LEN
+    setLength(desc, hr.headLen);
+    fileRead(fh, desc[1], length(desc));
+
+    // just scan shape, TD: parse dict sentence, i.e.:
+    // {'desc':'<f8', 'fortran_mode':False, 'shape':(100,),}
+
+    // extract shape
+    desc := rightStr(desc, length(desc) - pos('(', desc));
+    desc := leftStr(desc, pos(')', desc) - 1);
+
+    _dims := strToDims(desc);
+
+    if checkDims(_dims) then
+    begin
+      Result := NP.Create(_dims);
+      fileRead(fh, Result.fData[0], Result.fSizeBytes);
+    end;
+  finally
+    FileClose(fh);
   end;
 end;
 
@@ -865,6 +1021,7 @@ end;
 function TNumPas<T>.sort: NP;
 var
   tdim: TArrInt;
+  tdims: TArrArrInt;
   a: TNumPas<T>;
 begin
   if fNDims = 1 then Result := flatSort // 1d sort
@@ -872,12 +1029,45 @@ begin
   begin
     Result := copy;
 
-    for tdim in combinations(system.Copy(fDims, 0, fNDims - 1)) do // sort last
+    tdims := combinations(system.Copy(fDims, 0, fNDims - 1));
+    for tdim in tdims do // sort last
     begin
       a := slice(tdim);
       a._flatSort;
       Result.Assign(a, tdim);
     end;
+  end;
+end;
+
+function TNumPas<T>.sortMT: NP;
+var
+  tdims: TArrArrInt;
+
+  procedure _sortMT(ix: PtrInt; {%H-}pnt: pointer; Item: TMultiThreadProcItem);
+  var
+    delta: integer;
+    a: TNumPas<T>;
+  begin
+    delta := Item.Group.EndIndex;
+
+    while ix < length(tdims) do
+    begin
+      a := slice(tdims[ix]);
+      a._flatSort;
+      Result.Assign(a, tdims[ix]);
+
+      Inc(ix, delta);
+    end;
+  end;
+
+begin
+  if fNDims = 1 then Result := flatSort // 1d sort
+  else
+  begin
+    Result := copy;
+    tdims := combinations(system.Copy(fDims, 0, fNDims - 1));
+
+    ProcThreadPool.DoParallelLocalProc(@_sortMT, 0, GetCPUCount - 1, nil);
   end;
 end;
 
@@ -895,9 +1085,22 @@ var
   i: integer;
 begin
   Result := copy;
-  for i := 0 to pred(fNItems) do Result[i] := foo(self[i]);
+  for i := 0 to hitems do Result[i] := foo(self[i]);
 end;
 
+
+function TNumPas<T>.isQuadratic: boolean;
+begin
+  Result := (fNDims >= 2) and (hi(0) = hi(1));
+end;
+
+function TNumPas<T>.reshape(ndim: TArrInt): NP;
+begin
+  assert(size = prod(ndim), 'incompatible shapes');
+
+  Result := NP.Create(ndim);
+  move(fData[0], Result.fData[0], fSizeBytes);
+end;
 
 function TNumPas<T>.dot(a: TNumPas<T>): TNumPas<T>;
 var
@@ -949,9 +1152,7 @@ begin
         p := 0;   // calc dot 1x1
         for r := 0 to ppivd do p += self[sStart + r] * a[r];
 
-        Result[ixr] := p;
-        Inc(ixr);
-
+        Result[ixs] := p;
         Inc(sStart, pivd); // next self pivd slice position
       end;
     end;
@@ -985,6 +1186,109 @@ begin
   end;
 end;
 
+function TNumPas<T>.dotMT(a: TNumPas<T>): TNumPas<T>; // unfinished!
+var
+  pivotPos, pivd, ppivd: integer;
+  prs, pra: integer;
+  adim0, ahi0, ahi1, aStride: integer; // ranges
+  raDim, aDim, sDim, resDim: TArrInt;
+
+  procedure _dot1x1MT(ix: PtrInt; {%H-}pnt: pointer; Item: TMultiThreadProcItem);
+  var
+    delta, sStart, r: integer;
+    p: T;
+  begin
+    delta := Item.Group.EndIndex;
+
+
+    while ix < prs do
+    begin
+      sStart := ix * pivd;
+
+      p := 0;   // calc dot 1x1
+      for r := 0 to ppivd do p += self[sStart + r] * a[r];
+      Result[ix] := p;
+
+      Inc(ix, delta);
+    end;
+
+  end;
+
+  procedure _dot1x2MT(ix: PtrInt; {%H-}pnt: pointer; Item: TMultiThreadProcItem);
+  var
+    delta, sStart, aStart, r, c, ixa, ixr: integer;
+    p: T;
+  begin
+    delta := Item.Group.EndIndex;
+
+    while ix < prs do
+    begin
+
+      sStart := ix * pivd;
+      ixr := ix * (pra * adim0);
+
+      aStart := 0;
+      for ixa := 0 to pred(pra) do
+      begin
+
+        for c := 0 to ahi0 do // 1x2 dot prod.
+        begin
+          p := 0;
+          for r := 0 to ahi1 do
+            p += self[sStart + r] * a[aStart + r * adim0 + c];
+
+          Result[ixr] := p;
+          Inc(ixr);
+        end;
+
+        Inc(aStart, aStride); // next a slice
+      end;
+
+      Inc(ix, delta);
+    end;
+  end;
+
+begin
+  if not (checkDims and a.checkDims) then exit(nil);
+
+  pivotPos := Math.min(1, a.fNdims - 1); // position in a of pivot dim in  1|0
+  pivd := a.dim(pivotPos); // pivot dimension, a.dim(1|0) = dim(0)
+
+  assert(dim(0) = pivd, 'shapes not aligned'); // !!! = dim(0)
+
+  sDim := system.copy(fDims, 0, fNDims - 1); // all but dim(0)
+  aDim := system.copy(a.fDims); // remove 'pp' 0|1
+  Delete(aDim, high(a.fDims) - pivotPos, 1);
+
+  resDim := sDim + aDim;
+  if resDim = nil then resDim := [1];  // 1x1
+
+  if a.fNdims <= 2 then raDim := nil // last a.fndims - 2
+  else
+    raDim := system.copy(a.fDims, 0, a.fNdims - 2);
+
+  Result := NP.Create(resDim);
+
+  prs := prod(sDim); // mult all dims 1 if nil
+  pra := prod(raDim);
+
+  aStride := a.fNitems div pra; // a stride
+
+  adim0 := a.dim(0);
+  ahi0 := a.hi(0);
+  if a.fNdims > 1 then ahi1 := a.hi(1)
+  else
+    ahi1 := 0;
+  ppivd := pred(pivd);
+
+  case pivotPos of
+    0: ProcThreadPool.DoParallelLocalProc(@_dot1x1MT, 0, GetCPUCount - 1, nil);
+    1: ProcThreadPool.DoParallelLocalProc(@_dot1x2MT, 0, GetCPUCount - 1, nil);
+    else
+      assert(False, 'internal error in dot');
+  end;
+end;
+
 function TNumPas<T>.dot1x1(a: TNumPas<T>): TNumPas<T>;
 var
   p: T;
@@ -993,7 +1297,7 @@ begin
   assert(sameDims(a) and (fNDims = 1), 'dot 1x1 dims not feasible');
   Result := NP.Create([1]);
   p := 0;
-  for i := 0 to pred(fNItems) do p += self.fData[i] * a.fData[i];
+  for i := 0 to hitems do p += self.fData[i] * a.fData[i];
   Result[0] := p;
 end;
 
@@ -1173,7 +1477,7 @@ var
   tdim: TArrInt;
   tdims: TArrArrInt;
 begin
-  assert((fNDims >= 2) and (hi(0) = hi(1)), 'not quadratic matrix');
+  assert(isQuadratic, 'not quadratic matrix');
 
   if fNDims = 2 then
   begin
@@ -1192,10 +1496,47 @@ begin
   end;
 end;
 
+function TNumPas<T>.detMT: NP;
+var
+  tdim: TArrInt;
+  tdims: TArrArrInt;
+
+  procedure _detMT(ix: PtrInt; {%H-}pnt: pointer; Item: TMultiThreadProcItem);
+  var
+    delta: integer;
+  begin
+    delta := Item.Group.EndIndex;
+
+    while ix < length(tdims) do
+    begin
+      {%H-}Result[tdims[ix]] := slice(tdims[ix]).detBareiss;
+      Inc(ix, delta);
+    end;
+  end;
+
+begin
+  assert(isQuadratic, 'not quadratic matrix');
+
+  if fNDims = 2 then
+  begin
+    Result := TNumPas<T>.Create([1]);
+    Result[0] := detBareiss;
+  end
+  else
+  begin
+    tdim := system.Copy(fDims, 0, fNDims - 2);
+
+    tdims := combinations(tdim);
+    Result := TNumPas<T>.Create(tdim);
+
+    ProcThreadPool.DoParallelLocalProc(@_detMT, 0, GetCPUCount - 1, nil);
+  end;
+end;
+
 function TNumPas<T>.detBareiss: T;  // 2 dims n x n works on copy
 var
   factor: T;
-  i, j, k: integer;
+  i, j, k, hi0, hi1: integer;
   a: TNumPas<T>;
 begin
   assert((fNDims = 2) and (hi(0) = hi(1)), 'not quadratic matrix');
@@ -1203,14 +1544,17 @@ begin
   Result := 1.0;
   a := copy;
 
-  for i := 0 to hi(0) do
+  hi0 := hi(0);
+  hi1 := hi(1);
+
+  for i := 0 to hi0 do
   begin
-    for j := i + 1 to hi(0) do
+    for j := i + 1 to hi0 do
     begin
       if a[i, i] <> 0 then
       begin
         factor := a[j, i] / a[i, i];
-        for k := i to hi(0) do
+        for k := i to hi0 do
           a[j, k] := a[j, k] - factor * a[i, k];
       end;
     end;
@@ -1240,17 +1584,74 @@ begin
   end;
 end;
 
+function TNumPas<T>.invMT: NP;
+var
+  tdim: TArrInt;
+  tdims: TArrArrInt;
+
+  procedure _invMT(ix: PtrInt; {%H-}pnt: pointer; Item: TMultiThreadProcItem);
+  var
+    delta: integer;
+  begin
+    delta := Item.Group.EndIndex;
+
+    while ix < length(tdims) do
+    begin
+      Result.Assign(slice(tdims[ix]).inv_nxn, tdims[ix]);
+      Inc(ix, delta);
+    end;
+  end;
+
+begin
+  assert((fNDims >= 2) and (hi(0) = hi(1)), 'not quadratic matrix');
+
+  Result := copy;
+
+  if fNDims = 2 then
+    Result := inv_nxn
+  else
+  begin
+    tdim := system.Copy(fDims, 0, fNDims - 2);
+    tdims := combinations(tdim);
+
+    ProcThreadPool.DoParallelLocalProc(@_invMT, 0, GetCPUCount - 1, nil);
+  end;
+end;
+
+function TNumPas<T>.solve(b: TNumPas<T>): TNumPas<T>;
+begin
+  Result := inv.dot(b);
+end;
+
 function TNumPas<T>.transpose: NP;
 var
   i: integer;
 begin
   Result := NP.Create(revArrInt(fDims));   // shape = self.reversed dims
 
-  //for v in combinations do // slow way combinations is expensive in cpu & mem
-  //  {%H-}Result[revArrInt(v)] := self[v]{%H-};
+  for i := 0 to pred(size) do
+    Result[Result.transposedCoord(i)] := self[i];
+end;
 
-  for i := 0 to pred(size) do // fast way
-    Result[Result.calcIndex(revArrInt(self.index2Dims(i)))] := self[i];
+function TNumPas<T>.transposeMT: NP;
+
+  procedure _transMT(ix: PtrInt; {%H-}pnt: pointer; Item: TMultiThreadProcItem);
+  var
+    delta: integer;
+  begin
+    delta := Item.Group.EndIndex;
+
+    while ix < fNItems do
+    begin
+      Result[Result.transposedCoord(ix)] := self[ix];
+      Inc(ix, delta);
+    end;
+  end;
+
+begin
+  Result := NP.Create(revArrInt(fDims));   // shape = self.reversed dims
+
+  ProcThreadPool.DoParallelLocalProc(@_transMT, 0, GetCPUCount - 1, nil);
 end;
 
 function TNumPas<T>.transpose2x2: NP;
@@ -1299,7 +1700,7 @@ function TNumPas<T>.allEQ(const v: T): boolean;
 var
   i: integer;
 begin
-  for i := 0 to pred(fNItems) do if fData[i] <> v then exit(False);
+  for i := 0 to hitems do if fData[i] <> v then exit(False);
   Result := True;
 end;
 
@@ -1307,13 +1708,25 @@ function TNumPas<T>.allNE(const v: T): boolean;
 var
   i: integer;
 begin
-  for i := 0 to pred(fNItems) do if fData[i] = v then exit(False);
+  for i := 0 to hitems do if fData[i] = v then exit(False);
   Result := True;
 end;
 
 function TNumPas<T>.dims: TArrInt;
 begin
   Result := fDims;
+end;
+
+function TNumPas<T>.dimsStr: string;
+var
+  i: integer;
+begin
+  Result := '';
+  for i := low(fDims) to high(fDims) do
+  begin
+    Result += IntToStr(fDims[i]);
+    if i < high(fDims) then Result += ',';
+  end;
 end;
 
 { operators }
@@ -1332,7 +1745,7 @@ var
 begin
   assert(a.sameDims(b), 'can''t add with different simensions');
   Result := a.copy;
-  for i := 0 to pred(a.fNItems) do Result.fData[i] += b.fData[i];
+  for i := 0 to a.hitems do Result.fData[i] += b.fData[i];
 end;
 
 class operator TNumPas<T>.+(const a: TNumPas<T>; b: integer): TNumPas<T>;
@@ -1340,7 +1753,7 @@ var
   i: integer;
 begin
   Result := a.copy;
-  for i := 0 to pred(a.fNItems) do Result.fData[i] += b;
+  for i := 0 to a.hitems do Result.fData[i] += b;
 end;
 
 class operator TNumPas<T>.+(const a: TNumPas<T>; b: single): TNumPas<T>;
@@ -1350,10 +1763,10 @@ begin
   Result := a.copy;
   rb := round(b);
   case a.fDataType of
-    dtint: for i := 0 to pred(a.fNItems) do Result.fpint[i] += rb;
-    dtf32: for i := 0 to pred(a.fNItems) do Result.fpf32[i] += b;
-    dtf64: for i := 0 to pred(a.fNItems) do Result.fpf64[i] += b;
-    dtf128: for i := 0 to pred(a.fNItems) do Result.fpf128[i] += b;
+    dtint: for i := 0 to a.hitems do Result.fpint[i] += rb;
+    dtf32: for i := 0 to a.hitems do Result.fpf32[i] += b;
+    dtf64: for i := 0 to a.hitems do Result.fpf64[i] += b;
+    dtf128: for i := 0 to a.hitems do Result.fpf128[i] += b;
     else;
   end;
 end;
@@ -1365,10 +1778,10 @@ begin
   Result := a.copy;
   rb := round(b);
   case a.fDataType of
-    dtint: for i := 0 to pred(a.fNItems) do Result.fpint[i] += rb;
-    dtf32: for i := 0 to pred(a.fNItems) do Result.fpf32[i] += b;
-    dtf64: for i := 0 to pred(a.fNItems) do Result.fpf64[i] += b;
-    dtf128: for i := 0 to pred(a.fNItems) do Result.fpf128[i] += b;
+    dtint: for i := 0 to a.hitems do Result.fpint[i] += rb;
+    dtf32: for i := 0 to a.hitems do Result.fpf32[i] += b;
+    dtf64: for i := 0 to a.hitems do Result.fpf64[i] += b;
+    dtf128: for i := 0 to a.hitems do Result.fpf128[i] += b;
     else;
   end;
 end;
@@ -1379,7 +1792,7 @@ var
 begin
   assert(a.sameDims(b), 'can''t sub with different simensions');
   Result := a.copy;
-  for i := 0 to pred(a.fNItems) do Result.fData[i] -= b.fData[i];
+  for i := 0 to a.hitems do Result.fData[i] -= b.fData[i];
 end;
 
 class operator TNumPas<T>.-(const a: TNumPas<T>; b: integer): TNumPas<T>;
@@ -1387,7 +1800,7 @@ var
   i: integer;
 begin
   Result := a.copy;
-  for i := 0 to pred(a.fNItems) do Result.fData[i] -= b;
+  for i := 0 to a.hitems do Result.fData[i] -= b;
 end;
 
 class operator TNumPas<T>.-(const a: TNumPas<T>; b: single): TNumPas<T>;
@@ -1397,10 +1810,10 @@ begin
   Result := a.copy;
   rb := round(b);
   case a.fDataType of
-    dtint: for i := 0 to pred(a.fNItems) do Result.fpint[i] -= rb;
-    dtf32: for i := 0 to pred(a.fNItems) do Result.fpf32[i] -= b;
-    dtf64: for i := 0 to pred(a.fNItems) do Result.fpf64[i] -= b;
-    dtf128: for i := 0 to pred(a.fNItems) do Result.fpf128[i] -= b;
+    dtint: for i := 0 to a.hitems do Result.fpint[i] -= rb;
+    dtf32: for i := 0 to a.hitems do Result.fpf32[i] -= b;
+    dtf64: for i := 0 to a.hitems do Result.fpf64[i] -= b;
+    dtf128: for i := 0 to a.hitems do Result.fpf128[i] -= b;
   end;
 end;
 
@@ -1411,10 +1824,10 @@ begin
   Result := a.copy;
   rb := round(b);
   case a.fDataType of
-    dtint: for i := 0 to pred(a.fNItems) do Result.fpint[i] -= rb;
-    dtf32: for i := 0 to pred(a.fNItems) do Result.fpf32[i] -= b;
-    dtf64: for i := 0 to pred(a.fNItems) do Result.fpf64[i] -= b;
-    dtf128: for i := 0 to pred(a.fNItems) do Result.fpf128[i] -= b;
+    dtint: for i := 0 to a.hitems do Result.fpint[i] -= rb;
+    dtf32: for i := 0 to a.hitems do Result.fpf32[i] -= b;
+    dtf64: for i := 0 to a.hitems do Result.fpf64[i] -= b;
+    dtf128: for i := 0 to a.hitems do Result.fpf128[i] -= b;
   end;
 end;
 
@@ -1422,21 +1835,10 @@ class operator TNumPas<T>.*(const a, b: TNumPas<T>): TNumPas<T>;
 var
   i, j: integer;
 begin
+  assert(a.sameDims(b), 'can''t * with different simensions');
 
   Result := a.copy;
-
-  i := 0;
-  while i < a.fNItems do
-  begin
-    for j := 0 to pred(b.fnitems) do
-    begin
-      if i < a.fnitems then
-        Result[i] := Result[i] * b[j]
-      else
-        break;
-      Inc(i);
-    end;
-  end;
+  for i := 0 to a.hitems do Result[i] := Result[i] * b[i];
 end;
 
 
@@ -1445,7 +1847,7 @@ var
   i: integer;
 begin
   Result := a.copy;
-  for i := 0 to pred(a.fNItems) do Result.fData[i] *= b;
+  for i := 0 to a.hitems do Result.fData[i] *= b;
 end;
 
 class operator TNumPas<T>.*(const a: TNumPas<T>; b: single): TNumPas<T>;
@@ -1455,10 +1857,10 @@ begin
   Result := a.copy;
   rb := round(b);
   case a.fDataType of
-    dtint: for i := 0 to pred(a.fNItems) do Result.fpint[i] *= rb;
-    dtf32: for i := 0 to pred(a.fNItems) do Result.fpf32[i] *= b;
-    dtf64: for i := 0 to pred(a.fNItems) do Result.fpf64[i] *= b;
-    dtf128: for i := 0 to pred(a.fNItems) do Result.fpf128[i] *= b;
+    dtint: for i := 0 to a.hitems do Result.fpint[i] *= rb;
+    dtf32: for i := 0 to a.hitems do Result.fpf32[i] *= b;
+    dtf64: for i := 0 to a.hitems do Result.fpf64[i] *= b;
+    dtf128: for i := 0 to a.hitems do Result.fpf128[i] *= b;
   end;
 end;
 
@@ -1469,10 +1871,10 @@ begin
   Result := a.copy;
   rb := round(b);
   case a.fDataType of
-    dtint: for i := 0 to pred(a.fNItems) do Result.fpint[i] *= rb;
-    dtf32: for i := 0 to pred(a.fNItems) do Result.fpf32[i] *= b;
-    dtf64: for i := 0 to pred(a.fNItems) do Result.fpf64[i] *= b;
-    dtf128: for i := 0 to pred(a.fNItems) do Result.fpf128[i] *= b;
+    dtint: for i := 0 to a.hitems do Result.fpint[i] *= rb;
+    dtf32: for i := 0 to a.hitems do Result.fpf32[i] *= b;
+    dtf64: for i := 0 to a.hitems do Result.fpf64[i] *= b;
+    dtf128: for i := 0 to a.hitems do Result.fpf128[i] *= b;
   end;
 end;
 
@@ -1483,10 +1885,10 @@ begin
   assert(a.sameDims(b), 'can''t / with different dimensions');
   Result := a.copy;
   case a.fDataType of
-    dtint: for i := 0 to pred(a.fNItems) do Result.fpint[i] := a.fpint[i] div b.fpint[i];
-    dtf32: for i := 0 to pred(a.fNItems) do Result.fpf32[i] /= b.fpf32[i];
-    dtf64: for i := 0 to pred(a.fNItems) do Result.fpf64[i] /= b.fpf64[i];
-    dtf128: for i := 0 to pred(a.fNItems) do Result.fpf128[i] /= b.fpf128[i];
+    dtint: for i := 0 to a.hitems do Result.fpint[i] := a.fpint[i] div b.fpint[i];
+    dtf32: for i := 0 to a.hitems do Result.fpf32[i] /= b.fpf32[i];
+    dtf64: for i := 0 to a.hitems do Result.fpf64[i] /= b.fpf64[i];
+    dtf128: for i := 0 to a.hitems do Result.fpf128[i] /= b.fpf128[i];
   end;
 end;
 
@@ -1497,10 +1899,10 @@ begin
   Result := a.copy;
 
   case a.fDataType of
-    dtint: for i := 0 to pred(a.fNItems) do Result.fpint[i] := a.fpint[i] div b;
-    dtf32: for i := 0 to pred(a.fNItems) do Result.fpf32[i] /= b;
-    dtf64: for i := 0 to pred(a.fNItems) do Result.fpf64[i] /= b;
-    dtf128: for i := 0 to pred(a.fNItems) do Result.fpf128[i] /= b;
+    dtint: for i := 0 to a.hitems do Result.fpint[i] := a.fpint[i] div b;
+    dtf32: for i := 0 to a.hitems do Result.fpf32[i] /= b;
+    dtf64: for i := 0 to a.hitems do Result.fpf64[i] /= b;
+    dtf128: for i := 0 to a.hitems do Result.fpf128[i] /= b;
   end;
 end;
 
@@ -1511,10 +1913,10 @@ begin
   Result := a.copy;
   rb := round(b);
   case a.fDataType of
-    dtint: for i := 0 to pred(a.fNItems) do Result.fpint[i] := a.fpint[i] div rb;
-    dtf32: for i := 0 to pred(a.fNItems) do Result.fpf32[i] /= b;
-    dtf64: for i := 0 to pred(a.fNItems) do Result.fpf64[i] /= b;
-    dtf128: for i := 0 to pred(a.fNItems) do Result.fpf128[i] /= b;
+    dtint: for i := 0 to a.hitems do Result.fpint[i] := a.fpint[i] div rb;
+    dtf32: for i := 0 to a.hitems do Result.fpf32[i] /= b;
+    dtf64: for i := 0 to a.hitems do Result.fpf64[i] /= b;
+    dtf128: for i := 0 to a.hitems do Result.fpf128[i] /= b;
   end;
 end;
 
@@ -1525,10 +1927,10 @@ begin
   Result := a.copy;
   rb := round(b);
   case a.fDataType of
-    dtint: for i := 0 to pred(a.fNItems) do Result.fpint[i] := a.fpint[i] div rb;
-    dtf32: for i := 0 to pred(a.fNItems) do Result.fpf32[i] /= b;
-    dtf64: for i := 0 to pred(a.fNItems) do Result.fpf64[i] /= b;
-    dtf128: for i := 0 to pred(a.fNItems) do Result.fpf128[i] /= b;
+    dtint: for i := 0 to a.hitems do Result.fpint[i] := a.fpint[i] div rb;
+    dtf32: for i := 0 to a.hitems do Result.fpf32[i] /= b;
+    dtf64: for i := 0 to a.hitems do Result.fpf64[i] /= b;
+    dtf128: for i := 0 to a.hitems do Result.fpf128[i] /= b;
   end;
 end;
 
@@ -1540,7 +1942,7 @@ var
 begin
   assert(a.sameDims(b), 'can''t compare with different dimensions');
 
-  for i := 0 to pred(a.fNItems) do if a.fData[i] <> b.fData[i] then exit(False);
+  for i := 0 to a.hitems do if a.fData[i] <> b.fData[i] then exit(False);
   Result := True;
 end;
 
@@ -1555,7 +1957,7 @@ var
 begin
   assert(a.sameDims(b), 'can''t compare with different dimensions');
 
-  for i := 0 to pred(a.fNItems) do if a.fData[i] <= b.fData[i] then exit(False);
+  for i := 0 to a.hitems do if a.fData[i] <= b.fData[i] then exit(False);
   Result := True;
 end;
 
@@ -1565,7 +1967,7 @@ var
 begin
   assert(a.sameDims(b), 'can''t compare with different dimensions');
 
-  for i := 0 to pred(a.fNItems) do if a.fData[i] >= b.fData[i] then exit(False);
+  for i := 0 to a.hitems do if a.fData[i] >= b.fData[i] then exit(False);
   Result := True;
 end;
 
@@ -1641,6 +2043,17 @@ begin
     Result[i] := Result[j];
     Result[j] := tmp;
   end;
+end;
+
+function strToDims(sd: string): TarrInt;
+var
+  nums: TStringArray;
+  s: string;
+begin
+  nums := sd.split([' ', ',', '(', ')', '[', ']'], TStringSplitOptions.ExcludeEmpty);
+  Result := nil;
+  if length(nums) > 0 then
+    for s in nums do if StrToInt(s) > 0 then Result += [StrToInt(s)];
 end;
 
 initialization
