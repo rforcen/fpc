@@ -18,7 +18,7 @@ interface
 
 uses
   Classes, SysUtils, Math, TypInfo, MTProcs, Randoms,
-  Generics.Defaults, Generics.Collections, f128;
+  Generics.Defaults, Generics.Collections, f128, zstream;
 
 type
 
@@ -72,7 +72,7 @@ type
     fDims: TArrInt;
     hitems, fNitems, fNdims: int64;
     fMlt: TArrInt; // mlt factor for index calc
-    fSizeBytes: int64;
+    fSizeBytes, fCmpSize: int64;
 
     _typeInfo: PTypeInfo;
     fDataType: TDataType;
@@ -165,6 +165,10 @@ type
     function apply(foo: TNPFunction): NP;
     function isQuadratic: boolean;
     function reshape(ndim: TArrInt): NP;
+  public
+    procedure compress;
+    procedure deCompress;
+
     { algebra }
   private
     function det_nxn(const a: NP; ni: integer): T;
@@ -250,6 +254,7 @@ begin
   hitems := fNItems - 1;
 
   fSizeBytes := fNItems * sizeof(T);
+  fCmpSize := 0;
 
   assert(fNItems > 0, 'zero dims not supported');
 
@@ -1092,6 +1097,70 @@ end;
 function TNumPas<T>.isQuadratic: boolean;
 begin
   Result := (fNDims >= 2) and (hi(0) = hi(1));
+end;
+
+// does not use any additional buffer for compression
+// using only fpData -> fData[]
+
+procedure TNumPas<T>.compress;
+var
+  inStream, compStream: TMemoryStream;
+begin
+  if fNitems = 0 then exit; // already compressed
+
+  inStream := TMemoryStream.Create;    // populate inStream << fpData(fSizeBytes)
+  inStream.SetSize(fSizeBytes);        // this dups fData
+  inStream.Write(fpData^, fSizeBytes);
+  inStream.Seek(0, soFromBeginning);
+
+  compStream := TMemoryStream.Create;
+
+  with TCompressionStream.Create(clMax, compStream) do
+  begin // compress
+    CopyFrom(inStream, 0);  { compress inStream }
+    Free; // once free or flush, result is available
+  end;
+  inStream.Free;
+
+  fCmpSize := compStream.Size; // fpData << compStream,  compressed < original!!
+  compStream.Position := 0;
+  compStream.ReadBuffer(fpData^, fCmpSize);
+
+  compStream.Free;
+
+  fNitems := 0; // fpData contains compressed data, not accesible!!
+  fSizeBytes := 0;
+end;
+
+procedure TNumPas<T>.deCompress;
+var
+  zdc: TDecompressionStream;
+  compStream: TMemoryStream;
+begin
+  if fNitems <> 0 then exit; // fpData is not compressed
+
+  compStream := TMemoryStream.Create; // populate compStream w/fpData
+  compStream.SetSize(fCmpSize);
+  compStream.Write(fpData^, fCmpSize);
+  compStream.Position := 0;
+
+  with TMemoryStream.Create do
+  begin
+
+    zdc := TDecompressionStream.Create(compStream);
+    CopyFrom(zdc, 0);
+
+    zdc.Free;
+    compStream.Free;
+
+    fSizeBytes := Size;
+    fNItems := fSizeBytes div sizeof(T);
+
+    Position := 0;
+    ReadBuffer(fpData^, fSizeBytes); // copy to fpData
+
+    Free;
+  end;
 end;
 
 function TNumPas<T>.reshape(ndim: TArrInt): NP;

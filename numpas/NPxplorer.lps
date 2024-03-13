@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="12"/>
+    <BuildModes Active="Debug"/>
+    <Units>
+      <Unit>
+        <Filename Value="NPxplorer.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="24"/>
+        <UsageCount Value="57"/>
+      </Unit>
+      <Unit>
+        <Filename Value="unpxplorer.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Form1"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uNPxplorer"/>
+        <TopLine Value="127"/>
+        <CursorPos X="53" Y="168"/>
+        <UsageCount Value="57"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\units\unumpas.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uNumPas"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="1114"/>
+        <CursorPos X="38" Y="1127"/>
+        <FoldState Value=" T3tL0J09331n piW.Z0R1 PKT0W"/>
+        <UsageCount Value="44"/>
+        <Bookmarks Count="2">
+          <Item0 Y="934" ID="2"/>
+          <Item1 Y="1131" ID="1"/>
+        </Bookmarks>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="NPInterpreter.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="20"/>
+        <CursorPos X="20" Y="67"/>
+        <UsageCount Value="44"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\test\pLBCustom.lpr"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="8"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\test\ulbcust.pas"/>
+        <UnitName Value="uLBCust"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="97"/>
+        <CursorPos X="39" Y="100"/>
+        <UsageCount Value="8"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\stereograph\frmstereograph.pas"/>
+        <UnitName Value="frmStereograph"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="90"/>
+        <CursorPos X="20" Y="194"/>
+        <UsageCount Value="8"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\rtl\inc\objpash.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="232"/>
+        <CursorPos X="20" Y="256"/>
+        <UsageCount Value="8"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\lcl\spin.pp"/>
+        <UnitName Value="Spin"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="161"/>
+        <CursorPos X="14" Y="187"/>
+        <UsageCount Value="8"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\lcl\stdctrls.pp"/>
+        <UnitName Value="StdCtrls"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="843"/>
+        <CursorPos X="36" Y="868"/>
+        <UsageCount Value="8"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\test\unoaastations.pas"/>
+        <UnitName Value="unoaaStations"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="240"/>
+        <CursorPos X="4" Y="195"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\lcl\grids.pas"/>
+        <UnitName Value="Grids"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="5501"/>
+        <CursorPos Y="5527"/>
+        <UsageCount Value="8"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\lcl\clipbrd.pp"/>
+        <UnitName Value="Clipbrd"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\lcl\editbtn.pas"/>
+        <UnitName Value="EditBtn"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="180"/>
+        <CursorPos X="14" Y="204"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\lcl\controls.pp"/>
+        <UnitName Value="Controls"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1772"/>
+        <CursorPos X="23" Y="1798"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\rtl-objpas\src\inc\strutils.pp"/>
+        <UnitName Value="StrUtils"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1061"/>
+        <CursorPos X="43" Y="1106"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\rtl\objpas\math.pp"/>
+        <UnitName Value="Math"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="424"/>
+        <CursorPos X="10" Y="433"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\noaa\zcompress.pas"/>
+        <UnitName Value="zCompress"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\units\zcompress.pas"/>
+        <UnitName Value="zCompress"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="7" Y="46"/>
+        <UsageCount Value="11"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\rtl\objpas\classes\classesh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1032"/>
+        <CursorPos X="16" Y="1058"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\units\f128.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="156"/>
+        <CursorPos X="15" Y="183"/>
+        <UsageCount Value="10"/>
+      </Unit>
+    </Units>
+    <JumpHistory HistoryIndex="20">
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1115" TopLine="1070"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1109" Column="10" TopLine="1070"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1114" Column="36" TopLine="1088"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="85" Column="11" TopLine="58"/>
+      </Position>
+      <Position>
+        <Filename Value="unpxplorer.pas"/>
+        <Caret Line="168" TopLine="127"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1108" Column="11" TopLine="1080"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="402" TopLine="376"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1109" Column="19" TopLine="1084"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1114" Column="13" TopLine="1084"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1131" Column="19" TopLine="1100"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1111" Column="40" TopLine="1089"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="21" Column="57"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1128" Column="56" TopLine="1095"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="76" TopLine="67"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1153" TopLine="1107"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="259" Column="24" TopLine="232"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1116" Column="18" TopLine="1090"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1126" Column="39" TopLine="1112"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1128" TopLine="1112"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1130" TopLine="1112"/>
+      </Position>
+      <Position>
+        <Filename Value="..\units\unumpas.pas"/>
+        <Caret Line="1145" Column="28" TopLine="1111"/>
+      </Position>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes ActiveMode=""/>
+    </RunParams>
+  </ProjectSession>
+  <Debugging>
+    <Watches>
+      <Item>
+        <Expression Value="fCmpPtr"/>
+      </Item>
+      <Item>
+        <Expression Value="size"/>
+      </Item>
+      <Item>
+        <Expression Value="self"/>
+      </Item>
+      <Item>
+        <Expression Value="inStream"/>
+      </Item>
+      <Item>
+        <Expression Value="compStream"/>
+      </Item>
+      <Item>
+        <Expression Value="p"/>
+      </Item>
+      <Item>
+        <Expression Value="fCmpPtr"/>
+      </Item>
+    </Watches>
+  </Debugging>
+</CONFIG>

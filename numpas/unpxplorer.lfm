@@ -1,0 +1,502 @@
+object Form1: TForm1
+  Left = 585
+  Height = 829
+  Top = 520
+  Width = 1236
+  Caption = 'NP explorer'
+  ClientHeight = 829
+  ClientWidth = 1236
+  DesignTimePPI = 144
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  LCLVersion = '3.0.0.3'
+  object Panel1: TPanel
+    Left = 0
+    Height = 40
+    Top = 0
+    Width = 1236
+    Align = alTop
+    ClientHeight = 40
+    ClientWidth = 1236
+    TabOrder = 0
+    object seDecs: TSpinEdit
+      Left = 6
+      Height = 38
+      Hint = 'decimals'
+      Top = 1
+      Width = 75
+      Align = alLeft
+      BorderSpacing.Left = 5
+      MaxValue = 12
+      OnChange = seDecsChange
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 0
+      Value = 2
+    end
+    object seDims: TSpinEdit
+      Left = 81
+      Height = 38
+      Hint = '# dimensions'
+      Top = 1
+      Width = 75
+      Align = alLeft
+      MaxValue = 12
+      MinValue = 1
+      OnChange = seDimsChange
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+      Value = 4
+    end
+    object btSave: TButton
+      Left = 547
+      Height = 38
+      Top = 1
+      Width = 113
+      Align = alLeft
+      Caption = '&save'
+      TabOrder = 2
+      OnClick = btSaveClick
+    end
+    object ebDims: TEditButton
+      Left = 919
+      Height = 38
+      Hint = 'numpy array shape stored in a.bin'
+      Top = 1
+      Width = 280
+      Align = alLeft
+      ButtonWidth = 34
+      MaxLength = 0
+      NumGlyphs = 1
+      OnButtonClick = ebDimsClick
+      ParentShowHint = False
+      PasswordChar = #0
+      ShowHint = True
+      TabOrder = 3
+    end
+    object Label1: TLabel
+      Left = 785
+      Height = 38
+      Top = 1
+      Width = 134
+      Align = alLeft
+      Caption = '  load shape:  '
+    end
+    object cbQuad: TCheckBox
+      Left = 161
+      Height = 38
+      Top = 1
+      Width = 115
+      Align = alLeft
+      BorderSpacing.Left = 5
+      BorderSpacing.Right = 5
+      Caption = 'quadratic'
+      Checked = True
+      State = cbChecked
+      TabOrder = 4
+    end
+    object edFileName: TEdit
+      Left = 665
+      Height = 38
+      Top = 1
+      Width = 120
+      Align = alLeft
+      BorderSpacing.Left = 5
+      TabOrder = 5
+      Text = 'a'
+    end
+    object edShape: TEdit
+      Left = 343
+      Height = 38
+      Top = 1
+      Width = 204
+      Align = alLeft
+      TabOrder = 6
+      OnEditingDone = edShapeEditingDone
+    end
+    object cbMT: TCheckBox
+      Left = 281
+      Height = 38
+      Top = 1
+      Width = 57
+      Align = alLeft
+      BorderSpacing.Left = 5
+      BorderSpacing.Right = 5
+      Caption = 'MT'
+      Checked = True
+      State = cbChecked
+      TabOrder = 7
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 747
+    Top = 40
+    Width = 1236
+    Align = alClient
+    ClientHeight = 747
+    ClientWidth = 1236
+    TabOrder = 1
+    object gb: TGroupBox
+      Left = 232
+      Height = 707
+      Top = 1
+      Width = 1003
+      Align = alClient
+      Caption = 'dims:'
+      ClientHeight = 672
+      ClientWidth = 999
+      TabOrder = 0
+      object sg: TStringGrid
+        Left = 0
+        Height = 672
+        Top = 0
+        Width = 999
+        Align = alClient
+        ColCount = 1
+        RowCount = 1
+        TabOrder = 0
+      end
+    end
+    object edCommand: TEdit
+      Left = 1
+      Height = 38
+      Top = 708
+      Width = 1234
+      Align = alBottom
+      TabOrder = 1
+      OnEditingDone = edCommandEditingDone
+    end
+    object Panel3: TPanel
+      Left = 1
+      Height = 707
+      Top = 1
+      Width = 231
+      Align = alLeft
+      ClientHeight = 707
+      ClientWidth = 231
+      TabOrder = 2
+      object FlowPanel1: TFlowPanel
+        Left = 1
+        Height = 705
+        Top = 1
+        Width = 229
+        Align = alClient
+        ControlList = <        
+          item
+            Control = Button14
+            WrapAfter = waAuto
+            Index = 0
+          end        
+          item
+            Control = Button3
+            WrapAfter = waAuto
+            Index = 1
+          end        
+          item
+            Control = Button10
+            WrapAfter = waAuto
+            Index = 2
+          end        
+          item
+            Control = Button11
+            WrapAfter = waAuto
+            Index = 3
+          end        
+          item
+            Control = Button12
+            WrapAfter = waAuto
+            Index = 4
+          end        
+          item
+            Control = Button9
+            WrapAfter = waAuto
+            Index = 5
+          end        
+          item
+            Control = Button13
+            WrapAfter = waAuto
+            Index = 6
+          end        
+          item
+            Control = Button8
+            WrapAfter = waAuto
+            Index = 7
+          end        
+          item
+            Control = Button1
+            WrapAfter = waAuto
+            Index = 8
+          end        
+          item
+            Control = Button2
+            WrapAfter = waAuto
+            Index = 9
+          end        
+          item
+            Control = Button15
+            WrapAfter = waAuto
+            Index = 10
+          end        
+          item
+            Control = Button4
+            WrapAfter = waAuto
+            Index = 11
+          end        
+          item
+            Control = Button5
+            WrapAfter = waAuto
+            Index = 12
+          end        
+          item
+            Control = Button6
+            WrapAfter = waAuto
+            Index = 13
+          end        
+          item
+            Control = Button7
+            WrapAfter = waAuto
+            Index = 14
+          end        
+          item
+            Control = Button16
+            WrapAfter = waAuto
+            Index = 15
+          end        
+          item
+            Control = Button17
+            WrapAfter = waAuto
+            Index = 16
+          end        
+          item
+            Control = Button18
+            WrapAfter = waAuto
+            Index = 17
+          end        
+          item
+            Control = Button19
+            WrapAfter = waAuto
+            Index = 18
+          end        
+          item
+            Control = lbDims
+            WrapAfter = waAuto
+            Index = 19
+          end>
+        FlowLayout = tlTop
+        FlowStyle = fsLeftRightTopBottom
+        TabOrder = 0
+        object Button1: TButton
+          Left = 1
+          Height = 38
+          Top = 77
+          Width = 55
+          Anchors = []
+          Caption = 'inv'
+          TabOrder = 0
+          OnClick = Button1Click
+        end
+        object Button2: TButton
+          Left = 56
+          Height = 38
+          Top = 77
+          Width = 55
+          Anchors = []
+          Caption = 'dot'
+          TabOrder = 1
+          OnClick = Button1Click
+        end
+        object Button3: TButton
+          Left = 56
+          Height = 38
+          Top = 1
+          Width = 55
+          Anchors = []
+          Caption = 'rnd'
+          TabOrder = 2
+          OnClick = Button1Click
+        end
+        object Button4: TButton
+          Left = 166
+          Height = 38
+          Top = 77
+          Width = 55
+          Anchors = []
+          Caption = 'det'
+          TabOrder = 3
+          OnClick = Button1Click
+        end
+        object Button5: TButton
+          Left = 1
+          Height = 38
+          Top = 115
+          Width = 55
+          Anchors = []
+          Caption = '+'
+          TabOrder = 4
+          OnClick = Button1Click
+        end
+        object Button6: TButton
+          Left = 56
+          Height = 38
+          Top = 115
+          Width = 55
+          Anchors = []
+          Caption = '-'
+          TabOrder = 5
+          OnClick = Button1Click
+        end
+        object Button7: TButton
+          Left = 111
+          Height = 38
+          Top = 115
+          Width = 55
+          Anchors = []
+          Caption = '*'
+          TabOrder = 6
+          OnClick = Button1Click
+        end
+        object Button8: TButton
+          Left = 166
+          Height = 38
+          Top = 39
+          Width = 55
+          Anchors = []
+          Caption = 'sort'
+          TabOrder = 7
+          OnClick = Button1Click
+        end
+        object Button9: TButton
+          Left = 56
+          Height = 38
+          Top = 39
+          Width = 55
+          Anchors = []
+          Caption = 'T'
+          TabOrder = 8
+          OnClick = Button1Click
+        end
+        object Button10: TButton
+          Left = 111
+          Height = 38
+          Top = 1
+          Width = 55
+          Anchors = []
+          Caption = '0'
+          TabOrder = 9
+          OnClick = Button1Click
+        end
+        object Button11: TButton
+          Left = 166
+          Height = 38
+          Top = 1
+          Width = 55
+          Anchors = []
+          Caption = '1'
+          TabOrder = 10
+          OnClick = Button1Click
+        end
+        object Button12: TButton
+          Left = 1
+          Height = 38
+          Top = 39
+          Width = 55
+          Anchors = []
+          Caption = 'ident'
+          TabOrder = 11
+          OnClick = Button1Click
+        end
+        object Button13: TButton
+          Left = 111
+          Height = 38
+          Top = 39
+          Width = 55
+          Anchors = []
+          Caption = 'rng'
+          TabOrder = 12
+          OnClick = Button1Click
+        end
+        object Button14: TButton
+          Left = 1
+          Height = 38
+          Top = 1
+          Width = 55
+          Anchors = []
+          Caption = 'b=a'
+          TabOrder = 13
+          OnClick = Button1Click
+        end
+        object Button15: TButton
+          Left = 111
+          Height = 38
+          Top = 77
+          Width = 55
+          Anchors = []
+          Caption = 'solve'
+          TabOrder = 14
+          OnClick = Button1Click
+        end
+        object Button16: TButton
+          Left = 166
+          Height = 38
+          Top = 115
+          Width = 55
+          Anchors = []
+          Caption = 'save'
+          TabOrder = 15
+          OnClick = Button1Click
+        end
+        object Button17: TButton
+          Left = 1
+          Height = 38
+          Top = 153
+          Width = 55
+          Anchors = []
+          Caption = 'load'
+          TabOrder = 16
+          OnClick = Button1Click
+        end
+        object Button18: TButton
+          Left = 56
+          Height = 38
+          Top = 153
+          Width = 55
+          Anchors = []
+          Caption = 'cmp'
+          TabOrder = 17
+          OnClick = Button1Click
+        end
+        object lbDims: TListBox
+          Left = 1
+          Height = 510
+          Top = 191
+          Width = 229
+          Align = alClient
+          Anchors = []
+          ItemHeight = 0
+          Style = lbOwnerDrawFixed
+          TabOrder = 18
+          OnDrawItem = lbDimsDrawItem
+        end
+        object Button19: TButton
+          Left = 111
+          Height = 38
+          Top = 153
+          Width = 55
+          Anchors = []
+          Caption = 'dcp'
+          TabOrder = 19
+          OnClick = Button1Click
+        end
+      end
+    end
+  end
+  object stBar: TStatusBar
+    Left = 0
+    Height = 42
+    Top = 787
+    Width = 1236
+    Panels = <>
+  end
+end
