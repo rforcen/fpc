@@ -16,8 +16,9 @@ unit uNumPas;
 {$WARN 6058 off : Call to subroutine "$1" marked as inline is not inlined}
 interface
 
-uses
+uses // add required packages: multithreadprocslaz
   Classes, SysUtils, Math, TypInfo, MTProcs, Randoms,
+  UTF8Process,
   Generics.Defaults, Generics.Collections, f128, zstream;
 
 type
@@ -56,6 +57,7 @@ type
 
   public  { -- constructors }
     constructor Create(const _dims: TArrInt); overload;
+    constructor Create(const _dims: TArrInt; _pt: PT); overload;
     constructor Create(const a: TNumPas<T>); overload;
 
     constructor rand(_dims: TArrInt); overload;
@@ -67,6 +69,7 @@ type
     constructor zeros(const _dims: TArrInt); overload;
     constructor identity(n: integer); overload;
     constructor fromString(const s: string; typ: TDataType = dtf64); overload;
+    constructor vander(n: integer);
 
   private
     fDims: TArrInt;
@@ -81,7 +84,7 @@ type
     fpf32: psingle;
     fpf64: pdouble;
     fpf128: pfp128;
-    fpdata: ^T;
+    fpdata: PT;
     fData: array of T;
 
 
@@ -103,6 +106,7 @@ type
     function index2Dims(index: integer): TArrInt;
     function transposedCoord(index: integer): integer;
     function sqr(x: T): T; inline;
+    function getNThreads: integer;
   public
     function calcIndex(const index: TArrInt): integer; inline;
     procedure rangeSlice(const index: TArrInt; out aStart, aEnd: integer);
@@ -137,13 +141,17 @@ type
     function Data(index: integer): T;
     function getData: TArrT;
     procedure setValue(v: T); overload;
+    procedure fromBuffer(v: PT);
+    procedure toBuffer(v: pointer);
     procedure setValue(const slc: TArrInt; v: T); overload;
     function sameDims(a: NP): boolean; // same fDims
+  public
     function sum: T;
     function max: T;
     function min: T;
     function mean: T;
     function std: T;
+    procedure seq; // fill with seq # 0..pred(size)
     function shape: TArrInt;
     procedure Assign(const a: NP; const _dims: TArrInt);
     procedure toFile(Name: string);
@@ -289,12 +297,16 @@ begin
   assert(fDataType <> dtUnknown, 'data type not supported');
 end;
 
+constructor TNumPas<T>.Create(const _dims: TArrInt; _pt: PT);
+begin
+  self := Create(_dims).copy;
+  self.fromBuffer(_pt);
+end;
+
 constructor TNumPas<T>.Create(const a: TNumPas<T>);
 begin
-  Create(a.fDims);
+  self := Create(a.fDims);
 
-  fDims := system.copy(a.fDims);
-  fMlt := system.copy(a.fMlt);
   fData := system.copy(a.fData);
   setPointers;
 end;
@@ -360,6 +372,18 @@ begin
   self := TNumPas<T>.eye(n);
 end;
 
+constructor TNumPas<T>.vander(n: integer);
+var
+  r, c: integer;
+begin
+  assert(n > 0, 'vander matrix N<=0');
+  self := NP.Create([n, n]);
+
+  for r := 0 to self.hi(1) do
+    for c := 0 to self.hi(0) do
+      self[r, c] := power(r + 1, c);
+end;
+
 constructor TNumPas<T>.fromString(const s: string; typ: TDataType);
 var
   nums: TStringArray;
@@ -423,6 +447,15 @@ end;
 function TNumPas<T>.sqr(x: T): T; inline;
 begin
   Result := x * x;
+end;
+
+function TNumPas<T>.getNThreads: integer;
+begin
+  {$ifdef windows}
+  result:=getCPUCount;
+  {$else}
+  Result := GetSystemThreadCount;
+  {$endif}
 end;
 
 function TNumPas<T>.transposedCoord(index: integer): integer;
@@ -777,7 +810,7 @@ procedure TNumPas<T>.randMT;   // slower than ST mode as TsRnd is much slower th
   end;
 
 begin
-  ProcThreadPool.DoParallelLocalProc(@_randMT, 0, GetCPUCount - 1, nil);
+  ProcThreadPool.DoParallelLocalProc(@_randMT, 0, getNThreads - 1, nil);
 end;
 
 
@@ -822,6 +855,16 @@ var
   i: integer;
 begin
   for i := startSlice(slc) to endSlice(slc) do fData[i] := v;
+end;
+
+procedure TNumPas<T>.toBuffer(v: pointer);
+begin
+  move(fData[0], v^, fSizeBytes);
+end;
+
+procedure TNumPas<T>.fromBuffer(v: PT);
+begin
+  move(v^, fData[0], fSizeBytes);
 end;
 
 function TNumPas<T>.sameDims(a: TNumPas<T>): boolean;
@@ -887,6 +930,13 @@ begin // sigma = sqrt(1/n * sum(sqr(x-mean)))
   Result := sqrt(s / fNItems);
 end;
 
+procedure TNumPas<T>.seq; // fill with seq # 0..pred(size)
+var
+  i: integer;
+begin
+  for i := 0 to pred(size) do self[i] := i;
+end;
+
 function TNumPas<T>.shape: TArrInt;
 begin
   Result := fDims;
@@ -925,6 +975,7 @@ procedure TNumPas<T>.save(Name: string);
   var
     i: integer;
   begin
+    Result := '';
     setLength(Result, n);
     for i := 1 to n do Result[i] := ch;
   end;
@@ -968,9 +1019,8 @@ function TNumPas<T>.load(Name: string): NP;
 var
   fh: THandle;
   hr: TFileNPY;
-  desc: string;
+  desc: string = '';
   _dims: TArrInt;
-  pd: integer;
 begin
   try
     fh := fileOpen(Name + '.npy', fmOpenRead);
@@ -1072,7 +1122,7 @@ begin
     Result := copy;
     tdims := combinations(system.Copy(fDims, 0, fNDims - 1));
 
-    ProcThreadPool.DoParallelLocalProc(@_sortMT, 0, GetCPUCount - 1, nil);
+    ProcThreadPool.DoParallelLocalProc(@_sortMT, 0, getNThreads - 1, nil);
   end;
 end;
 
@@ -1123,6 +1173,8 @@ begin
   inStream.Free;
 
   fCmpSize := compStream.Size; // fpData << compStream,  compressed < original!!
+  setLength(fData, (fCmpSize div sizeof(T)) + 1);
+  setPointers;
   compStream.Position := 0;
   compStream.ReadBuffer(fpData^, fCmpSize);
 
@@ -1157,6 +1209,8 @@ begin
     fNItems := fSizeBytes div sizeof(T);
 
     Position := 0;
+    setLength(fData, fSizeBytes);
+    setPointers;
     ReadBuffer(fpData^, fSizeBytes); // copy to fpData
 
     Free;
@@ -1351,8 +1405,8 @@ begin
   ppivd := pred(pivd);
 
   case pivotPos of
-    0: ProcThreadPool.DoParallelLocalProc(@_dot1x1MT, 0, GetCPUCount - 1, nil);
-    1: ProcThreadPool.DoParallelLocalProc(@_dot1x2MT, 0, GetCPUCount - 1, nil);
+    0: ProcThreadPool.DoParallelLocalProc(@_dot1x1MT, 0, getNThreads - 1, nil);
+    1: ProcThreadPool.DoParallelLocalProc(@_dot1x2MT, 0, getNThreads - 1, nil);
     else
       assert(False, 'internal error in dot');
   end;
@@ -1598,14 +1652,14 @@ begin
     tdims := combinations(tdim);
     Result := TNumPas<T>.Create(tdim);
 
-    ProcThreadPool.DoParallelLocalProc(@_detMT, 0, GetCPUCount - 1, nil);
+    ProcThreadPool.DoParallelLocalProc(@_detMT, 0, getNThreads - 1, nil);
   end;
 end;
 
 function TNumPas<T>.detBareiss: T;  // 2 dims n x n works on copy
 var
   factor: T;
-  i, j, k, hi0, hi1: integer;
+  i, j, k, hi0: integer;
   a: TNumPas<T>;
 begin
   assert((fNDims = 2) and (hi(0) = hi(1)), 'not quadratic matrix');
@@ -1614,7 +1668,6 @@ begin
   a := copy;
 
   hi0 := hi(0);
-  hi1 := hi(1);
 
   for i := 0 to hi0 do
   begin
@@ -1683,7 +1736,7 @@ begin
     tdim := system.Copy(fDims, 0, fNDims - 2);
     tdims := combinations(tdim);
 
-    ProcThreadPool.DoParallelLocalProc(@_invMT, 0, GetCPUCount - 1, nil);
+    ProcThreadPool.DoParallelLocalProc(@_invMT, 0, getNThreads - 1, nil);
   end;
 end;
 
@@ -1698,7 +1751,7 @@ var
 begin
   Result := NP.Create(revArrInt(fDims));   // shape = self.reversed dims
 
-  for i := 0 to pred(size) do
+  for i := 1 to pred(size div 2) - 1 do
     Result[Result.transposedCoord(i)] := self[i];
 end;
 
@@ -1720,7 +1773,7 @@ function TNumPas<T>.transposeMT: NP;
 begin
   Result := NP.Create(revArrInt(fDims));   // shape = self.reversed dims
 
-  ProcThreadPool.DoParallelLocalProc(@_transMT, 0, GetCPUCount - 1, nil);
+  ProcThreadPool.DoParallelLocalProc(@_transMT, 0, getNThreads - 1, nil);
 end;
 
 function TNumPas<T>.transpose2x2: NP;
@@ -1902,7 +1955,7 @@ end;
 
 class operator TNumPas<T>.*(const a, b: TNumPas<T>): TNumPas<T>;
 var
-  i, j: integer;
+  i: integer;
 begin
   assert(a.sameDims(b), 'can''t * with different simensions');
 
