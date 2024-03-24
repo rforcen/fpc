@@ -1,0 +1,144 @@
+object Form1: TForm1
+  Left = 1080
+  Height = 772
+  Top = 446
+  Width = 991
+  Caption = 'epub indexer'
+  ClientHeight = 772
+  ClientWidth = 991
+  DesignTimePPI = 144
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  LCLVersion = '3.0.0.3'
+  object sb: TStatusBar
+    Left = 0
+    Height = 42
+    Top = 730
+    Width = 991
+    Panels = <>
+  end
+  object sg: TStringGrid
+    Left = 0
+    Height = 682
+    Top = 48
+    Width = 496
+    Align = alLeft
+    ColCount = 4
+    Columns = <    
+      item
+        Title.Caption = 'word'
+        Width = 180
+      end    
+      item
+        Title.Caption = 'index'
+        Width = 96
+      end    
+      item
+        Title.Caption = 'count'
+        Width = 96
+      end>
+    TabOrder = 1
+    OnClick = sgClick
+    ColWidths = (
+      96
+      180
+      96
+      96
+    )
+  end
+  object gb: TGroupBox
+    Left = 496
+    Height = 682
+    Top = 48
+    Width = 495
+    Align = alClient
+    Caption = 'closest words'
+    ClientHeight = 647
+    ClientWidth = 491
+    TabOrder = 2
+    object sgcw: TStringGrid
+      Left = 0
+      Height = 647
+      Top = 0
+      Width = 491
+      Align = alClient
+      ColCount = 3
+      FixedCols = 0
+      TabOrder = 0
+      OnClick = sgcwClick
+      ColWidths = (
+        96
+        286
+        96
+      )
+      Cells = (
+        3
+        0
+        0
+        'distance'
+        1
+        0
+        'word'
+        2
+        0
+        'count'
+      )
+    end
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 48
+    Top = 0
+    Width = 991
+    Align = alTop
+    ClientHeight = 48
+    ClientWidth = 991
+    TabOrder = 3
+    object cbOrder: TComboBox
+      Left = 272
+      Height = 38
+      Hint = 'order by'
+      Top = 1
+      Width = 100
+      Align = alLeft
+      ItemHeight = 30
+      ItemIndex = 1
+      Items.Strings = (
+        'word'
+        'count'
+      )
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 0
+      Text = 'count'
+      OnChange = cbOrderChange
+    end
+    object btOpen: TButton
+      Left = 1
+      Height = 46
+      Top = 1
+      Width = 113
+      Align = alLeft
+      Caption = 'open'
+      TabOrder = 1
+      OnClick = btOpenClick
+    end
+    object edFind: TEdit
+      Left = 114
+      Height = 46
+      Hint = 'find word'
+      Top = 1
+      Width = 158
+      Align = alLeft
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 2
+      OnEditingDone = edFindEditingDone
+    end
+  end
+  object od: TOpenDialog
+    Filter = '*.epub|*.epub'
+    Left = 464
+    Top = 65528
+  end
+end
