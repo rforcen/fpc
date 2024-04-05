@@ -9,10 +9,8 @@
         <Filename Value="FourInLine.lpr"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <WindowIndex Value="-1"/>
-        <TopLine Value="-1"/>
-        <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="39"/>
+        <CursorPos X="36" Y="25"/>
+        <UsageCount Value="42"/>
       </Unit>
       <Unit>
         <Filename Value="frm4il.pas"/>
@@ -20,25 +18,25 @@
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <TopLine Value="43"/>
-        <CursorPos X="10" Y="49"/>
-        <UsageCount Value="39"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="128"/>
+        <CursorPos X="66" Y="155"/>
+        <UsageCount Value="42"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="board.pas"/>
+        <Filename Value="ufourinline.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
+        <UnitName Value="ufourInLine"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="320"/>
-        <CursorPos X="27" Y="331"/>
-        <FoldState Value=" T3qX0f21216 pjalN0721]F pl7lY0DI"/>
-        <UsageCount Value="39"/>
+        <CursorPos X="18" Y="2"/>
+        <FoldState Value=" T3qb0f21216 pjalN07]D31 PjJlf0a"/>
+        <UsageCount Value="42"/>
         <Bookmarks Count="3">
-          <Item0 Y="500" ID="3"/>
-          <Item1 X="30" Y="658" ID="2"/>
-          <Item2 X="25" Y="546" ID="1"/>
+          <Item0 Y="504" ID="3"/>
+          <Item1 X="30" Y="662" ID="2"/>
+          <Item2 X="3" Y="140" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
       </Unit>
@@ -94,122 +92,142 @@
         <CursorPos X="14" Y="27"/>
         <UsageCount Value="10"/>
       </Unit>
+      <Unit>
+        <Filename Value="..\NPxplorer\unpxplorer.pas"/>
+        <UnitName Value="uNPxplorer"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="7" Y="9"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\NPxplorer\utnpbrowser.pas"/>
+        <UnitName Value="uTNPBrowser"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="55"/>
+        <CursorPos X="20" Y="23"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\lcl\dialogs.pp"/>
+        <UnitName Value="Dialogs"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="699"/>
+        <CursorPos X="28" Y="725"/>
+        <UsageCount Value="10"/>
+      </Unit>
     </Units>
-    <JumpHistory HistoryIndex="28">
+    <JumpHistory HistoryIndex="27">
       <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="400" Column="32" TopLine="356"/>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="98" Column="16" TopLine="55"/>
       </Position>
       <Position>
         <Filename Value="frm4il.pas"/>
-        <Caret Line="98" Column="57" TopLine="57"/>
+        <Caret Line="36" Column="22" TopLine="10"/>
       </Position>
       <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="381" Column="35" TopLine="356"/>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="98" Column="16" TopLine="46"/>
       </Position>
       <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="92" Column="37" TopLine="40"/>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="36" Column="15"/>
       </Position>
       <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="580" Column="29" TopLine="578"/>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="148" Column="37" TopLine="99"/>
       </Position>
       <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="55" Column="20" TopLine="34"/>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="149" Column="37" TopLine="100"/>
       </Position>
       <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="412" Column="21" TopLine="389"/>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="70" Column="3" TopLine="60"/>
       </Position>
       <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="388" Column="64" TopLine="363"/>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="62" Column="79" TopLine="36"/>
       </Position>
       <Position>
-        <Filename Value="board.pas"/>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="63" Column="3" TopLine="37"/>
       </Position>
       <Position>
-        <Filename Value="board.pas"/>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="90" Column="35" TopLine="58"/>
+      </Position>
+      <Position>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="82" Column="11" TopLine="58"/>
+      </Position>
+      <Position>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="63" Column="25" TopLine="105"/>
+      </Position>
+      <Position>
+        <Filename Value="frm4il.pas"/>
         <Caret Line="81" TopLine="60"/>
       </Position>
       <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="325" TopLine="299"/>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="82" TopLine="60"/>
       </Position>
       <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="455" TopLine="412"/>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="84" TopLine="60"/>
       </Position>
       <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="718" TopLine="518"/>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="85" TopLine="60"/>
       </Position>
       <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="206" Column="9" TopLine="180"/>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="87" Column="41" TopLine="60"/>
       </Position>
       <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="135" Column="18" TopLine="108"/>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="82" TopLine="60"/>
       </Position>
       <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="162" Column="14" TopLine="136"/>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="84" TopLine="60"/>
       </Position>
       <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="81" Column="18" TopLine="54"/>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="85" TopLine="60"/>
       </Position>
       <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="70" Column="17" TopLine="54"/>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="87" TopLine="60"/>
       </Position>
       <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="83" Column="14" TopLine="57"/>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="89" TopLine="60"/>
       </Position>
       <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="713" Column="23" TopLine="516"/>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="82" TopLine="60"/>
       </Position>
       <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="101" Column="39" TopLine="75"/>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="93" TopLine="60"/>
       </Position>
       <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="341" Column="19" TopLine="322"/>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="92" Column="23" TopLine="58"/>
       </Position>
       <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="535" Column="23" TopLine="405"/>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="85" Column="26" TopLine="70"/>
       </Position>
       <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="592" Column="12" TopLine="542"/>
+        <Filename Value="ufourinline.pas"/>
+        <Caret Line="2" Column="18"/>
       </Position>
       <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="604" Column="27" TopLine="554"/>
-      </Position>
-      <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="614" Column="43" TopLine="564"/>
-      </Position>
-      <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="616" Column="20" TopLine="566"/>
-      </Position>
-      <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="779" Column="20" TopLine="735"/>
-      </Position>
-      <Position>
-        <Filename Value="board.pas"/>
-        <Caret Line="781" Column="37" TopLine="737"/>
+        <Filename Value="frm4il.pas"/>
+        <Caret Line="155" Column="3" TopLine="128"/>
       </Position>
     </JumpHistory>
     <RunParams>
@@ -220,10 +238,7 @@
   <Debugging>
     <Watches>
       <Item>
-        <Expression Value="maxResult"/>
-      </Item>
-      <Item>
-        <Expression Value="minResult"/>
+        <Expression Value="moves"/>
       </Item>
     </Watches>
   </Debugging>

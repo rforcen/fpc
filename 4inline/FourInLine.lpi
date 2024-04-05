@@ -113,8 +113,9 @@
         <ResourceBaseClass Value="Form"/>
       </Unit>
       <Unit>
-        <Filename Value="board.pas"/>
+        <Filename Value="ufourinline.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="ufourInLine"/>
       </Unit>
     </Units>
   </ProjectOptions>

@@ -1,40 +1,31 @@
 object Form1: TForm1
   Left = 489
-  Height = 1154
+  Height = 1013
   Top = 163
-  Width = 1196
+  Width = 1406
   Align = alTop
   Caption = '4 in line'
-  ClientHeight = 1154
-  ClientWidth = 1196
+  ClientHeight = 1013
+  ClientWidth = 1406
   DesignTimePPI = 144
   OnCreate = FormCreate
   LCLVersion = '3.0.0.3'
-  object pb: TPaintBox
-    Left = 0
-    Height = 1061
-    Top = 51
-    Width = 1196
-    Align = alClient
-    OnMouseDown = pbMouseDown
-    OnPaint = pbPaint
-  end
   object topPanel: TPanel
     Left = 0
     Height = 51
     Top = 0
-    Width = 1196
+    Width = 1406
     Align = alTop
     ClientHeight = 51
-    ClientWidth = 1196
+    ClientWidth = 1406
     TabOrder = 0
     object btNewGame: TButton
       Left = 76
       Height = 49
       Top = 1
-      Width = 113
+      Width = 68
       Align = alLeft
-      Caption = 'new game'
+      Caption = 'new'
       TabOrder = 0
       OnClick = btNewGameClick
     end
@@ -52,12 +43,22 @@ object Form1: TForm1
       TabOrder = 1
       Value = 5
     end
+    object btUndo: TButton
+      Left = 144
+      Height = 49
+      Top = 1
+      Width = 72
+      Align = alLeft
+      Caption = 'undo'
+      TabOrder = 2
+      OnClick = btUndoClick
+    end
   end
   object sb: TStatusBar
     Left = 0
     Height = 42
-    Top = 1112
-    Width = 1196
+    Top = 971
+    Width = 1406
     Font.CharSet = ANSI_CHARSET
     Font.Height = -24
     Font.Name = 'Courier New'
@@ -65,5 +66,56 @@ object Form1: TForm1
     Font.Quality = fqDraft
     Panels = <>
     ParentFont = False
+  end
+  object bodyPanel: TPanel
+    Left = 0
+    Height = 920
+    Top = 51
+    Width = 1406
+    Align = alClient
+    ClientHeight = 920
+    ClientWidth = 1406
+    TabOrder = 2
+    object pb: TPaintBox
+      Left = 360
+      Height = 918
+      Top = 1
+      Width = 1045
+      Align = alClient
+      OnMouseDown = pbMouseDown
+      OnPaint = pbPaint
+    end
+    object sg: TStringGrid
+      Left = 1
+      Height = 918
+      Top = 1
+      Width = 359
+      Align = alLeft
+      ColCount = 4
+      RowCount = 1
+      ScrollBars = ssAutoVertical
+      TabOrder = 0
+      ColWidths = (
+        46
+        96
+        96
+        118
+      )
+      Cells = (
+        4
+        0
+        0
+        '#'
+        1
+        0
+        'column'
+        2
+        0
+        'chip'
+        3
+        0
+        'prediction'
+      )
+    end
   end
 end
