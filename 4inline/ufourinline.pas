@@ -8,7 +8,7 @@ unit ufourInLine;
 interface
 
 uses
-  Classes, SysUtils, ExtCtrls, Graphics, Math;
+  Classes, SysUtils, ExtCtrls, Graphics, Math, MtProcs;
 
 type
 
@@ -77,12 +77,15 @@ type
     function toString(const brd: TheBoard): string; overload;
     function toString: string; overload;
     procedure copyBoard(_b: TheBoard);
+    procedure copyAll(var _b: TBoard); // copy self to _b
     function isWinner(chip: TChip): boolean;
     function isDraw: boolean;
     function match(const brd: TheBoard): boolean;
     function genMoves(out _moves: TMoves): byte;
     function nMoves: byte;
+
     function play(chip: TChip; maxLevel: integer): integer;
+    function playMT(chip: TChip; maxLevel: integer): integer;
     function evalWinner(chip: TChip; player: TPlayer): int8;
     function play02(chip: TChip): integer;
     function play01(chip: TChip): boolean;
@@ -92,7 +95,7 @@ type
     function getBest: integer;
     function getBestMove: byte;
     function machineWins: boolean;
-    function possibleMoves: integer;
+    function possibleMoves: int64;
   public
     procedure genSolutions;
     function rc2index(r, c: byte): byte; inline;
@@ -275,6 +278,13 @@ begin
   b := _b;
 end;
 
+procedure TBoard.copyAll(var _b: TBoard);
+begin
+  _b := self;
+  _b.b := b;
+  _b.nChips := nChips;
+end;
+
 function TBoard.isWinner(chip: TChip): boolean;
 var
   brd: TheBoard;
@@ -412,15 +422,85 @@ function TBoard.play(chip: TChip; maxLevel: integer): integer;
 
 begin
   initBest;
-  Result := 0;
   level := maxLevel;
 
   if nMoves = 0 then Result := DrawVal
   else
-  if not play01(chip) then  // winning move?
+  if play01(chip) then // winning move?
+    Result := bestVal
+  else
     Result := _play(chip, plMachine, 0, maxLevel, +maxInt8, -maxInt8);
   // play even levels
 end;
+
+{ not worth as only a x 2 improvement can be achieved }
+function TBoard.playMT(chip: TChip; maxLevel: integer): integer;
+
+  function getNThreads: integer;
+  begin
+    {$ifdef windows}
+    result:=getCPUCount;
+    {$else}
+    Result := GetSystemThreadCount;
+    {$endif}
+  end;
+
+var
+  brds: array of TBoard;
+  nth, s, i, nm: integer;
+  moves: TMoves;
+
+  procedure _playMT(ix: PtrInt; {%H-}pnt: pointer; {%H-}Item: TMultiThreadProcItem);
+  begin
+    brds[ix].play(switchChip(chip), maxLevel - 1); // level-1 moves
+  end;
+
+begin
+  Result := 0;
+
+  if nMoves = 0 then Result := DrawVal
+  else
+  if play01(chip) then  // any winning move?
+    Result := bestVal
+  else
+  begin    {worth MT?, empty cells > maxLevel*2}
+    s := 0;
+    for i in nChips do s += i;
+    s := (COLS * ROWS) - s;
+    if s < maxLevel * 2 then Result := play(chip, maxLevel); // no -> ST
+    begin
+
+      nm := genMoves(moves);
+      nth := min(getNThreads, nm);
+      brds := nil;
+      setLength(brds, nth);
+
+      for i := 0 to pred(nm) do // prepare brds
+      begin
+        brds[i].init;
+        copyAll(brds[i]);
+        brds[i].moveChip(chip, moves[i]);  // move chip for next level
+      end;
+
+      ProcThreadPool.DoParallelLocalProc(@_playMT, 0, nth - 1, nil);
+
+      // find worst human move
+      initBest;
+      Result := +2;
+
+      for i := 0 to high(brds) do
+        if brds[i].bestVal < Result then
+        begin
+          Result := brds[i].bestVal;
+          setMove(chip, brds[i].bestMove, Result); // best move found
+
+          break;
+        end;
+    end;
+  end;
+end;
+
+
 
 function TBoard.play02(chip: TChip): integer;     // 2 level play w/beta prune
 var
@@ -529,7 +609,7 @@ begin
   Result := bestVal = MaxVal;
 end;
 
-function TBoard.possibleMoves: integer;
+function TBoard.possibleMoves: int64;
 begin
   Result := round(power(COLS, level));
 end;
