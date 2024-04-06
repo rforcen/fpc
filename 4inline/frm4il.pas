@@ -16,6 +16,7 @@ type
     btNewGame: TButton;
     bodyPanel: TPanel;
     btUndo: TButton;
+    cbMT: TCheckBox;
     pb: TPaintBox;
     sb: TStatusBar;
     seLevel: TSpinEdit;
@@ -119,7 +120,11 @@ begin
           else
           begin
             t0 := getTickCount64;
-            val := board.play(machine, seLevel.Value);
+
+            if cbMT.Checked then val := board.playMT(machine, seLevel.Value)
+            else
+              val := board.play(machine, seLevel.Value);
+
             board.moveBest;
 
             addMove(board.bestMove, machine, board.bestVal);

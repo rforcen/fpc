@@ -53,6 +53,16 @@ object Form1: TForm1
       TabOrder = 2
       OnClick = btUndoClick
     end
+    object cbMT: TCheckBox
+      Left = 216
+      Height = 49
+      Hint = 'multithread'
+      Top = 1
+      Width = 57
+      Align = alLeft
+      Caption = 'MT'
+      TabOrder = 3
+    end
   end
   object sb: TStatusBar
     Left = 0
