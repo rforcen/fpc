@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="12"/>
+    <BuildModes Active="Debug"/>
+    <Units>
+      <Unit>
+        <Filename Value="baseApp.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="8" Y="25"/>
+        <UsageCount Value="48"/>
+      </Unit>
+      <Unit>
+        <Filename Value="ubaseapp.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Form1"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="ubaseApp"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="57"/>
+        <CursorPos X="21" Y="58"/>
+        <UsageCount Value="48"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="glcommon.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="glCommon"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="793"/>
+        <CursorPos Y="797"/>
+        <FoldState Value=" T3rg0h3221412111429 poJw80c014 PWiU0X"/>
+        <UsageCount Value="48"/>
+        <Bookmarks Count="2">
+          <Item0 X="26" Y="1285" ID="2"/>
+          <Item1 X="3" Y="336" ID="1"/>
+        </Bookmarks>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\algSurf\unit1.pas"/>
+        <UnitName Value="Unit1"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="36" Y="281"/>
+        <FoldState Value=" T3jU04212 PjNj005"/>
+        <UsageCount Value="8"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\johnson\uplato.pas"/>
+        <UnitName Value="uPlato"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="36" Y="22"/>
+        <UsageCount Value="8"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\johnson\ucommon.pas"/>
+        <UnitName Value="uCommon"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="136"/>
+        <CursorPos X="3" Y="19"/>
+        <UsageCount Value="8"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\lcl\include\control.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="3099"/>
+        <CursorPos Y="3124"/>
+        <UsageCount Value="8"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\opengl\src\gl.pp"/>
+        <UnitName Value="GL"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1279"/>
+        <CursorPos X="3" Y="1305"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\lcl\graphics.pp"/>
+        <UnitName Value="Graphics"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="896"/>
+        <CursorPos X="15" Y="922"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\lcl\include\fpimagebitmap.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="115"/>
+        <CursorPos Y="141"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\components\opengl\openglcontext.pas"/>
+        <UnitName Value="OpenGLContext"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="156"/>
+        <CursorPos X="16" Y="193"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\lcl\controls.pp"/>
+        <UnitName Value="Controls"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1679"/>
+        <CursorPos X="15" Y="1706"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\grepper\ugrepper.pas"/>
+        <UnitName Value="uGrepper"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="190"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\grepper\uthread.pas"/>
+        <UnitName Value="uThread"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="277"/>
+        <CursorPos Y="300"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\lcl\include\picture.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="755"/>
+        <CursorPos Y="781"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\4inline\ufourinline.pas"/>
+        <UnitName Value="ufourInLine"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="16"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\dbf\xbaseBrowser.lpr"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\dbf\udbfbrowser.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="27"/>
+        <CursorPos X="33" Y="43"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\lcl\include\wincontrol.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="7485"/>
+        <CursorPos Y="7529"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="D:\Code\qt-old\VSlibQt\opengl.cpp"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="258"/>
+        <CursorPos X="15" Y="295"/>
+        <UsageCount Value="16"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="C++"/>
+      </Unit>
+      <Unit>
+        <Filename Value="D:\Code\qt-old\VSlibQt\opengl.h"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="15"/>
+        <DefaultSyntaxHighlighter Value="C++"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\rtl\objpas\math.pp"/>
+        <UnitName Value="Math"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="335"/>
+        <CursorPos X="10" Y="361"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\rtl\inc\mathh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="79"/>
+        <CursorPos X="39" Y="105"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\rtl\inc\innr.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="102"/>
+        <CursorPos X="4" Y="128"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\rtl\inc\objpash.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="180"/>
+        <CursorPos X="21" Y="215"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\rtl\inc\objpas.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="333"/>
+        <CursorPos X="12" Y="334"/>
+        <UsageCount Value="10"/>
+      </Unit>
+    </Units>
+    <JumpHistory HistoryIndex="29">
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="271" TopLine="238"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="272" TopLine="238"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="274" TopLine="238"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="275" TopLine="238"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="327" Column="14" TopLine="287"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="247" TopLine="220"/>
+      </Position>
+      <Position>
+        <Filename Value="ubaseapp.pas"/>
+        <Caret Line="94" Column="29" TopLine="60"/>
+      </Position>
+      <Position>
+        <Filename Value="ubaseapp.pas"/>
+        <Caret Line="98" Column="3" TopLine="60"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="210" Column="11" TopLine="183"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="678" Column="3" TopLine="676"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="210" Column="11" TopLine="184"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="678" Column="3" TopLine="676"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="234" Column="45" TopLine="206"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="233" Column="10" TopLine="207"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="413" TopLine="397"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="336" TopLine="304"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="337" TopLine="304"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="336" TopLine="304"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="337" TopLine="304"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="336" TopLine="304"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="337" TopLine="304"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="336" TopLine="304"/>
+      </Position>
+      <Position>
+        <Filename Value="ubaseapp.pas"/>
+        <Caret Line="58" TopLine="32"/>
+      </Position>
+      <Position>
+        <Filename Value="ubaseapp.pas"/>
+        <Caret Line="98" TopLine="56"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="701" TopLine="668"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="702" TopLine="668"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="668" TopLine="642"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="664" TopLine="642"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="669" Column="23" TopLine="642"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="220" Column="42" TopLine="187"/>
+      </Position>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes ActiveMode=""/>
+    </RunParams>
+  </ProjectSession>
+  <Debugging>
+    <Watches>
+      <Item>
+        <Expression Value="R"/>
+      </Item>
+      <Item>
+        <Expression Value="x"/>
+      </Item>
+      <Item>
+        <Expression Value="result"/>
+      </Item>
+      <Item>
+        <Expression Value="wtm"/>
+      </Item>
+    </Watches>
+  </Debugging>
+</CONFIG>

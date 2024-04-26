@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="12"/>
+    <BuildModes Active="Release"/>
+    <Units>
+      <Unit>
+        <Filename Value="waterman.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos Y="24"/>
+        <UsageCount Value="31"/>
+      </Unit>
+      <Unit>
+        <Filename Value="uwaterman.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="frmWaterman"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uWaterman"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="116"/>
+        <CursorPos Y="27"/>
+        <UsageCount Value="31"/>
+        <Bookmarks Count="1">
+          <Item0 X="30" Y="88" ID="1"/>
+        </Bookmarks>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="iwaterman.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="iWaterman"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="23"/>
+        <CursorPos X="25" Y="55"/>
+        <UsageCount Value="31"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\btree_ndx\btree.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="49"/>
+        <UsageCount Value="12"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\btree_ndx\btreedx.cpp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="7"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="C++"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\btree_ndx\btreeWrap.cpp"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="C++"/>
+      </Unit>
+      <Unit>
+        <Filename Value="cpp\fpc_interface.cpp"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="37" Y="35"/>
+        <UsageCount Value="15"/>
+        <DefaultSyntaxHighlighter Value="C++"/>
+      </Unit>
+      <Unit>
+        <Filename Value="glcommon.pas"/>
+        <UnitName Value="glCommon"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="930"/>
+        <CursorPos X="3" Y="945"/>
+        <UsageCount Value="15"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\lcl\include\customform.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="900"/>
+        <CursorPos X="42" Y="927"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="cpp\QuickHull3D.h"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="171"/>
+        <CursorPos X="27" Y="216"/>
+        <UsageCount Value="11"/>
+        <DefaultSyntaxHighlighter Value="C++"/>
+      </Unit>
+      <Unit>
+        <Filename Value="cpp\QuickHull3D.cpp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="600"/>
+        <CursorPos X="44" Y="628"/>
+        <UsageCount Value="14"/>
+        <DefaultSyntaxHighlighter Value="C++"/>
+      </Unit>
+      <Unit>
+        <Filename Value="ubaseapp.pas"/>
+        <UnitName Value="ubaseApp"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="59"/>
+        <CursorPos X="14" Y="59"/>
+        <UsageCount Value="12"/>
+        <Loaded Value="True"/>
+      </Unit>
+    </Units>
+    <JumpHistory HistoryIndex="29">
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="777" TopLine="747"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="778" TopLine="747"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="780" Column="33" TopLine="747"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="782" TopLine="747"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="775" TopLine="747"/>
+      </Position>
+      <Position>
+        <Filename Value="iwaterman.pas"/>
+        <Caret Column="20"/>
+      </Position>
+      <Position>
+        <Filename Value="iwaterman.pas"/>
+        <Caret Line="44" Column="13" TopLine="18"/>
+      </Position>
+      <Position>
+        <Filename Value="iwaterman.pas"/>
+        <Caret Line="36" Column="25" TopLine="18"/>
+      </Position>
+      <Position>
+        <Filename Value="iwaterman.pas"/>
+        <Caret Line="44" Column="16" TopLine="19"/>
+      </Position>
+      <Position>
+        <Filename Value="iwaterman.pas"/>
+        <Caret Line="45" Column="26" TopLine="19"/>
+      </Position>
+      <Position>
+        <Filename Value="iwaterman.pas"/>
+        <Caret Line="36" Column="14" TopLine="18"/>
+      </Position>
+      <Position>
+        <Filename Value="iwaterman.pas"/>
+        <Caret Line="44" Column="41" TopLine="18"/>
+      </Position>
+      <Position>
+        <Filename Value="iwaterman.pas"/>
+        <Caret Line="33" Column="38" TopLine="18"/>
+      </Position>
+      <Position>
+        <Filename Value="iwaterman.pas"/>
+        <Caret Line="61" Column="73" TopLine="21"/>
+      </Position>
+      <Position>
+        <Filename Value="uwaterman.pas"/>
+        <Caret Line="67" Column="19" TopLine="59"/>
+      </Position>
+      <Position>
+        <Filename Value="uwaterman.pas"/>
+        <Caret Line="37" Column="45" TopLine="11"/>
+      </Position>
+      <Position>
+        <Filename Value="uwaterman.pas"/>
+        <Caret Line="67" Column="23" TopLine="56"/>
+      </Position>
+      <Position>
+        <Filename Value="uwaterman.pas"/>
+        <Caret Line="37" Column="17" TopLine="11"/>
+      </Position>
+      <Position>
+        <Filename Value="uwaterman.pas"/>
+        <Caret Line="50" Column="17" TopLine="11"/>
+      </Position>
+      <Position>
+        <Filename Value="uwaterman.pas"/>
+        <Caret Line="139" Column="16" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="51" Column="60" TopLine="25"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="1042" TopLine="1002"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="52" Column="32" TopLine="26"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="1028" Column="10" TopLine="1003"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="995" Column="27" TopLine="968"/>
+      </Position>
+      <Position>
+        <Filename Value="uwaterman.pas"/>
+        <Caret Line="139" Column="18" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="uwaterman.pas"/>
+        <Caret Line="146" Column="36" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="glcommon.pas"/>
+        <Caret Line="942" Column="12" TopLine="931"/>
+      </Position>
+      <Position>
+        <Filename Value="uwaterman.pas"/>
+        <Caret Line="39" Column="44" TopLine="13"/>
+      </Position>
+      <Position>
+        <Filename Value="uwaterman.pas"/>
+        <Caret Line="78" TopLine="57"/>
+      </Position>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes ActiveMode=""/>
+    </RunParams>
+  </ProjectSession>
+  <Debugging>
+    <Watches>
+      <Item>
+        <Expression Value="p"/>
+      </Item>
+      <Item>
+        <Expression Value="polyCoord"/>
+      </Item>
+      <Item>
+        <Expression Value="face"/>
+      </Item>
+      <Item>
+        <Expression Value="c"/>
+      </Item>
+    </Watches>
+  </Debugging>
+</CONFIG>

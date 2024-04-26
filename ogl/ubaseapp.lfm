@@ -1,0 +1,35 @@
+object Form1: TForm1
+  Left = 616
+  Height = 1077
+  Top = 309
+  Width = 1125
+  Caption = 'open gl base app'
+  ClientHeight = 1077
+  ClientWidth = 1125
+  DesignTimePPI = 144
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  LCLVersion = '3.0.0.3'
+  object sb: TStatusBar
+    Left = 0
+    Height = 42
+    Top = 1035
+    Width = 1125
+    Panels = <>
+  end
+  object glPanel: TPanel
+    Left = 0
+    Height = 1035
+    Top = 0
+    Width = 1125
+    Align = alClient
+    TabOrder = 1
+  end
+  object IdleTimer1: TIdleTimer
+    AutoEnabled = True
+    Interval = 3
+    OnTimer = IdleTimer1Timer
+    Left = 8
+    Top = 8
+  end
+end
