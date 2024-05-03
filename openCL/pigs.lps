@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="12"/>
+    <BuildModes Active="Release"/>
+    <Units>
+      <Unit>
+        <Filename Value="pigs.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="33"/>
+      </Unit>
+      <Unit>
+        <Filename Value="upigs.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Form1"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uPigs"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="46"/>
+        <CursorPos X="3" Y="88"/>
+        <FoldState Value=" T3jJ0v011 PRj509"/>
+        <UsageCount Value="33"/>
+        <Bookmarks Count="2">
+          <Item0 X="16" Y="231" ID="1"/>
+          <Item1 X="12" Y="120" ID="2"/>
+        </Bookmarks>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="OpenCL.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="26"/>
+        <CursorPos X="21" Y="256"/>
+        <UsageCount Value="33"/>
+      </Unit>
+      <Unit>
+        <Filename Value="uopencl.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uOpenCL"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="7"/>
+        <CursorPos X="22" Y="33"/>
+        <UsageCount Value="30"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="mesh.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="25"/>
+        <CursorPos X="39" Y="43"/>
+        <UsageCount Value="25"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\packages\opencl\src\cl.pp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="199"/>
+        <CursorPos X="3" Y="225"/>
+        <UsageCount Value="12"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\rtl\inc\ctypes.pp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="66"/>
+        <CursorPos X="3" Y="92"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="cl\voronoi.cl"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="2" Y="53"/>
+        <SyntaxHighlighter Value="C++"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\rtl\inc\systemh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="649"/>
+        <CursorPos X="3" Y="432"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\symmetricIcon\frmsymmetricicon.pas"/>
+        <UnitName Value="frmSymmetricIcon"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="2"/>
+        <CursorPos X="5" Y="54"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\symmetricIcon\symmetriciconwrap.pas"/>
+        <UnitName Value="SymmetricIconWrap"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="64"/>
+        <CursorPos Y="96"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="cl\mandelbrot.cl"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="21"/>
+        <CursorPos X="2" Y="73"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit>
+      <Unit>
+        <Filename Value="cl\dc.cl"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="111"/>
+        <CursorPos X="2" Y="163"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit>
+      <Unit>
+        <Filename Value="cl\sh.cl"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="467"/>
+        <CursorPos X="2" Y="519"/>
+        <SyntaxHighlighter Value="C++"/>
+        <UsageCount Value="11"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\fpc\3.2.2\source\rtl\inc\objpash.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="381"/>
+        <CursorPos X="15" Y="419"/>
+        <UsageCount Value="11"/>
+      </Unit>
+    </Units>
+    <JumpHistory HistoryIndex="3">
+      <Position>
+        <Filename Value="uopencl.pas"/>
+        <Caret Line="33" Column="30" TopLine="20"/>
+      </Position>
+      <Position>
+        <Filename Value="uopencl.pas"/>
+        <Caret Line="100" Column="3" TopLine="90"/>
+      </Position>
+      <Position>
+        <Filename Value="upigs.pas"/>
+        <Caret Column="18"/>
+      </Position>
+      <Position>
+        <Filename Value="uopencl.pas"/>
+        <Caret Line="53" Column="12" TopLine="27"/>
+      </Position>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes ActiveMode=""/>
+    </RunParams>
+  </ProjectSession>
+  <Debugging>
+    <Watches>
+      <Item>
+        <Expression Value="w"/>
+      </Item>
+      <Item>
+        <Expression Value="h"/>
+      </Item>
+      <Item>
+        <Expression Value="img"/>
+      </Item>
+      <Item>
+        <Expression Value="oclDC"/>
+      </Item>
+      <Item>
+        <Expression Value="oclV"/>
+      </Item>
+      <Item>
+        <Expression Value="oclM"/>
+      </Item>
+    </Watches>
+  </Debugging>
+</CONFIG>
