@@ -4,15 +4,15 @@
     <Version Value="12"/>
     <PathDelim Value="\"/>
     <General>
+      <Flags>
+        <MainUnitHasCreateFormStatements Value="False"/>
+        <MainUnitHasTitleStatement Value="False"/>
+        <MainUnitHasScaledStatement Value="False"/>
+      </Flags>
       <SessionStorage Value="InProjectDir"/>
-      <Title Value="pigs"/>
-      <Scaled Value="True"/>
+      <Title Value="testHalf"/>
+      <UseAppBundle Value="False"/>
       <ResourceType Value="res"/>
-      <UseXPManifest Value="True"/>
-      <XPManifest>
-        <DpiAware Value="True"/>
-      </XPManifest>
-      <Icon Value="0"/>
     </General>
     <BuildModes>
       <Item Name="Default" Default="True"/>
@@ -21,10 +21,11 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="pigs"/>
+            <Filename Value="testHalf"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="..\f16"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -48,11 +49,6 @@
               <TrashVariables Value="True"/>
               <UseExternalDbgSyms Value="True"/>
             </Debugging>
-            <Options>
-              <Win32>
-                <GraphicApplication Value="True"/>
-              </Win32>
-            </Options>
           </Linking>
         </CompilerOptions>
       </Item>
@@ -61,10 +57,11 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="pigs"/>
+            <Filename Value="testHalf"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="..\f16"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -79,11 +76,6 @@
               <RunWithoutDebug Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
-            <Options>
-              <Win32>
-                <GraphicApplication Value="True"/>
-              </Win32>
-            </Options>
           </Linking>
         </CompilerOptions>
       </Item>
@@ -97,24 +89,16 @@
     </RunParams>
     <RequiredPackages>
       <Item>
-        <PackageName Value="LCL"/>
+        <PackageName Value="multithreadprocslaz"/>
       </Item>
     </RequiredPackages>
     <Units>
       <Unit>
-        <Filename Value="pigs.lpr"/>
+        <Filename Value="testHalf.lpr"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
-        <Filename Value="upigs.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="Form1"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-        <UnitName Value="uPigs"/>
-      </Unit>
-      <Unit>
-        <Filename Value="OpenCL.pas"/>
+        <Filename Value="..\f16\uf16.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit>
       <Unit>
@@ -122,36 +106,23 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="uOpenCL"/>
       </Unit>
-      <Unit>
-        <Filename Value="mesh.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit>
-      <Unit>
-        <Filename Value="uimagedisp.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="uImageDisp"/>
-      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="pigs"/>
+      <Filename Value="testHalf"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
+      <OtherUnitFiles Value="..\f16"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Linking>
       <Debugging>
         <DebugInfoType Value="dsDwarf3"/>
       </Debugging>
-      <Options>
-        <Win32>
-          <GraphicApplication Value="True"/>
-        </Win32>
-      </Options>
     </Linking>
   </CompilerOptions>
   <Debugging>

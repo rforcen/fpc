@@ -12,7 +12,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, ExtCtrls, ComCtrls,
-  StdCtrls, GraphType, uOpenCL, mesh;
+  StdCtrls, GraphType, uOpenCL, mesh, uImageDisp;
 
 type
 
@@ -158,7 +158,7 @@ begin
   oclV.Release(gpuPoints);
 
   // disp
-  assignImage(image1, img);
+  ImageDisp(image1, img);
 
 end;
 
@@ -191,7 +191,7 @@ begin
   sb.SimpleText := format('mandelbrot %d x %d, %d iters, lap: %d ms', [w, h, iters, t0]);
 
   oclM.Release(gpuImage);     // release
-  assignImage(image1, img);  // disp
+  ImageDisp(image1, img);  // disp
 end;
 
 procedure TForm1.shCL;
@@ -250,7 +250,7 @@ begin
 
   oclDC.Release(gpuImage);   // .release buffer
 
-  assignImage(image1, img);  // disp
+  ImageDisp(image1, img);  // disp
 end;
 
 end.

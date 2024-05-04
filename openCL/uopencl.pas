@@ -1,11 +1,11 @@
 unit uOpenCL;
 
-{$mode ObjFPC}{$H+}
+{$mode delphi}{$H+}
 
 interface
 
 uses
-  Classes, SysUtils, ExtCtrls, Graphics, GraphType, ctypes, cl;
+  Classes, SysUtils, ctypes, cl;
 
 type
 
@@ -34,27 +34,35 @@ type
     function compileFile(FileSource, kernelFunc: string): boolean;
     function compile(Source, kernelFunc: string): boolean;
     function buffer(sz: cl_uint): cl_mem;
+    function buffer<T>(a: array of T): cl_mem;
     procedure setArg(ix: cl_uint; sz: csize_t; v: pointer);
     procedure setArgs(const args: array of const);
     procedure Write(p: pointer; buff: cl_mem; sz: csize_t);
+    procedure Write<T>(const a: array of T; buff: cl_mem);
     procedure run(sz: csize_t);
     procedure Read(p: pointer; buff: cl_mem; sz: csize_t);
+    procedure Read<T>(const a: array of T; buff: cl_mem);
 
     procedure AMDdevice;
     procedure NVIDIAdevice;
     procedure INTELdevice;
 
     function ok: boolean;
-
   private
   end;
 
-  TArru32 = array of uint32;
   TCLBuffer = cl_mem;
 
-procedure AssignImage(var timg: TImage; const img: TArru32);
+function bytesOf<T>(a: array of T): integer;
 
 implementation
+
+function bytesOf<T>(a: array of T): integer;
+begin
+  Result := length(a) * sizeof(T);
+end;
+
+
 
 { TOpenCL }
 
@@ -143,6 +151,12 @@ begin
   Result := clCreateBuffer(context, CL_MEM_READ_WRITE, sz, nil, err_code);
 end;
 
+function TOpenCL.buffer<T>(a: array of T): cl_mem;
+begin
+  Result := clCreateBuffer(context, CL_MEM_READ_WRITE,
+    cl_uint(length(a) * sizeof(T)), nil, err_code);
+end;
+
 procedure TOpenCL.setArg(ix: cl_uint; sz: csize_t; v: pointer);
 begin
   err_code := clSetKernelArg(kernel, ix, sz, v);
@@ -168,9 +182,15 @@ begin
   err_code := clEnqueueWriteBuffer(queue, buff, CL_FALSE, 0, sz, p, 0, nil, nil);
 end;
 
+procedure TOpenCL.Write<T>(const a: array of T; buff: cl_mem);
+begin
+  err_code := clEnqueueWriteBuffer(queue, buff, CL_FALSE, 0, length(a) *
+    sizeof(T), @a[0], 0, nil, nil);
+end;
+
 procedure TOpenCL.run(sz: csize_t);
 const
-  gws: array of csize_t = (0, 0, 0);
+  gws: array of csize_t = [0, 0, 0];
 begin
   gws[0] := sz;
   err_code := clenqueueNDRangeKernel(queue, kernel, 1, nil, @gws[0], nil, 0, nil, nil);
@@ -179,6 +199,12 @@ end;
 procedure TOpenCL.Read(p: pointer; buff: cl_mem; sz: csize_t);
 begin
   clenqueueReadBuffer(queue, buff, CL_TRUE, 0, sz, p, 0, nil, nil);
+end;
+
+procedure TOpenCL.Read<T>(const a: array of T; buff: cl_mem);
+begin
+  clenqueueReadBuffer(queue, buff, CL_TRUE, 0, length(a) * sizeof(T),
+    @a[0], 0, nil, nil);
 end;
 
 procedure TOpenCL.AMDdevice;
@@ -201,29 +227,5 @@ begin
   Result := err_code = CL_SUCCESS;
 end;
 
-
-// helpers
-// TImage <- img:array of u32
-procedure AssignImage(var timg: TImage; const img: TArru32);
-var
-  rawImg: TRawImage;
-  bmp: TBitmap;
-begin
-  with rawImg do
-  begin
-    Init;
-    Description.Init_BPP32_R8G8B8A8_BIO_TTB(timg.Width, timg.Height); // RGBA
-    DataSize := length(img) * sizeof(img[0]);
-    Data := @img[0];
-  end;
-  // Create a bitmap from the rawImg and display it in the Image component
-  bmp := TBitmap.Create;
-  try
-    bmp.LoadFromRawImage(rawImg, False);  // false = bmp does not "own" the image data.
-    timg.Picture.Assign(bmp);
-  finally
-    bmp.Free;
-  end;
-end;
 
 end.
