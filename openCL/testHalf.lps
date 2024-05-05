@@ -9,9 +9,13 @@
         <Filename Value="testHalf.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="120"/>
-        <CursorPos X="66" Y="167"/>
-        <UsageCount Value="32"/>
+        <TopLine Value="206"/>
+        <CursorPos X="23" Y="250"/>
+        <UsageCount Value="36"/>
+        <Bookmarks Count="2">
+          <Item0 Y="127" ID="1"/>
+          <Item1 Y="183" ID="2"/>
+        </Bookmarks>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -20,7 +24,7 @@
         <EditorIndex Value="4"/>
         <TopLine Value="37"/>
         <CursorPos X="18" Y="59"/>
-        <UsageCount Value="32"/>
+        <UsageCount Value="36"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -29,7 +33,7 @@
         <UnitName Value="uOpenCL"/>
         <EditorIndex Value="2"/>
         <CursorPos X="32" Y="8"/>
-        <UsageCount Value="32"/>
+        <UsageCount Value="36"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -43,7 +47,7 @@
         <Filename Value="cl\half.cl"/>
         <EditorIndex Value="3"/>
         <CursorPos Y="14"/>
-        <UsageCount Value="16"/>
+        <UsageCount Value="19"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit>
@@ -88,91 +92,11 @@
         <EditorIndex Value="1"/>
         <TopLine Value="22"/>
         <CursorPos X="29" Y="60"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="14"/>
         <Loaded Value="True"/>
       </Unit>
     </Units>
     <JumpHistory HistoryIndex="29">
-      <Position>
-        <Filename Value="testHalf.lpr"/>
-        <Caret Line="165" TopLine="141"/>
-      </Position>
-      <Position>
-        <Filename Value="testHalf.lpr"/>
-        <Caret Line="167" TopLine="141"/>
-      </Position>
-      <Position>
-        <Filename Value="testHalf.lpr"/>
-        <Caret Line="170" Column="29" TopLine="141"/>
-      </Position>
-      <Position>
-        <Filename Value="testHalf.lpr"/>
-        <Caret Line="175" Column="25" TopLine="141"/>
-      </Position>
-      <Position>
-        <Filename Value="testHalf.lpr"/>
-        <Caret Line="178" TopLine="141"/>
-      </Position>
-      <Position>
-        <Filename Value="testHalf.lpr"/>
-        <Caret Line="170" TopLine="129"/>
-      </Position>
-      <Position>
-        <Filename Value="testHalf.lpr"/>
-        <Caret Line="178" Column="18" TopLine="129"/>
-      </Position>
-      <Position>
-        <Filename Value="testHalf.lpr"/>
-        <Caret Line="175" TopLine="131"/>
-      </Position>
-      <Position>
-        <Filename Value="testHalf.lpr"/>
-        <Caret Line="178" TopLine="134"/>
-      </Position>
-      <Position>
-        <Filename Value="testHalf.lpr"/>
-        <Caret Line="175" Column="22" TopLine="136"/>
-      </Position>
-      <Position>
-        <Filename Value="testHalf.lpr"/>
-        <Caret Line="170" TopLine="136"/>
-      </Position>
-      <Position>
-        <Filename Value="testHalf.lpr"/>
-        <Caret Line="173" TopLine="136"/>
-      </Position>
-      <Position>
-        <Filename Value="testHalf.lpr"/>
-        <Caret Line="175" TopLine="136"/>
-      </Position>
-      <Position>
-        <Filename Value="testHalf.lpr"/>
-        <Caret Line="178" TopLine="136"/>
-      </Position>
-      <Position>
-        <Filename Value="testHalf.lpr"/>
-        <Caret Line="159" Column="9" TopLine="139"/>
-      </Position>
-      <Position>
-        <Filename Value="testHalf.lpr"/>
-        <Caret Line="158" TopLine="133"/>
-      </Position>
-      <Position>
-        <Filename Value="testHalf.lpr"/>
-        <Caret Line="160" TopLine="133"/>
-      </Position>
-      <Position>
-        <Filename Value="testHalf.lpr"/>
-        <Caret Line="162" TopLine="133"/>
-      </Position>
-      <Position>
-        <Filename Value="testHalf.lpr"/>
-        <Caret Line="182" Column="32" TopLine="133"/>
-      </Position>
-      <Position>
-        <Filename Value="testHalf.lpr"/>
-        <Caret Line="173" TopLine="142"/>
-      </Position>
       <Position>
         <Filename Value="testHalf.lpr"/>
         <Caret Line="176" TopLine="142"/>
@@ -213,6 +137,86 @@
         <Filename Value="testHalf.lpr"/>
         <Caret Line="148" Column="36" TopLine="109"/>
       </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="209" Column="50" TopLine="169"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="213" Column="44" TopLine="169"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="214" Column="34" TopLine="176"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="225" TopLine="187"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="201" Column="7" TopLine="187"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="220" Column="18" TopLine="187"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="217" Column="18" TopLine="187"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="186" Column="20" TopLine="162"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="205" Column="35" TopLine="162"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="227" Column="31" TopLine="191"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="219" Column="74" TopLine="193"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="224" Column="32" TopLine="196"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="206" Column="17" TopLine="179"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="215" Column="17" TopLine="190"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="226" TopLine="177"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="146" Column="9" TopLine="124"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="135" Column="6" TopLine="109"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="175" Column="49" TopLine="134"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="273" Column="49" TopLine="225"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="237" Column="46" TopLine="200"/>
+      </Position>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
@@ -228,19 +232,5 @@
         <WatchKind Value="wpkWrite"/>
       </Item>
     </BreakPoints>
-    <Watches>
-      <Item>
-        <Expression Value="f4a"/>
-      </Item>
-      <Item>
-        <Expression Value="f4b"/>
-      </Item>
-      <Item>
-        <Expression Value="h8a"/>
-      </Item>
-      <Item>
-        <Expression Value="a"/>
-      </Item>
-    </Watches>
   </Debugging>
 </CONFIG>

@@ -24,11 +24,13 @@ uses
   mtprocs;
 
 const
-  n = 10 * 1000 * 1000;
+  n = 40 * 1000 * 1000; // use multiple of 4 values
 
 type
   TSingle4 = array[0..3] of single; // 128 bits xmm#
+  TSingle8 = array[0..7] of single; // 128 bits xmm#
   THalf8 = array[0..7] of half;
+  THalf16 = array[0..15] of half;
   THalf4 = array[0..3] of half;
   pTSingle4 = ^ TSingle4;
   pTHalf8 = ^THalf8;
@@ -122,16 +124,13 @@ var
   end;
 
   {$asmmode intel}
-  procedure testSingleConv; // even slower
+  procedure testSingleConv; // faster  w/inline intrinsic no avx-512 required
   var
-    sa, sb: single;
     i, j: integer;
     ha, hb: half;
 
     f4a, f4b: TSingle4;
-    h8, h8a: THalf8;
-    pf4: pTSingle4;
-    ph8: pTHalf8;
+    p: pointer;
   begin
 
     load_ab;
@@ -139,21 +138,21 @@ var
     t0 := gettickCount64;
 
     i := 0;
-    while i < length(a) do
+    while i < length(a) do   // length(a) mod 4 = 0
     begin
-      // h8a:=a[i]
-      ph8 := pTHalf8(@a[i]);
+      // f4a:=a[i]
+      p := @a[i];
       asm // convert THalf8 -> TSingle4
-               MOV     R11,[ph8]
+               MOV     R11,[p]
                MOVUPS  XMM0,[R11]
                DB      $c4, $e2, $79, $13, $c0 // VCVTPH2PS XMM0,XMM0  //  c4 e2 79 13 c0
                MOVUPS  [f4a],XMM0
       end;
 
-      // h8b:=b[i]
-      ph8 := pTHalf8(@b[i]);
+      // f4b:=b[i]
+      p := @b[i];
       asm // convert THalf8 -> TSingle4
-               MOV     R11,[ph8]
+               MOV     R11,[p]
                MOVUPS  XMM0,[R11]
                DB      $c4, $e2, $79, $13, $c0 // VCVTPH2PS XMM0,XMM0  //  c4 e2 79 13 c0
                MOVUPS  [f4b],XMM0
@@ -172,6 +171,8 @@ var
 
       Inc(i, 4);
     end;
+
+    // if length(a) mod 4 <> 0 then convert rest
 
     t0 := gettickCount64 - t0;
 
@@ -202,20 +203,74 @@ var
       end;
     end;
 
-    procedure _gen_ab_simd(i: PtrInt; {%H-}pnt: pointer; Item: TMultiThreadProcItem);
-    begin
+    procedure _gen_ab_SIMD(i: PtrInt; {%H-}pnt: pointer; Item: TMultiThreadProcItem);
+    var
+      delta: integer;
 
+      j, n4: integer;
+      ha, hb: half;
+
+      f4a, f4b: TSingle4;
+      p: pointer;
+    begin
+      delta := Item.Group.EndIndex + 1;
+
+      n4 := n div 4;
+      while i < n4 do   // length(a) mod 4 = 0
+      begin
+        // f4a:=a[i]
+        p := @a[i * 4];
+        asm // convert THalf8 -> TSingle4
+                 MOV     R11,[p]
+                 MOVUPS  XMM0,[R11]
+                 DB      $c4, $e2, $79, $13, $c0 // VCVTPH2PS XMM0,XMM0
+                 MOVUPS  [f4a],XMM0
+        end;
+
+        // f4b:=b[i]
+        p := @b[i * 4];
+        asm // convert THalf8 -> TSingle4
+                 MOV     R11,[p]
+                 MOVUPS  XMM0,[R11]
+                 DB      $c4, $e2, $79, $13, $c0 // VCVTPH2PS XMM0,XMM0
+                 MOVUPS  [f4b],XMM0
+        end;
+
+        // evaluate: sa * sb + sa - sb / sa;
+        for j := 0 to 3 do f4a[j] := f4a[j] * f4b[j] + f4a[j] - f4b[j] / f4a[j];
+
+        asm  // convert single to half f4a -> half(f4a)
+                 MOVUPS  XMM0,[f4a]
+                 DB      $c4, $e3,  $79, $1d, $c0, $00 // vcvtps2ph xmm0,xmm0,0x0
+                 MOVUPS   [f4a],XMM0
+        end;
+
+        pTHalf4(@a[i * 4])^ := pTHalf4(@f4a)^;
+
+        Inc(i, delta);
+      end;
     end;
 
   begin
-
+    // no SIMD
     load_ab;
 
     t0 := gettickCount64;
-    ProcThreadPool.DoParallelLocalProc(@_gen_ab, 0, getNThreads - 2, nil);
+    ProcThreadPool.DoParallelLocalProc(@_gen_ab, 0, getNThreads - 1, nil);
     t0 := gettickCount64 - t0;
 
     writeln(format('lap half MT, %d threads : %5d ms', [getNThreads, t0]));
+    write_a;
+
+
+    // SIMD
+    load_ab;
+
+    t0 := gettickCount64;
+    ProcThreadPool.DoParallelLocalProc(@_gen_ab_SIMD, 0, getNThreads - 1, nil);
+    t0 := gettickCount64 - t0;
+
+    writeln(format('lap half MT, %d threads SIMD: %5d ms', [getNThreads, t0]));
     write_a;
 
   end;
@@ -227,7 +282,6 @@ begin
   testHalfOCL;
   testIter;
   testMT;
-
 
   writeln('end');
   readln;
