@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="12"/>
+    <BuildModes Active="Release"/>
+    <Units>
+      <Unit>
+        <Filename Value="testHalf.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="120"/>
+        <CursorPos X="66" Y="167"/>
+        <UsageCount Value="32"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\f16\uf16.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="37"/>
+        <CursorPos X="18" Y="59"/>
+        <UsageCount Value="32"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="uopencl.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uOpenCL"/>
+        <EditorIndex Value="2"/>
+        <CursorPos X="32" Y="8"/>
+        <UsageCount Value="32"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="cl\half.cl.txt"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="22"/>
+        <UsageCount Value="19"/>
+        <DefaultSyntaxHighlighter Value="Text"/>
+      </Unit>
+      <Unit>
+        <Filename Value="cl\half.cl"/>
+        <EditorIndex Value="3"/>
+        <CursorPos Y="14"/>
+        <UsageCount Value="16"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit>
+      <Unit>
+        <Filename Value="cl\mandelbrot.cl"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="21"/>
+        <CursorPos X="35" Y="55"/>
+        <UsageCount Value="9"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit>
+      <Unit>
+        <Filename Value="cl\voronoi.cl"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="9"/>
+        <DefaultSyntaxHighlighter Value="None"/>
+      </Unit>
+      <Unit>
+        <Filename Value="upigs.pas"/>
+        <UnitName Value="uPigs"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="122"/>
+        <CursorPos X="23" Y="152"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\lazarus\components\multithreadprocs\mtprocs.pas"/>
+        <UnitName Value="MTProcs"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\units\unumpas.pas"/>
+        <UnitName Value="uNumPas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1719"/>
+        <CursorPos X="38" Y="1764"/>
+        <UsageCount Value="9"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\test\testSIMD.lpr"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="22"/>
+        <CursorPos X="29" Y="60"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit>
+    </Units>
+    <JumpHistory HistoryIndex="29">
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="165" TopLine="141"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="167" TopLine="141"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="170" Column="29" TopLine="141"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="175" Column="25" TopLine="141"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="178" TopLine="141"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="170" TopLine="129"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="178" Column="18" TopLine="129"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="175" TopLine="131"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="178" TopLine="134"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="175" Column="22" TopLine="136"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="170" TopLine="136"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="173" TopLine="136"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="175" TopLine="136"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="178" TopLine="136"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="159" Column="9" TopLine="139"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="158" TopLine="133"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="160" TopLine="133"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="162" TopLine="133"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="182" Column="32" TopLine="133"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="173" TopLine="142"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="176" TopLine="142"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="178" TopLine="142"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="185" TopLine="159"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="187" TopLine="159"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="175" TopLine="159"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="185" TopLine="159"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="120" Column="24" TopLine="104"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="118" Column="13" TopLine="92"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="121" Column="14" TopLine="92"/>
+      </Position>
+      <Position>
+        <Filename Value="testHalf.lpr"/>
+        <Caret Line="148" Column="36" TopLine="109"/>
+      </Position>
+    </JumpHistory>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes ActiveMode=""/>
+    </RunParams>
+  </ProjectSession>
+  <Debugging>
+    <BreakPoints>
+      <Item>
+        <Kind Value="bpkAddress"/>
+        <Address Value="4294977132"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+      </Item>
+    </BreakPoints>
+    <Watches>
+      <Item>
+        <Expression Value="f4a"/>
+      </Item>
+      <Item>
+        <Expression Value="f4b"/>
+      </Item>
+      <Item>
+        <Expression Value="h8a"/>
+      </Item>
+      <Item>
+        <Expression Value="a"/>
+      </Item>
+    </Watches>
+  </Debugging>
+</CONFIG>

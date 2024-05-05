@@ -26,12 +26,22 @@ uses
 const
   n = 10 * 1000 * 1000;
 
+type
+  TSingle4 = array[0..3] of single; // 128 bits xmm#
+  THalf8 = array[0..7] of half;
+  THalf4 = array[0..3] of half;
+  pTSingle4 = ^ TSingle4;
+  pTHalf8 = ^THalf8;
+  pTHalf4 = ^THalf4;
+
+
 var
   a, b: array of half;
   t0: int64;
 
   procedure write_a;
-  const nitems=20;
+  const
+    nitems = 19;
   var
     i: integer;
   begin
@@ -111,6 +121,64 @@ var
     write_a;
   end;
 
+  {$asmmode intel}
+  procedure testSingleConv; // even slower
+  var
+    sa, sb: single;
+    i, j: integer;
+    ha, hb: half;
+
+    f4a, f4b: TSingle4;
+    h8, h8a: THalf8;
+    pf4: pTSingle4;
+    ph8: pTHalf8;
+  begin
+
+    load_ab;
+
+    t0 := gettickCount64;
+
+    i := 0;
+    while i < length(a) do
+    begin
+      // h8a:=a[i]
+      ph8 := pTHalf8(@a[i]);
+      asm // convert THalf8 -> TSingle4
+               MOV     R11,[ph8]
+               MOVUPS  XMM0,[R11]
+               DB      $c4, $e2, $79, $13, $c0 // VCVTPH2PS XMM0,XMM0  //  c4 e2 79 13 c0
+               MOVUPS  [f4a],XMM0
+      end;
+
+      // h8b:=b[i]
+      ph8 := pTHalf8(@b[i]);
+      asm // convert THalf8 -> TSingle4
+               MOV     R11,[ph8]
+               MOVUPS  XMM0,[R11]
+               DB      $c4, $e2, $79, $13, $c0 // VCVTPH2PS XMM0,XMM0  //  c4 e2 79 13 c0
+               MOVUPS  [f4b],XMM0
+      end;
+
+      // evaluate: sa * sb + sa - sb / sa;
+      for j := 0 to 3 do f4a[j] := f4a[j] * f4b[j] + f4a[j] - f4b[j] / f4a[j];
+
+      asm  // convert single to half f4a -> half(f4a)
+               MOVUPS  XMM0,[f4a]
+               DB      $c4, $e3,  $79, $1d, $c0, $00 // vcvtps2ph xmm0,xmm0,0x0
+               MOVUPS   [f4a],XMM0
+      end;
+
+      pTHalf4(@a[i])^ := pTHalf4(@f4a)^;
+
+      Inc(i, 4);
+    end;
+
+    t0 := gettickCount64 - t0;
+
+    writeln(format('lap half pas simd intrinsic w/single   : %5d ms', [t0]));
+    write_a;
+  end;
+
   procedure testMT;
 
     function getNThreads: integer;
@@ -134,6 +202,11 @@ var
       end;
     end;
 
+    procedure _gen_ab_simd(i: PtrInt; {%H-}pnt: pointer; Item: TMultiThreadProcItem);
+    begin
+
+    end;
+
   begin
 
     load_ab;
@@ -150,9 +223,11 @@ var
 begin
   writeln(format('opengl native pas bench, %d iters', [n]));
 
+  testSingleConv;
   testHalfOCL;
   testIter;
   testMT;
+
 
   writeln('end');
   readln;
