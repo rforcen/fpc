@@ -1,7 +1,17 @@
 {
  80 bit fp80 support
  this is the extended float type not supported in win64
-}
+
+ range: 3.65 × 10−4951 to 1.18 × 10+4932
+
+ intel asm equivalence
+
+ byte = uint8
+ word = uint16
+ dword = uint32
+ qword = uint64
+ tbyte = ten byte = 80 bits
+ }
 
 unit f80;
 
@@ -14,7 +24,7 @@ uses
   Classes, SysUtils, Math;
 
 type
-  float80 = packed array [0..9] of byte;
+  float80 = packed array [0..9] of byte;  // 80 bits : 10 bytes
   fp80 = float80;
 
 
@@ -39,6 +49,9 @@ type
     expo: 0..32768 - 1;         // 15-bit exponent
     sign: 0..1;                 // 1-bit sign
   end;
+
+const
+  ten: fp80 = (0, 0, 0, 0, 0, 0, 0, 160, 2, 64);
 
 operator := (const a: double): fp80;
 operator := (const a: fp80): double;
@@ -67,6 +80,13 @@ function atan(x, y: fp80): fp80; assembler;
 
 
 // funcs
+function zero: fp80; assembler;
+function one: fp80; assembler;
+function pi: fp80; assembler;
+function log10_2: fp80; assembler;
+function cpuid(code: integer): integer;
+function rand: fp80;
+
 function sqrt(x: fp80): fp80; assembler;
 function abs(x: fp80): fp80; assembler;
 function remainder(x, y: fp80): fp80; assembler; // mod
@@ -78,6 +98,9 @@ function fp80ToStr(x: fp80; decimals: integer = 0): string;
 
 function IsNaN(x: fp80): boolean; assembler;
 function IsInfinite(x: fp80): boolean; assembler;
+procedure extractMantExp(const a: fp80; var mant: fp80; var expo: fp80); assembler;
+function combineMantExp(const mant: fp80; const expo: fp80): fp80;
+// mant * power(2, expo)
 
 implementation
 
@@ -139,7 +162,6 @@ asm
          FMULP    ST(1),ST(0)
 
          FSTP    tbyte[Result]
-
 end;
 
 operator /(const a, b: fp80): fp80; assembler; nostackframe;
@@ -266,6 +288,61 @@ asm
          FSTP    tbyte[result]
 end;
 
+function zero: fp80; assembler;
+asm
+         FLDZ
+         FSTP    tbyte[result]
+end;
+
+function one: fp80; assembler;
+asm
+         FLD1
+         FSTP    tbyte[result]
+end;
+
+function pi: fp80; assembler;
+asm
+         FLDPI
+         FSTP    tbyte[result]
+end;
+
+function log10_2: fp80; assembler;
+asm
+         FLDLG2
+         FSTP    tbyte[result]
+end;
+
+function cpuid(code: integer): integer;
+begin
+  asm
+           MOV     EAX,[code]
+           CPUID
+           MOV     [result],EAX
+  end;
+end;
+
+function rand: fp80;
+var
+  v: uint64;
+begin
+  asm
+           RDRAND  R11
+
+           MOV     [v],R11 // int64 rand
+           FILD     [v]
+
+           MOV     R12,$7fffffffffffffff  // maxint64
+           MOV     [v],R12
+           FILD    [v]
+
+           FDIVP   ST(1),ST(0)  // div to 0..1 range
+           FABS
+
+           MOV     R11,tbyte[result] // store result
+           FSTP    tbyte[R11]
+  end;
+end;
+
 function sqrt(x: fp80): fp80; assembler; nostackframe;
 asm
          FLD     tbyte[x]
@@ -293,7 +370,7 @@ asm
          // Calculate e^x using the relationship e^x = 2^(x * log2(e))
          FLD     tbyte[x]           // Load x
          FLDL2E              // Load log base 2 of e onto the stack
-         FMUL                // Multiply st(0) by st(1) to get x * log2(e)
+         FMUL    ST(0),ST(1) // Multiply st(0) by st(1) to get x * log2(e)
          FLD1                // Load the constant 1 onto the stack
          FLD     ST(1)       // Copy the result of x * log2(e) to the top of the stack
          FPREM               // Compute the partial remainder of st(0) / st(1)
@@ -375,55 +452,147 @@ begin
     Result := -Result;
 
   if IsExponentNegative then
-    Result := Result / Power(10, Exponent)
+    Result := Result / (ten ** Exponent)
   else
-    Result := Result * Power(10, Exponent);
+    Result := Result * (ten ** Exponent);
 end;
 
-function __old_fp80ToStr(const a: fp80): string;
-var
-  mant: double;
-  expo: int32;
-begin
-  mant := a;
-  asm
-           MOV     R11,[a]
-           FLD     tbyte [R11]
-           FXTRACT // expo:st(0), mant:st(1)
-           FST     dword [expo]
-           FSTP    ST(1)
-           FST     qword [mant]
-  end;
-  Result := format('%fe%d', [mant, expo]);
+procedure extractMantExp(const a: fp80; var mant: fp80; var expo: fp80); assembler;
+// a = mant * power(2, expo), mant * power(10, expo * 0.30103)
+asm
+         FLD     tbyte[a]
+         FXTRACT // expo:st(0), mant:st(1)
+         FSTP    tbyte[mant]
+         FSTP    tbyte[expo]
+end;
+
+function combineMantExp(const mant: fp80; const expo: fp80): fp80;
+begin // mant * power(2, expo)
+  Result := mant * (fp80(2) ** expo);
 end;
 
 function fp80ToStr(x: fp80; decimals: integer): string;
 var
-  integral: int64;
-  decimal: int64;
-  exponent: double;
+  m, e: fp80;
+  exf, ex: double;
+  exi: integer;
 begin
-  Result := '';
-  if x < 0.0 then     // Handle negative numbers
+  if x = 0 then exit('0');
+
+  extractMantExp(x, m, e);
+
+  // mant * power(10, expo * 0.30103), mant^
+  ex := double(e) * log10_2; // 0.30103;
+  exi := trunc(ex);
+  exf := Frac(ex);
+  m := m * power(10, exf);
+
+  if abs(m - 10) < 1e-6 then
   begin
-    Result := '-';
+    m /= 10;
+    Inc(exi);
+  end;
+
+  if exi <> 0 then
+    Result := format('%ge%d', [double(m), exi])
+  else
+    Result := format('%g', [double(m)]);
+end;
+
+function __fp80ToStr(x: fp80; decimals: integer): string;
+const
+  sqTab: array of fp80 = ( // table of squares or 10: 1,10,100,10000...
+    {1e0}(0, 0, 0, 0, 0, 0, 0, 128, 255, 63),
+    {1e1}(0, 0, 0, 0, 0, 0, 0, 160, 2, 64),
+    {1e2}(0, 0, 0, 0, 0, 0, 0, 200, 5, 64),
+    {1e4}(0, 0, 0, 0, 0, 0, 64, 156, 12, 64),
+    {1e8}(0, 0, 0, 0, 0, 32, 188, 190, 25, 64),
+    {1e16}(0, 0, 0, 4, 191, 201, 27, 142, 52, 64),
+    {1e32}(158, 181, 112, 43, 168, 173, 197, 157, 105, 64),
+    {1e64}(213, 166, 207, 255, 73, 31, 120, 194, 211, 64),
+    {1e128}(223, 140, 233, 128, 201, 71, 186, 147, 168, 65),
+    {1e256}(140, 222, 249, 157, 251, 235, 126, 170, 81, 67),
+    {1e512}(194, 145, 14, 166, 174, 160, 25, 227, 163, 70),
+    {1e1024}(15, 12, 117, 129, 134, 117, 118, 201, 72, 77),
+    {1e2048}(215, 93, 61, 197, 93, 59, 139, 158, 146, 90),
+    {1e4096}(121, 151, 32, 138, 2, 82, 96, 196, 37, 117));
+var
+  i, ex2, exponent: integer;
+  ds, xOrg, mant: fp80;
+  sign: string;
+begin
+
+  if x < 0 then
+  begin
+    sign := '-';
     x := -x;
   end;
 
   // Handle special cases (NaN and Inf)
-  if IsNaN(x) then  Exit(Result + 'NaN');
-  if IsInfinite(x) or (x > high(int64)) then  Exit(Result + 'Inf');
+  if IsNaN(x) then  Exit(sign + 'NaN');
+  if IsInfinite(x) then  Exit(sign + 'Inf');
 
-  exponent := power(10.0, Min(decimals, 16)); // exponent of 10 for rounding
-  x := x + 0.5 / exponent;     // Rounding
+  xOrg := x;
+  exponent := 0;
 
-  integral := Trunc(x);     // Extract integral and decimal parts
-  decimal := Trunc((x - integral) * exponent);
+  if abs(x - 10) < 1e-6 then    // 10..+inf
+  begin
+    i := high(sqTab);
+    ds := sqTab[i];
+    ex2 := 4096;
 
-  Result := Result + IntToStr(integral);     // Construct the final string
-  if decimals > 0 then
-    Result := Result + '.' + IntToStr(decimal);
+    while ex2 > 0 do
+    begin
+      if (x > ds) or (abs(x - ds) < 1e-6) then // x >= ds with 1e-6 tolerance
+      begin
+        exponent += ex2;
+        x /= ds;
+      end;
+
+      ex2 := ex2 div 2;
+      Dec(i);
+      ds := sqTab[i];
+    end;
+
+    if x > 1 then
+    begin
+      x /= 10;
+      Inc(exponent, 1);
+    end;
+  end
+  else
+  begin
+    if (x > 0.0) and (x <= 1.0) then   // 0.00..1 .. 1
+    begin
+      i := high(sqTab);
+      ds := 1 / sqTab[i];
+      ex2 := 4096;
+
+      while ex2 > 0 do
+      begin
+        if (x < ds) then
+        begin
+          exponent -= ex2;
+          x /= ds;
+        end;
+
+        ex2 := ex2 div 2;
+        Dec(i);
+        ds := 1 / sqTab[i];
+      end;
+      if abs(x - 1) < 1e-6 then
+        Inc(exponent);
+    end;
+  end;
+
+  mant := xOrg / (f80.ten ** exponent);
+
+  if exponent <> 0 then
+    Result := format('%s%.5ge%d', [sign, double(x), exponent])
+  else
+    Result := format('%s%.5g', [sign, double(x)]);
 end;
+
 
 function IsNaN(x: fp80): boolean; assembler; nostackframe;
 asm
