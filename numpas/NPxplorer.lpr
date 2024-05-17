@@ -10,7 +10,8 @@ uses
   athreads,
   {$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, lazcontrols, uNPxplorer, NPInterpreter, uNumPas
+  Forms, lazcontrols, uNPxplorer, NPInterpreter, uNumPas, uTNPBrowser, 
+uTCCSpinEdit
   { you can add units after this };
 
 {$R *.res}

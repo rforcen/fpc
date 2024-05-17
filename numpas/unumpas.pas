@@ -19,7 +19,7 @@ interface
 uses // add required packages: multithreadprocslaz
   Classes, SysUtils, Math, TypInfo, MTProcs, Randoms,
   UTF8Process,
-  Generics.Defaults, Generics.Collections, f128, zstream;
+  Generics.Defaults, Generics.Collections, f128, f80, zstream;
 
 type
 
@@ -30,7 +30,7 @@ type
   end;
 
   TArrInt = array of integer;
-  TDataType = (dtUnknown, dtint, dtf32, dtf64, dtf128);
+  TDataType = (dtUnknown, dtint, dtf32, dtf64, dtf80, dtf128);
 
   { TNumPas }
 
@@ -83,7 +83,9 @@ type
     fpint: pinteger;
     fpf32: psingle;
     fpf64: pdouble;
+    fpf80: pfp80;
     fpf128: pfp128;
+
     fpdata: PT;
     fData: array of T;
 
@@ -127,6 +129,7 @@ type
     property mitem[index: TArrInt]: T read rget write rput;
 
     function {%H-}toString: string; overload;
+    function npToStr(r, c, nDecs: integer): string;
     function toPython(varName: string): string; overload;
     function slice(index: TArrInt): NP;
     function copy: NP; // deep copy
@@ -280,16 +283,22 @@ begin
   setPointers;
 
   _typeInfo := PTypeInfo(TypeInfo(T)); // data type of T
+  fDataType := dtUnknown;
 
   case _typeInfo^.Kind of
     tkInteger: fDataType := dtint;
     tkFloat: begin
-      if _typeInfo^.Name = 'Single' then fDataType := dtf32;
-      if _typeInfo^.Name = 'Double' then fDataType := dtf64;
-      if _typeInfo^.Name = 'Real' then fDataType := dtf64;
+      if CompareStr(_typeInfo^.Name, 'Single') = 0 then fDataType := dtf32
+      else
+      if CompareStr(_typeInfo^.Name, 'Double') = 0 then fDataType := dtf64
+      else
+      if CompareStr(_typeInfo^.Name, 'Real') = 0 then fDataType := dtf64;
     end;
-    tkRecord:
-      if _typeInfo^.Name = 'fp128' then fDataType := dtf128;
+    tkRecord: begin
+      if CompareStr(_typeInfo^.Name, 'fp80') = 0 then fDataType := dtf80
+      else
+      if CompareStr(_typeInfo^.Name, 'fp128') = 0 then fDataType := dtf128;
+    end;
     else
       fDataType := dtUnknown;
   end;
@@ -424,6 +433,7 @@ begin
   fpint := pinteger(@fData[0]); // pointers to data
   fpf32 := psingle(@fData[0]);
   fpf64 := pdouble(@fData[0]);
+  fpf80 := pfp80(@fData[0]);
   fpf128 := pfp128(@fData[0]);
   fpdata := @fData[0];
 end;
@@ -698,9 +708,26 @@ begin
       dtint: Result += format('%d', [fpint[i]]);
       dtf32: Result += format('%f', [fpf32[i]]);
       dtf64: Result += format('%f', [fpf64[i]]);
-      dtf128: Result += format('%s', [f128tos(fpf128[i])]);
+      dtf80: Result += fp80ToStr(fpf80[i]);
+      dtf128: Result += f128tos(fpf128[i]);
       else;
     end;
+  end;
+end;
+
+function TNumPas<T>.npToStr(r, c, nDecs: integer): string;
+var
+  index: integer;
+begin
+  Result := '';
+  index := r * dim(0) + c;
+  case fDataType of
+    dtint: Result := format('%d', [fpint[index]]);
+    dtf32: Result := format('%.*f', [nDecs, fpf32[index]]);
+    dtf64: Result := format('%.*f', [nDecs, fpf64[index]]);
+    dtf80: Result := fp80ToStr(fpf80[index], nDecs);
+    dtf128: Result := f128tos(fpf128[index]);
+    else;
   end;
 end;
 
@@ -716,7 +743,8 @@ begin
       dtint: Result += format('%d', [fpint[i]]);
       dtf32: Result += format('%e', [fpf32[i]]);
       dtf64: Result += format('%e', [fpf64[i]]);
-      dtf128: Result += format('%s', [f128tos(fpf128[i])]);
+      dtf80: Result += fp80toStr(fpf80[i]);
+      dtf128: Result += f128tos(fpf128[i]);
       else;
     end;
     if i <> hitems then Result += ', ';
@@ -774,6 +802,7 @@ begin
     dtint: for i := 0 to hitems do fpint[i] := random(10000);
     dtf32: for i := 0 to hitems do fpf32[i] := random; // fp32
     dtf64: for i := 0 to hitems do fpf64[i] := random; // TsRandf64(seed); // fp64
+    dtf80: for i := 0 to hitems do fpf80[i] := random;
     dtf128: for i := 0 to hitems do fpf128[i] := random;
     else;
   end;
@@ -786,7 +815,7 @@ procedure TNumPas<T>.randMT;   // slower than ST mode as TsRnd is much slower th
     delta: integer;
     seed: integer;
   begin
-    delta := Item.Group.EndIndex;
+    delta := Item.Group.EndIndex + 1;
     seed := random($7fff); // each thread has its own seed
 
     case fDataType of
@@ -803,6 +832,11 @@ procedure TNumPas<T>.randMT;   // slower than ST mode as TsRnd is much slower th
       dtf64: while ix < fNItems do
         begin
           fpf64[ix] := TsRandf64(seed); // TsRnd.random;
+          Inc(ix, delta);
+        end;
+      dtf80: while ix < fNItems do
+        begin
+          fpf80[ix] := TsRandf64(seed);
           Inc(ix, delta);
         end;
       else;
@@ -1103,7 +1137,7 @@ var
     delta: integer;
     a: TNumPas<T>;
   begin
-    delta := Item.Group.EndIndex;
+    delta := Item.Group.EndIndex + 1;
 
     while ix < length(tdims) do
     begin
@@ -1126,7 +1160,7 @@ begin
   end;
 end;
 
-function TNumPas<T>.diagonal: TNumPas<T>;
+function TNumPas<T>.diagonal: NP;
 var
   i: integer;
 begin
@@ -1135,7 +1169,7 @@ begin
   for i := 0 to hi(0) do Result[i] := self[i, i];
 end;
 
-function TNumPas<T>.apply(foo: TNPFunction): TNumPas<T>;
+function TNumPas<T>.apply(foo: TNPFunction): NP;
 var
   i: integer;
 begin
@@ -1321,7 +1355,7 @@ var
     delta, sStart, r: integer;
     p: T;
   begin
-    delta := Item.Group.EndIndex;
+    delta := Item.Group.EndIndex + 1;
 
 
     while ix < prs do
@@ -1342,7 +1376,7 @@ var
     delta, sStart, aStart, r, c, ixa, ixr: integer;
     p: T;
   begin
-    delta := Item.Group.EndIndex;
+    delta := Item.Group.EndIndex + 1;
 
     while ix < prs do
     begin
@@ -1628,7 +1662,7 @@ var
   var
     delta: integer;
   begin
-    delta := Item.Group.EndIndex;
+    delta := Item.Group.EndIndex + 1;
 
     while ix < length(tdims) do
     begin
@@ -1715,7 +1749,7 @@ var
   var
     delta: integer;
   begin
-    delta := Item.Group.EndIndex;
+    delta := Item.Group.EndIndex + 1;
 
     while ix < length(tdims) do
     begin
@@ -1761,7 +1795,7 @@ function TNumPas<T>.transposeMT: NP;
   var
     delta: integer;
   begin
-    delta := Item.Group.EndIndex;
+    delta := Item.Group.EndIndex + 1;
 
     while ix < fNItems do
     begin
@@ -1888,6 +1922,7 @@ begin
     dtint: for i := 0 to a.hitems do Result.fpint[i] += rb;
     dtf32: for i := 0 to a.hitems do Result.fpf32[i] += b;
     dtf64: for i := 0 to a.hitems do Result.fpf64[i] += b;
+    dtf80: for i := 0 to a.hitems do Result.fpf80[i] += b;
     dtf128: for i := 0 to a.hitems do Result.fpf128[i] += b;
     else;
   end;
@@ -1903,6 +1938,7 @@ begin
     dtint: for i := 0 to a.hitems do Result.fpint[i] += rb;
     dtf32: for i := 0 to a.hitems do Result.fpf32[i] += b;
     dtf64: for i := 0 to a.hitems do Result.fpf64[i] += b;
+    dtf80: for i := 0 to a.hitems do Result.fpf80[i] += b;
     dtf128: for i := 0 to a.hitems do Result.fpf128[i] += b;
     else;
   end;
@@ -1935,6 +1971,7 @@ begin
     dtint: for i := 0 to a.hitems do Result.fpint[i] -= rb;
     dtf32: for i := 0 to a.hitems do Result.fpf32[i] -= b;
     dtf64: for i := 0 to a.hitems do Result.fpf64[i] -= b;
+    dtf80: for i := 0 to a.hitems do Result.fpf80[i] -= b;
     dtf128: for i := 0 to a.hitems do Result.fpf128[i] -= b;
   end;
 end;
@@ -1949,6 +1986,7 @@ begin
     dtint: for i := 0 to a.hitems do Result.fpint[i] -= rb;
     dtf32: for i := 0 to a.hitems do Result.fpf32[i] -= b;
     dtf64: for i := 0 to a.hitems do Result.fpf64[i] -= b;
+    dtf80: for i := 0 to a.hitems do Result.fpf80[i] -= b;
     dtf128: for i := 0 to a.hitems do Result.fpf128[i] -= b;
   end;
 end;
@@ -1982,6 +2020,7 @@ begin
     dtint: for i := 0 to a.hitems do Result.fpint[i] *= rb;
     dtf32: for i := 0 to a.hitems do Result.fpf32[i] *= b;
     dtf64: for i := 0 to a.hitems do Result.fpf64[i] *= b;
+    dtf80: for i := 0 to a.hitems do Result.fpf80[i] *= b;
     dtf128: for i := 0 to a.hitems do Result.fpf128[i] *= b;
   end;
 end;
@@ -1996,6 +2035,7 @@ begin
     dtint: for i := 0 to a.hitems do Result.fpint[i] *= rb;
     dtf32: for i := 0 to a.hitems do Result.fpf32[i] *= b;
     dtf64: for i := 0 to a.hitems do Result.fpf64[i] *= b;
+    dtf80: for i := 0 to a.hitems do Result.fpf80[i] *= b;
     dtf128: for i := 0 to a.hitems do Result.fpf128[i] *= b;
   end;
 end;
@@ -2010,6 +2050,7 @@ begin
     dtint: for i := 0 to a.hitems do Result.fpint[i] := a.fpint[i] div b.fpint[i];
     dtf32: for i := 0 to a.hitems do Result.fpf32[i] /= b.fpf32[i];
     dtf64: for i := 0 to a.hitems do Result.fpf64[i] /= b.fpf64[i];
+    dtf80: for i := 0 to a.hitems do Result.fpf80[i] /= b.fpf80[i];
     dtf128: for i := 0 to a.hitems do Result.fpf128[i] /= b.fpf128[i];
   end;
 end;
@@ -2024,6 +2065,7 @@ begin
     dtint: for i := 0 to a.hitems do Result.fpint[i] := a.fpint[i] div b;
     dtf32: for i := 0 to a.hitems do Result.fpf32[i] /= b;
     dtf64: for i := 0 to a.hitems do Result.fpf64[i] /= b;
+    dtf80: for i := 0 to a.hitems do Result.fpf80[i] /= b;
     dtf128: for i := 0 to a.hitems do Result.fpf128[i] /= b;
   end;
 end;
@@ -2038,6 +2080,7 @@ begin
     dtint: for i := 0 to a.hitems do Result.fpint[i] := a.fpint[i] div rb;
     dtf32: for i := 0 to a.hitems do Result.fpf32[i] /= b;
     dtf64: for i := 0 to a.hitems do Result.fpf64[i] /= b;
+    dtf80: for i := 0 to a.hitems do Result.fpf80[i] /= b;
     dtf128: for i := 0 to a.hitems do Result.fpf128[i] /= b;
   end;
 end;
@@ -2052,6 +2095,7 @@ begin
     dtint: for i := 0 to a.hitems do Result.fpint[i] := a.fpint[i] div rb;
     dtf32: for i := 0 to a.hitems do Result.fpf32[i] /= b;
     dtf64: for i := 0 to a.hitems do Result.fpf64[i] /= b;
+    dtf80: for i := 0 to a.hitems do Result.fpf80[i] /= b;
     dtf128: for i := 0 to a.hitems do Result.fpf128[i] /= b;
   end;
 end;
